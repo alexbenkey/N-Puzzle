@@ -75,10 +75,13 @@ OBJ_DIR :=	obj/
 DEP_DIR :=	dep/
 
 SRC_MAIN :=	main.cpp
-SRC_FUNC :=	
+
+DIR_PARSE :=	$(SRC_DIR)parse/
+SRC_PARSE :=	parse.cpp
 
 SRC_$(NAME) :=	$(SRC_MAIN:%=$(SRC_DIR)%) \
-				$(SRC_FUNC:%=$(SRC_DIR)%)
+				$(SRC_PARSE:%.cpp=$(DIR_PARSE)%.cpp)\
+
 OBJ_$(NAME) :=	$(SRC_$(NAME):$(SRC_DIR)%.cpp=$(OBJ_DIR)%.o)
 DEP_$(NAME) :=	$(SRC_$(NAME):$(SRC_DIR)%.cpp=$(DEP_DIR)%.d)
 
@@ -103,6 +106,7 @@ $(OBJ_DIR) $(DEP_DIR):
 
 # Compile C++
 $(OBJ_DIR)%.o: $(SRC_DIR)%.cpp | $(OBJ_DIR) $(DEP_DIR)
+	@mkdir -p $(@D) $(DEP_DIR)/$(*D)
 	@printf	"$(CC_LINE)$(C_DCYAN)Compiling $(C_CYAN)%s$(C_DCYAN) to $(C_CYAN)%s$(C_DCYAN)...$(C_RESET)" "$<" "$@"
 	@$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(DEPFLAGS) -c $< -o $@
 
