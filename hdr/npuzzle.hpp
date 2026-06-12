@@ -6,12 +6,14 @@
 /*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/10 17:52:56 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/06/10 18:35:50 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/06/12 19:03:47 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef NPUZZLE_HPP
 # define NPUZZLE_HPP
+
+# include "nPuzzle.hpp"
 
 void	parse();
 
