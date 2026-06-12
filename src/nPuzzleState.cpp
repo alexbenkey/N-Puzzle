@@ -89,7 +89,10 @@ nPuzzleState::~nPuzzleState(void)
 
 void	nPuzzleState::printPuzzle(void) const
 {
-	std::cout	<< "# Unknown puzzle solvability\n";
+	if (this->validPuzzle())
+		std::cout	<< "# Unknown puzzle solvability\n";
+	else
+		std::cout	<< "# This puzzle is unsolvable\n";
 	if (this->width != this->height)
 		std::cout	<< this->width	<< ' ';
 	std::cout	<< this->height	<< '\n';
@@ -102,6 +105,37 @@ void	nPuzzleState::printPuzzle(void) const
 		std::cout << '\n';
 	}
 	std::cout	<< std::flush;
+}
+
+#include <set>
+
+bool	nPuzzleState::validPuzzle(void) const
+{
+	return (validPuzzleContent() && validPuzzlePlacement());
+}
+
+bool	nPuzzleState::validPuzzleContent(void) const
+{
+	std::set<int32_t>				set;
+
+	for (size_t y = 0; y < this->tiles.size(); ++y)
+		for (size_t x = 0; x < this->tiles[y].size(); ++x)
+			if (!set.insert(tiles[y][x].get()).second)
+				throw std::runtime_error("Duplicate tile value");
+	if (*set.begin() != 0)
+		throw std::runtime_error("Missing 0 tile");
+	if (*set.rbegin() != this->size - 1)
+		throw std::runtime_error(std::string("Out of bounds value "));
+	if (set.size() != (size_t)this->size)
+		throw std::runtime_error("Missing numbers");
+	return (true);
+}
+
+bool	nPuzzleState::validPuzzlePlacement(void) const
+{
+	// Idont know, something with inversion and extra on even numbers
+	// Spiral sucks
+	return (true);
 }
 
 /** ************************************************************************ **\

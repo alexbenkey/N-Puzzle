@@ -38,6 +38,9 @@ class nPuzzleState
 
 		std::vector<std::vector<Tile> >	tiles;
 
+		bool	validPuzzleContent(void) const;
+		bool	validPuzzlePlacement(void) const;
+
 	protected:
 		const int32_t	width;
 		const int32_t	height;
@@ -54,6 +57,7 @@ class nPuzzleState
 		const Tile&	getTile(const int32_t x, const int32_t y) const { return this->tiles[y][x]; }
 		// Tile&	getTile(int32_t x, int32_t y){ return tiles[y][x]; }
 		void	printPuzzle(void) const;
+		bool	validPuzzle(void) const;
 
 		nPuzzleState	&operator=(const nPuzzleState &src);
 };
