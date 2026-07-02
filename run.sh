@@ -6,10 +6,10 @@
 #    By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/06/10 18:24:25 by ohengelm          #+#    #+#              #
-#    Updated: 2026/06/10 18:36:04 by ohengelm         ###   ########.fr        #
+#    Updated: 2026/06/12 18:11:00 by ohengelm         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 clear
-make
-python assets/npuzzle-gen.py 3 | ./npuzzle
+make || exit 1
+python assets/npuzzle-gen.py 4 | ./npuzzle

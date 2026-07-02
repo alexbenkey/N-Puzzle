@@ -1,17 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   npuzzle.hpp                                        :+:      :+:    :+:   */
+/*   nPuzzleHeader.hpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
+/*   By: avon-ben <avon-ben@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/10 17:52:56 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/06/10 18:35:50 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/07/02 14:55:16 by avon-ben         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef NPUZZLE_HPP
-# define NPUZZLE_HPP
+#ifndef NPUZZLEHEADER_HPP
+# define NPUZZLEHEADER_HPP
+
+# include "nPuzzle.hpp"
 
 void	parse();
 

@@ -14,10 +14,11 @@ CPPFLAGS +=	$(INCLUDES) $(DEFINES)
 
 WARNFLAGS :=	-Wall -Wextra -Werror
 # WARNFLAGS +=	-Wno-unused-result
+# WARNFLAGS +=	-Wno-unused-variable
 
 # C++ Compiler
 CXX ?=		c++
-CXXFLAGS ?=	
+CXXFLAGS ?=	-std=c++98
 CXXFLAGS +=	$(WARNFLAGS)
 
 # Dependency generation
@@ -79,8 +80,12 @@ SRC_MAIN :=	main.cpp
 DIR_PARSE :=	$(SRC_DIR)parse/
 SRC_PARSE :=	parse.cpp
 
+DIR_CLASS :=	$(SRC_DIR)
+SRC_CLASS :=	nPuzzleState.cpp nPuzzleTile.cpp nPuzzleTarget.cpp nPuzzle.cpp
+
 SRC_$(NAME) :=	$(SRC_MAIN:%=$(SRC_DIR)%) \
 				$(SRC_PARSE:%.cpp=$(DIR_PARSE)%.cpp)\
+				$(SRC_CLASS:%.cpp=$(DIR_CLASS)%.cpp)
 
 OBJ_$(NAME) :=	$(SRC_$(NAME):$(SRC_DIR)%.cpp=$(OBJ_DIR)%.o)
 DEP_$(NAME) :=	$(SRC_$(NAME):$(SRC_DIR)%.cpp=$(DEP_DIR)%.d)

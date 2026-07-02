@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "npuzzle.hpp"
+#include "nPuzzleHeader.hpp"
 
 
 int	main(void)
