@@ -18,7 +18,7 @@ WARNFLAGS :=	-Wall -Wextra -Werror
 
 # C++ Compiler
 CXX ?=		c++
-CXXFLAGS ?=	-std=c++98
+CXXFLAGS ?=	-std=c++11
 CXXFLAGS +=	$(WARNFLAGS)
 
 # Dependency generation
@@ -29,8 +29,8 @@ CXXFLAGS +=	$(WARNFLAGS)
 DEPFLAGS =		-MMD -MP -MF $(DEP_DIR)$*.d -MT $@
 
 # Linking
-LDFLAGS ?=	
-LDLIBS ?=	
+LDFLAGS ?=	-Lassets/raylib/src
+LDLIBS ?=	-lraylib -lGL -lm -lpthread -ldl -lrt -lX11
 # LDLIBS +=	-lft
 
 # =========================
@@ -83,9 +83,13 @@ SRC_PARSE :=	parse.cpp
 DIR_CLASS :=	$(SRC_DIR)
 SRC_CLASS :=	nPuzzleState.cpp nPuzzleTile.cpp nPuzzleTarget.cpp nPuzzle.cpp
 
+DIR_GRAPHIC :=	$(SRC_DIR)graphics/
+SRC_GRAPHIC :=	displayNPuzzle.cpp	Display.cpp
+
 SRC_$(NAME) :=	$(SRC_MAIN:%=$(SRC_DIR)%) \
 				$(SRC_PARSE:%.cpp=$(DIR_PARSE)%.cpp)\
-				$(SRC_CLASS:%.cpp=$(DIR_CLASS)%.cpp)
+				$(SRC_CLASS:%.cpp=$(DIR_CLASS)%.cpp)\
+				$(SRC_GRAPHIC:%.cpp=$(DIR_GRAPHIC)%.cpp)
 
 OBJ_$(NAME) :=	$(SRC_$(NAME):$(SRC_DIR)%.cpp=$(OBJ_DIR)%.o)
 DEP_$(NAME) :=	$(SRC_$(NAME):$(SRC_DIR)%.cpp=$(DEP_DIR)%.d)
@@ -98,7 +102,7 @@ all: $(NAME)
 
 $(NAME): $(OBJ_$(NAME))
 	@printf	"$(CC_LINE)$(C_DORANGE)Linking C++ object files into $(C_ORANGE)%s$(C_DORANGE)...$(C_RESET)\n" "$@"
-	@$(CXX) $(LDLIBS) $^ -o $@
+	$(CXX) $^ $(LDFLAGS) $(LDLIBS) -o $@
 
 # =========================
 # Build Rules
