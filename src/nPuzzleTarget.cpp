@@ -74,22 +74,22 @@ void	nPuzzleTarget::setTargetTiles(void)
 	{
 		// left → right
 		for (int32_t x = left; x <= right && i < this->size; ++x)
-			this->getTile(x, top).set(i++);
+			this->getTile(x, top).setVal(i++);
 		++top;
 
 		// top → bottom
 		for (int32_t y = top; y <= bottom && i < this->size; ++y)
-			this->getTile(right, y).set(i++);
+			this->getTile(right, y).setVal(i++);
 		--right;
 
 		// right → left
 		for (int32_t x = right; x >= left && i < this->size; --x)
-			this->getTile(x, bottom).set(i++);
+			this->getTile(x, bottom).setVal(i++);
 		--bottom;
 
 		// bottom → top
 		for (int32_t y = bottom; y >= top && i < this->size; --y)
-			this->getTile(left, y).set(i++);
+			this->getTile(left, y).setVal(i++);
 		++left;
 	}
 }

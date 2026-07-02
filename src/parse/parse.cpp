@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
+/*   By: avon-ben <avon-ben@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/10 18:29:47 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/06/12 19:00:56 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/07/02 18:13:35 by avon-ben         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ static bool				validLine(const std::string &line);
 static nPuzzle* 		createPuzzle(const std::string &line);
 static std::vector<int>	convertLineToNumbers(const std::string& line);
 
-void	parse()
+nPuzzle&	parse()
 {
 	nPuzzle*	puzzle = NULL;
 
@@ -45,6 +45,8 @@ void	parse()
 	}
 	puzzle->printPuzzle();
 	puzzle->printTarget();
+	puzzle->printEmpty();
+	return *puzzle;
 }
 
 static bool	emptyLine(const std::string &line)
