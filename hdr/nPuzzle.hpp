@@ -10,8 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef NPUZZLE2_HPP
-# define NPUZZLE2_HPP
+#ifndef NPUZZLE_HPP
+# define NPUZZLE_HPP
 
 #include "nPuzzleState.hpp"
 #include "nPuzzleTarget.hpp"
