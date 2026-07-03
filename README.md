@@ -45,6 +45,8 @@ make
 
 [Admissible heuristic](https://en.wikipedia.org/wiki/Admissible_heuristic)
 
+[Raylib](https://github.com/raysan5/raylib)
+
 ---
 
 # Credits
@@ -89,6 +91,8 @@ git switch -c [name]
 git push -u origin [name]
 # Add other repo's to project as children
 git submodule add [link] [dest]
+# merge
+
 # Clean after merge
 git branch -d [name]
 git fetch --prune

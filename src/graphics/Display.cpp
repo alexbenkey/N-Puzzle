@@ -110,7 +110,7 @@ void	Display::renderHUD()
 
 void	Display::renderTiles(nPuzzleState& state)
 {
-	Color	ctile = {192, 192, 192, 255};
+	Color	tileColor = {192, 192, 192, 255};
 	int	xOffset = (this->tile.width - 20) / 2;
 	int	yOffset = (this->tile.height - 20) / 2;
 
@@ -124,10 +124,10 @@ void	Display::renderTiles(nPuzzleState& state)
 			if (val == 0)
 				continue;
 			if (val == this->puzzle->getTargetState().getTileValue(x, y))
-			ctile = {69, 69, 69, 255};
+				tileColor = {69, 69, 69, 255};
 			else
-			ctile = {123, 123, 123, 255};
-			DrawRectangleRec(this->tile, ctile);
+				tileColor = {123, 123, 123, 255};
+			DrawRectangleRec(this->tile, tileColor);
 			DrawRectangleLinesEx(this->tile, 2, Color{23, 23, 23, 127});
 			DrawText(std::to_string(val).c_str(), this->tile.x + xOffset, this->tile.y + yOffset, 20, ORANGE);
 		}
