@@ -16,5 +16,6 @@
 int	main(void)
 {
 	nPuzzle puzzle = parse();
+	displayNPuzzle(&puzzle);
 	return (0);
 }
