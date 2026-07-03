@@ -16,5 +16,6 @@
 # include "nPuzzle.hpp"
 
 nPuzzle&	parse();
+void	   displayNPuzzle(nPuzzle* puzzle);
 
 #endif

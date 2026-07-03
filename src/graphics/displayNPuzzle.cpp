@@ -34,10 +34,10 @@ void	displayNPuzzle(nPuzzle* puzzle)
 			{
 				switch (GetKeyPressed())
 				{
-					case KEY_RIGHT:	break;
-					case KEY_LEFT:	break;
-					case KEY_DOWN:	break;
-					case KEY_UP:	break;
+					case KEY_RIGHT:	puzzle->moveRight();	break;
+					case KEY_LEFT:	puzzle->moveLeft();	break;
+					case KEY_DOWN:	puzzle->moveDown();	break;
+					case KEY_UP:	puzzle->moveUp();	break;
 					case KEY_T:		puzzle->printTarget();	break;
 					case KEY_S:		puzzle->printPuzzle();	break;
 					default:		break ;
