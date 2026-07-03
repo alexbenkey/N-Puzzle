@@ -100,9 +100,12 @@ DEP_$(NAME) :=	$(SRC_$(NAME):$(SRC_DIR)%.cpp=$(DEP_DIR)%.d)
 
 all: $(NAME)
 
-$(NAME): $(OBJ_$(NAME))
+$(NAME): $(OBJ_$(NAME)) assets/raylib/src/libraylib.a
 	@printf	"$(CC_LINE)$(C_DORANGE)Linking C++ object files into $(C_ORANGE)%s$(C_DORANGE)...$(C_RESET)\n" "$@"
 	$(CXX) $^ $(LDFLAGS) $(LDLIBS) -o $@
+
+assets/raylib/src/libraylib.a:
+	$(MAKE) -C assets/raylib/src/
 
 # =========================
 # Build Rules
