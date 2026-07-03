@@ -39,6 +39,11 @@ class nPuzzle
 		void	printTarget(void) { this->target.printPuzzle(); }
 		void	printEmptyTilePos(void) {this->state.printTilePos( this->state.getTile(0)); }
 
+		void moveUp(void) { this->state.moveUp(); }
+		void moveDown(void) { this->state.moveDown(); }
+		void moveLeft(void) { this->state.moveLeft(); }
+		void moveRight(void) { this->state.moveRight(); }
+
 		nPuzzle	&operator=(const nPuzzle &src);
 };
 

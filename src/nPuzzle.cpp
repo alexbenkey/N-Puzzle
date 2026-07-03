@@ -86,8 +86,11 @@ void	nPuzzle::setRow(int32_t row, const std::vector<int>& numbers)
 {
 	if (row > this->height)
 		throw std::runtime_error(std::string("Invalid puzzle row: "));
-	for (int32_t x = 0; x < this->width; ++x){
+	for (int32_t x = 0; x < this->width; ++x)
+	{
 		this->state.getTile(x, row).setVal(numbers[x]);
+		if (numbers[x] == 0)
+			this->state.setEmptysquare(&this->state.getTile(x, row));
 		this->state.getTile(x, row).setxPos(x);
 		this->state.getTile(x, row).setyPos(row);
 	}
