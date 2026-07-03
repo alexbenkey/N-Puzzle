@@ -14,26 +14,31 @@
 # define DISPLAY_HPP
 
 #include "../assets/raylib/src/raylib.h"
+#include "nPuzzle.hpp"
 
 class Display
 {
 	private:
-		int			rows;
-		int			cols;
+		nPuzzle*	puzzle;
+		// int			rows;
+		// int			cols;
 		Rectangle	Frame;
 		Rectangle	tile;
 
 	protected:
 
 	public:
-		Display(void);
+		Display(nPuzzle* puzzle);
 		Display(const Display &src);
 		~Display(void);
 
 		void	adjustScale();
 		// void	render();
 		void	renderHUD();
-		void	renderTiles();
+		void	renderTiles(nPuzzleState& state);
+		void	renderCurrentState()	{ this->renderTiles(this->puzzle->getCurrentState()); }
+		void	renderTargetState()		{ this->renderTiles(this->puzzle->getTargetState()); }
+		void	renderStartState()		{ this->renderTiles(this->puzzle->getStartState()); }
 
 		Display	&operator=(const Display &src);
 };

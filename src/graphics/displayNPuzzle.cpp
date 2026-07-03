@@ -19,11 +19,9 @@
 // void	drawHUD(void);
 #include <iostream>
 
-void	displayNPuzzle(void)
+void	displayNPuzzle(nPuzzle* puzzle)
 {
-	Display	graphics;
-
-	nPuzzle	temp(5, 5);
+	Display	graphics(puzzle);
 
 	try
 	{
@@ -35,16 +33,16 @@ void	displayNPuzzle(void)
 			try
 			{
 				if (IsKeyDown(KEY_T))
-					{}
+					graphics.renderTargetState();
 				else if (IsKeyDown(KEY_S))
-					{}
+					graphics.renderStartState();
 				else
-					graphics.renderTiles();
+					graphics.renderCurrentState();
 
 				if (IsKeyPressed(KEY_T))
-					temp.printTarget();
+					puzzle->printTarget();
 				if (IsKeyPressed(KEY_S))
-					temp.printPuzzle();
+					puzzle->printPuzzle();
 			}
 			catch(const std::exception& e)
 			{

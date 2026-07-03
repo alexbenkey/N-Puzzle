@@ -24,7 +24,7 @@
  * 
 \* ************************************************************************** */
 
-Display::Display(void)
+Display::Display(nPuzzle* puzzle): puzzle(puzzle)
 {
 	std::cout	<< C_DGREEN	<< "Default constructor "
 				<< C_GREEN	<< "Display"
@@ -35,8 +35,8 @@ Display::Display(void)
 	InitWindow(800, 450, "nPuzzle");
 	SetWindowPosition(MARGIN, MARGIN);
 	SetWindowMinSize(800, 450);
-	this->cols = 5;
-	this->rows = 5;
+	// this->cols = 5;
+	// this->rows = 5;
 	this->adjustScale();
 }
 
@@ -75,8 +75,8 @@ void	Display::adjustScale()
 	this->Frame.height = GetRenderHeight() - 46;
 	this->Frame.x = GetRenderWidth() - this->Frame.width - MARGIN;
 	this->Frame.y = GetRenderHeight() - this->Frame.height - MARGIN;
-	this->tile.width = this->Frame.width / this->cols;
-	this->tile.height = this->Frame.height / this->rows;
+	this->tile.width = this->Frame.width / this->puzzle->getWidth();
+	this->tile.height = this->Frame.height / this->puzzle->getHeight();
 }
 
 // void	Display::render()
@@ -108,20 +108,40 @@ void	Display::renderHUD()
 	DrawText("[T] Display Target", MARGIN, MARGIN * 3, 20, WHITE);
 }
 
-void	Display::renderTiles()
+void	Display::renderTiles(nPuzzleState& state)
 {
+	Color	ctile = {192, 192, 192, 255};
 	int	xOffset = (this->tile.width - 20) / 2;
 	int	yOffset = (this->tile.height - 20) / 2;
-	for (int i = 0; i < this->cols * this->rows; ++i)
+
+	for (int x = 0; x < this->puzzle->getWidth(); ++x)
 	{
-		if (i == 0)
-			continue;
-		this->tile.x = this->Frame.x + (i % this->cols * this->tile.width);
-		this->tile.y = this->Frame.y + (i / this->cols * this->tile.height);
-		DrawRectangleRec(this->tile, Color{(unsigned char)((int)this->tile.x % 256), (unsigned char)((int)this->tile.y % 256), 0, 255});
-		DrawRectangleLinesEx(this->tile, 2, Color{23, 23, 23, 127});
-		DrawText(std::to_string(i).c_str(), this->tile.x + xOffset, this->tile.y + yOffset, 20, BLUE);
+		this->tile.x = this->Frame.x + x * this->tile.width;
+		for (int y = 0; y < this->puzzle->getHeight(); ++y)
+		{
+			this->tile.y = this->Frame.y + y * this->tile.height;
+			int	val = state.getTileValue(x, y);
+			if (val == 0)
+				continue;
+			if (val == this->puzzle->getTargetState().getTileValue(x, y))
+			ctile = {69, 69, 69, 255};
+			else
+			ctile = {123, 123, 123, 255};
+			DrawRectangleRec(this->tile, ctile);
+			DrawRectangleLinesEx(this->tile, 2, Color{23, 23, 23, 127});
+			DrawText(std::to_string(val).c_str(), this->tile.x + xOffset, this->tile.y + yOffset, 20, ORANGE);
+		}
 	}
+	// for (int i = 0; i < this->puzzle->getSurface(); ++i)
+	// {
+	// 	if (i == 0)
+	// 		continue;
+	// 	this->tile.x = this->Frame.x + (i % this->puzzle->getWidth() * this->tile.width);
+	// 	this->tile.y = this->Frame.y + (i / this->puzzle->getWidth() * this->tile.height);
+	// 	DrawRectangleRec(this->tile, Color{(unsigned char)((int)this->tile.x % 256), (unsigned char)((int)this->tile.y % 256), 0, 255});
+	// 	DrawRectangleLinesEx(this->tile, 2, Color{23, 23, 23, 127});
+	// 	DrawText(std::to_string(i).c_str(), this->tile.x + xOffset, this->tile.y + yOffset, 20, BLUE);
+	// }
 }
 
 /** ************************************************************************ **\

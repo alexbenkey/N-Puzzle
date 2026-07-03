@@ -64,6 +64,7 @@ class nPuzzleState
 		Tile&	getTile(const int32_t x, const int32_t y) { return this->tiles[y][x]; }
 		const Tile&	getTile(const int32_t x, const int32_t y) const { return this->tiles[y][x]; }
 		// Tile&	getTile(int32_t x, int32_t y){ return tiles[y][x]; }
+		int		getTileValue(const int32_t x, const int32_t y) const	{ return this->getTile(x, y).getVal(); }
 		void	printPuzzle(void) const;
 		bool	validPuzzle(void) const;
 		void	printTilePos(const Tile& Tile) const;
