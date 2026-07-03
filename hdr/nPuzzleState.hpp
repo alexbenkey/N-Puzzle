@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+
 #ifndef NPUZZLESTATE_HPP
 # define NPUZZLESTATE_HPP
 
@@ -24,14 +25,20 @@ class nPuzzleState
 		{
 			private:
 				int32_t	value;
+				int32_t xPos;
+				int32_t yPos;
 				
 			public:
 				Tile(void);
 				Tile(const Tile &src);
 				~Tile(void);
 
-				int32_t	get(void) const	{ return (this->value); }
-				void	set(int16_t value) { this->value = value; }
+				int32_t	getVal(void) const	{ return (this->value); } 
+				void	setVal(int32_t value) { this->value = value; }
+				int32_t	getxPos(void) const { return (this->xPos); }
+				void	setxPos(int32_t xPos) { this->xPos = xPos; } 
+				int32_t getyPos(void) const {return (this->yPos); }
+				void	setyPos(int32_t yPos) { this->yPos = yPos; }  
 
 				Tile	&operator=(const Tile &src);
 		};
@@ -53,11 +60,13 @@ class nPuzzleState
 		~nPuzzleState(void);
 
 		void	generateTiles(void);
+		Tile&   getTile(const int32_t value);
 		Tile&	getTile(const int32_t x, const int32_t y) { return this->tiles[y][x]; }
 		const Tile&	getTile(const int32_t x, const int32_t y) const { return this->tiles[y][x]; }
 		// Tile&	getTile(int32_t x, int32_t y){ return tiles[y][x]; }
 		void	printPuzzle(void) const;
 		bool	validPuzzle(void) const;
+		void	printTilePos(const Tile& Tile) const;
 
 		nPuzzleState	&operator=(const nPuzzleState &src);
 };
