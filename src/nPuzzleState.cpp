@@ -100,7 +100,7 @@ void	nPuzzleState::printPuzzle(void) const
 	{
 		for (size_t x = 0; x < this->tiles[y].size(); ++x)
 		{
-			std::cout << std::setw(3) << tiles[y][x].get() << ' ';
+			std::cout << std::setw(3) << tiles[y][x].getVal() << ' ';
 		}
 		std::cout << '\n';
 	}
@@ -141,6 +141,30 @@ bool	nPuzzleState::validPuzzlePlacement(void) const
 	// Idont know, something with inversion and extra on even numbers
 	// Spiral sucks
 	return (true);
+}
+
+nPuzzleState::Tile&	nPuzzleState::getTile(int32_t value)
+{
+	if ((size_t)value > this->tiles.size()){
+		std::runtime_error("Out of bounds Value");
+	}
+	for (size_t y = 0; y < this->tiles.size(); ++y)
+	{
+		for (size_t x = 0; x < this->tiles[y].size(); ++x)
+		{
+			if (this->tiles[y][x].getVal() == value)
+				return (this->tiles[y][x]);
+		}
+	}
+	return (this->tiles[0][0]);
+}
+
+void	nPuzzleState::printTilePos(const nPuzzleState::Tile& Tile) const
+{
+	// if (!Tile)
+	// 	std::cout << "no tile found" << std::endl
+	std::cout	<< "Found tile with value: " << Tile.getVal()
+				<< " at position [X,Y]:" << Tile.getxPos() << ", " << Tile.getyPos() << std::endl;
 }
 
 /** ************************************************************************ **\
