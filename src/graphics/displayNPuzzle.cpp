@@ -32,6 +32,17 @@ void	displayNPuzzle(nPuzzle* puzzle)
 			graphics.renderHUD();
 			try
 			{
+				switch (GetKeyPressed())
+				{
+					case KEY_RIGHT:	break;
+					case KEY_LEFT:	break;
+					case KEY_DOWN:	break;
+					case KEY_UP:	break;
+					case KEY_T:		puzzle->printTarget();	break;
+					case KEY_S:		puzzle->printPuzzle();	break;
+					default:		break ;
+				}
+				
 				if (IsKeyDown(KEY_T))
 					graphics.renderTargetState();
 				else if (IsKeyDown(KEY_S))
@@ -39,10 +50,10 @@ void	displayNPuzzle(nPuzzle* puzzle)
 				else
 					graphics.renderCurrentState();
 
-				if (IsKeyPressed(KEY_T))
-					puzzle->printTarget();
-				if (IsKeyPressed(KEY_S))
-					puzzle->printPuzzle();
+				// if (IsKeyPressed(KEY_T))
+				// 	puzzle->printTarget();
+				// if (IsKeyPressed(KEY_S))
+				// 	puzzle->printPuzzle();
 			}
 			catch(const std::exception& e)
 			{
