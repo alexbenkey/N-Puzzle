@@ -34,3 +34,6 @@
 # stupid DS_Store
 *.DS_Store
 .vscode
+
+# Ignore the binary
+npuzzle
