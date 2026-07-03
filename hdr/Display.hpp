@@ -31,7 +31,9 @@ class Display
 		~Display(void);
 
 		void	adjustScale();
-		void	render();
+		// void	render();
+		void	renderHUD();
+		void	renderTiles();
 
 		Display	&operator=(const Display &src);
 };

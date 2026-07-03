@@ -13,9 +13,11 @@
 #include "../../assets/raylib/src/raylib.h"
 #include "nPuzzle.hpp"
 #include "Display.hpp"
+#include "colors.hpp"
 
 // void	drawPuzzle(nPuzzle &puzzle);
 // void	drawHUD(void);
+#include <iostream>
 
 void	displayNPuzzle(void)
 {
@@ -23,12 +25,42 @@ void	displayNPuzzle(void)
 
 	nPuzzle	temp(5, 5);
 
-	while (!WindowShouldClose())
+	try
 	{
-		BeginDrawing();
-		ClearBackground(Color{23, 23, 23, 255});
-		graphics.render();
-		EndDrawing();
+		while (!WindowShouldClose())
+		{
+			BeginDrawing();
+			ClearBackground(Color{23, 23, 23, 255});
+			graphics.renderHUD();
+			try
+			{
+				if (IsKeyDown(KEY_T))
+					{}
+				else if (IsKeyDown(KEY_S))
+					{}
+				else
+					graphics.renderTiles();
+
+				if (IsKeyPressed(KEY_T))
+					temp.printTarget();
+				if (IsKeyPressed(KEY_S))
+					temp.printPuzzle();
+			}
+			catch(const std::exception& e)
+			{
+				std::cerr	<< C_RED	<< "Error: "
+							<< C_RESET	<< e.what()
+							<< std::endl;
+			}
+			
+			EndDrawing();
+		}
+	}
+	catch(const std::exception& e)
+	{
+		std::cerr	<< C_RED	<< "Error: "
+					<< C_RESET	<< e.what()
+					<< std::endl;
 	}
 	CloseWindow();
 }
