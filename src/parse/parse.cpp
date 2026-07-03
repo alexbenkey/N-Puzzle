@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: avon-ben <avon-ben@student.42.fr>          +#+  +:+       +#+        */
+/*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/10 18:29:47 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/02 18:13:35 by avon-ben         ###   ########.fr       */
+/*   Updated: 2026/07/03 12:37:38 by avon-ben         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ nPuzzle&	parse()
 	}
 	puzzle->printPuzzle();
 	puzzle->printTarget();
-	puzzle->printEmpty();
+	puzzle->printEmptyTilePos();
 	return *puzzle;
 }
 

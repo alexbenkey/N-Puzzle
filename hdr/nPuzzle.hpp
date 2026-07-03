@@ -37,7 +37,7 @@ class nPuzzle
 
 		void	printPuzzle(void) { this->state.printPuzzle(); }
 		void	printTarget(void) { this->target.printPuzzle(); }
-		void	printEmpty(void) {this->state.printTilePos( this->state.getTile(0)); }
+		void	printEmptyTilePos(void) {this->state.printTilePos( this->state.getTile(0)); }
 
 		nPuzzle	&operator=(const nPuzzle &src);
 };

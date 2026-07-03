@@ -3,13 +3,13 @@
 #                                                         :::      ::::::::    #
 #    run.sh                                             :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+         #
+#    By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/06/10 18:24:25 by ohengelm          #+#    #+#              #
-#    Updated: 2026/06/12 18:11:00 by ohengelm         ###   ########.fr        #
+#    Updated: 2026/07/03 12:38:13 by avon-ben         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 clear
 make || exit 1
-python assets/npuzzle-gen.py 4 | ./npuzzle
+python3 assets/npuzzle-gen.py 4 | ./npuzzle
