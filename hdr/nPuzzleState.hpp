@@ -47,6 +47,7 @@ class nPuzzleState
 
 		bool	validPuzzleContent(void) const;
 		bool	validPuzzlePlacement(void) const;
+		Tile*   Emptysquare;
 
 	protected:
 		const int32_t	width;
@@ -62,12 +63,22 @@ class nPuzzleState
 		void	generateTiles(void);
 		Tile&   getTile(const int32_t value);
 		Tile&	getTile(const int32_t x, const int32_t y) { return this->tiles[y][x]; }
+		
 		const Tile&	getTile(const int32_t x, const int32_t y) const { return this->tiles[y][x]; }
 		// Tile&	getTile(int32_t x, int32_t y){ return tiles[y][x]; }
 		int		getTileValue(const int32_t x, const int32_t y) const	{ return this->getTile(x, y).getVal(); }
 		void	printPuzzle(void) const;
 		bool	validPuzzle(void) const;
 		void	printTilePos(const Tile& Tile) const;
+
+		void 	setEmptysquare(Tile* tile) { this->Emptysquare = tile; }
+		Tile* 	getEmptysquare(void) const { return this->Emptysquare; }
+
+		void 	moveTile(Tile& tile);
+		void 	moveUp(void);
+		void 	moveDown(void);
+		void 	moveLeft(void);
+		void 	moveRight(void);
 
 		nPuzzleState	&operator=(const nPuzzleState &src);
 };

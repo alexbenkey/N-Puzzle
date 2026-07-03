@@ -161,12 +161,66 @@ nPuzzleState::Tile&	nPuzzleState::getTile(int32_t value)
 
 void	nPuzzleState::printTilePos(const nPuzzleState::Tile& Tile) const
 {
-	// if (!Tile)
-	// 	std::cout << "no tile found" << std::endl
 	std::cout	<< "Found tile with value: " << Tile.getVal()
 				<< " at position [X,Y]:" << Tile.getxPos() << ", " << Tile.getyPos() << std::endl;
 }
 
+void 	nPuzzleState::moveTile(nPuzzleState::Tile& tile)
+{
+	// Check if the tile is adjacent to the empty square
+	int32_t emptyX = this->Emptysquare->getxPos();
+	int32_t emptyY = this->Emptysquare->getyPos();
+	int32_t tileX = tile.getxPos();
+	int32_t tileY = tile.getyPos();
+
+	if ((abs(emptyX - tileX) == 1 && emptyY == tileY) || (abs(emptyY - tileY) == 1 && emptyX == tileX))
+	{
+
+		// Swap the values of the empty square and the tile
+		int32_t tempVal = this->Emptysquare->getVal();
+		this->Emptysquare->setVal(tile.getVal());
+		tile.setVal(tempVal);
+
+		// Update the position of the empty square
+		this->setEmptysquare(&tile);
+	}
+	else
+	{
+		throw std::runtime_error("Tile is not adjacent to the empty square");
+	}
+}
+
+void nPuzzleState::moveUp(void)
+{
+	if (this->Emptysquare->getyPos() == 0)
+		throw std::runtime_error("Cannot move up, empty square is at the top");
+	Tile& tileAbove = this->getTile(this->Emptysquare->getxPos(), this->Emptysquare->getyPos() - 1);
+	this->moveTile(tileAbove);
+}
+
+void nPuzzleState::moveDown(void)
+{
+	if (this->Emptysquare->getyPos() == this->height - 1)
+		throw std::runtime_error("Cannot move down, empty square is at the bottom");
+	Tile& tileBelow = this->getTile(this->Emptysquare->getxPos(), this->Emptysquare->getyPos() + 1);
+	this->moveTile(tileBelow);
+}
+
+void nPuzzleState::moveLeft(void)
+{
+	if (this->Emptysquare->getxPos() == 0)
+		throw std::runtime_error("Cannot move left, empty square is at the left edge");
+	Tile& tileLeft = this->getTile(this->Emptysquare->getxPos() - 1, this->Emptysquare->getyPos());
+	this->moveTile(tileLeft);
+}
+
+void nPuzzleState::moveRight(void)
+{
+	if (this->Emptysquare->getxPos() == this->width - 1)
+		throw std::runtime_error("Cannot move right, empty square is at the right edge");
+	Tile& tileRight = this->getTile(this->Emptysquare->getxPos() + 1, this->Emptysquare->getyPos());
+	this->moveTile(tileRight);
+}
 /** ************************************************************************ **\
  * 
  * 	Operators
