@@ -12,4 +12,4 @@
 
 clear
 make || exit 1
-python assets/npuzzle-gen.py 4 | ./npuzzle
+python3 assets/npuzzle-gen.py 4 | ./npuzzle
