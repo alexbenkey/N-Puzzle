@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Display.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/02 17:58:28 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/03 18:20:27 by othello          ###   ########.fr       */
+/*   Updated: 2026/07/08 20:05:31 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,9 @@
 // std::
 
 std::unordered_map<char, std::string> Display::hotkeyList = {
-	{ 'S', "Display Start" },
-	{ 'T', "Display Target" },
 	{ 'R', "Reset to Start" },
+	{ 'T', "Display Target" },
+	{ 'S', "Display Start" },
 };
 
 /** ************************************************************************ **\
@@ -34,18 +34,27 @@ Display::Display(nPuzzle* puzzle): puzzle(puzzle)
 				<< C_GREEN	<< "Display"
 				<< C_DGREEN	<< " called."
 				<< C_RESET	<< std::endl;
-	this->setFontSize(DEFAULT_FONTSIZE);
-	this->setMargin(DEFAULT_MARGIN);
-	this->adjustScale();
 	SetTraceLogLevel(TraceLogLevel::LOG_WARNING);
 	SetConfigFlags(FLAG_WINDOW_RESIZABLE);
-	InitWindow(800, 450, "nPuzzle");
-
-	this->setFontSize(DEFAULT_FONTSIZE);
-	this->setMargin(DEFAULT_MARGIN);
+	InitWindow(1, 1, "nPuzzle");
+	// this->setFontSize(DEFAULT_FONTSIZE);
+	this->fontSize = DEFAULT_FONTSIZE;
+	this->fontHeight = MeasureTextEx(GetFontDefault(), "W", this->fontSize, 0).y;
+	// this->setMargin(DEFAULT_MARGIN);
+	this->margin = DEFAULT_MARGIN;
+	this->configureMinimumSizes();
+	this->configureMaximumSizes();
+	this->configureSizes();
 	SetWindowPosition(DEFAULT_MARGIN, DEFAULT_MARGIN);
-	SetWindowMinSize(800, 450);
-	SetWindowSize(800, 450);
+	SetWindowSize(this->HUD.Frame.width + this->Frame.width + this->margin * 3, std::max(this->HUD.Frame.height, this->Frame.height) + this->margin * 2);
+	this->configurePositions();
+
+	// SetWindowSize(this->HUD.Frame.width + this->Frame.width + 3 * this->margin, this->Frame.height + 2 * this->margin);
+
+	// this->setFontSize(DEFAULT_FONTSIZE);
+	// this->setMargin(DEFAULT_MARGIN);
+	// SetWindowMinSize(800, 450);
+	// SetWindowSize(800, 450);
 	// this->cols = 5;
 	// this->rows = 5;
 	// this->adjustScale();
@@ -80,108 +89,249 @@ Display::~Display(void)
  * 
 \* ************************************************************************** */
 
-void	Display::adjustScale()
+void	Display::configureMinimumSizes(void)
 {
-	// set to minimum size
-	this->configureMinimumSizes();
-	SetWindowMinSize(this->HUD.width + this->Frame.width + 3 * this->margin, this->HUD.height + 2 * this->margin);
-	// Set sizes
-	this->Frame.width = GetRenderWidth() - this->HUD.width - this->margin * 3;
-	this->tile.width = this->Frame.width / this->puzzle->getWidth();
-	this->tile.height = this->Frame.height / this->puzzle->getHeight();
-	// Set locations
-	this->HUD.x = this->margin;
-	this->HUD.y = this->margin;
-	this->HUDData.x = this->HUD.x;
-	this->HUDData.y = this->HUD.y;
-	this->HUDControls.x = this->HUD.x;
-	this->HUDControls.y = this->HUDData.y + this->HUDData.height;
-	this->Frame.x = this->HUD.x + this->HUD.width + this->margin;
-	this->Frame.y = this->margin;
-
-
-	// this->Frame.width = GetRenderWidth() - MeasureText("[T] Display Target", 20) - 69;
-	// this->Frame.height = GetRenderHeight() - 46;
-	// this->Frame.x = GetRenderWidth() - this->Frame.width - this->margin;
-	// this->Frame.y = GetRenderHeight() - this->Frame.height - this->margin;
-	// this->tile.width = this->Frame.width / this->puzzle->getWidth();
-	// this->tile.height = this->Frame.height / this->puzzle->getHeight();
-	// getMinHUDWidth();
+	this->configureHUDDataSize();
+	this->configureHUDControlSize();
+	this->configureHUDMovementSize();
+	this->configureHUDFrameSize();
+	this->configureMinimumFrameSizes();
+	SetWindowMinSize(this->HUD.Frame.width + this->Frame.width + this->margin * 3, 
+		std::max(this->HUD.Frame.height, this->Frame.height) + this->margin * 2);
 }
 
-void	Display::configureMinimumSizes()
+void	Display::configureHUDDataSize(void)
 {
-	configureMinimumHUDSizes();
-	configureMinimumFrameSizes();
-	if (this->Frame.height < this->HUD.height)
-		this->Frame.height = this->HUD.height;
-	else
-		this->HUD.height = this->Frame.height;
+	this->HUD.Data.width = MeasureText("  [M]anhattan: 00", this->fontSize);
+	this->HUD.Data.height = 7 * this->fontHeight;
+	Display::logRectangle("HUD.Data", this->HUD.Data);
 }
 
-void	Display::getMinHUDWidth()
+void	Display::configureHUDControlSize()
 {
-	int	width;
-
-	this->HUDControls.width = this->getMinHUDKeyWidth() + this->getMinHUDDescriptionWidth();
-	this->HUDControls.height = Display::hotkeyList.size() * this->fontHeight;
-	this->HUD.width = this->HUDControls.width;
-	this->HUD.height = this->HUDControls.height;
-	// width = this->getMinHUDKeyWidth() + this->getMinHUDDescriptionWidth();
-	// if (width != 0)
-	// 	width += this->margin;
-	// float height = MeasureTextEx(GetFontDefault(), "-", 20, 0).y;
-	// TraceLog(LOG_WARNING, "w %i h %f", width, height);
-}
-
-int	Display::getMinHUDKeyWidth()
-{
-	int width = 0;
-
+	this->HUD.Controls.width = 0;
 	for (const auto& key : Display::hotkeyList)
 	{
-		std::string text = "[" + std::string(1, key.first) + "]";
-		width = std::max(width, MeasureText(text.c_str(), 20));
+		const char* buffer = TextFormat("[%c] %s", key.first, key.second.c_str());
+		this->HUD.Controls.width = std::max(this->HUD.Controls.width, (float)MeasureText(buffer, this->fontSize));
 	}
-	return width;
+	this->HUD.Controls.height = (float)Display::hotkeyList.size() * this->fontHeight;
+	Display::logRectangle("HUD.Controls", this->HUD.Controls);
 }
 
-int	Display::getMinHUDDescriptionWidth()
+void	Display::configureHUDMovementSize(void)
 {
-	int width = 0;
-
-	for (const auto& key : Display::hotkeyList)
-		width = std::max(width, MeasureText(key.second.c_str(), 20));
-	return width;
+	this->HUD.Movement.width = this->margin * 5;
+	this->HUD.Movement.height = this->HUD.Movement.width;
+	Display::logRectangle("HUD.Movement", this->HUD.Movement);
 }
 
-// void	Display::render()
-// {
-// 	ClearBackground(ORANGE);
-// 	DrawRectangleRec(this->Frame, Color{23, 23, 23, 255});
-// 	DrawText("nPuzzle", MARGIN, MARGIN, 20, WHITE);
-// 	DrawText("[S] Display Start", MARGIN, MARGIN * 2, 20, RED);
-// 	DrawText("[T] Display Target", MARGIN, MARGIN * 3, 20, WHITE);
-
-// 	int	xOffset = (this->tile.width - 20) / 2;
-// 	int	yOffset = (this->tile.height - 20) / 2;
-// 	for (int i = 0; i < this->cols * this->rows; ++i)
-// 	{
-// 		this->tile.x = this->Frame.x + (i / this->cols * this->tile.width);
-// 		this->tile.y = this->Frame.y + (i % this->cols * this->tile.height);
-// 		DrawRectangleRec(this->tile, Color{(unsigned char)((int)this->tile.x % 256), (unsigned char)((int)this->tile.y % 256), 0, 255});
-// 		DrawRectangleLinesEx(this->tile, 2, Color{23, 23, 23, 127});
-// 		DrawText(std::to_string(i).c_str(), this->tile.x + xOffset, this->tile.y + yOffset, 20, BLUE);
-// 	}
-// }
-
-void	Display::renderHUD()
+void	Display::configureMinimumFrameSizes()
 {
-	ClearBackground(Color{255, 127, 0, 255});
-	DrawRectangleRec(this->Frame, Color{23, 23, 23, 255});
-	DrawText("nPuzzle", this->margin, this->margin, 20, WHITE);
-	DrawText("[S] Display Start", this->margin, this->margin * 2, 20, RED);
-	DrawText("[T] Display Target", this->margin, this->margin * 3, 20, WHITE);
+	this->tile.width = (float)MeasureText("WW", this->fontSize) + 2 * this->margin;
+	this->tile.height = this->fontSize + 2 * margin;
+	Display::logRectangle("tile", this->tile);
+
+	this->Frame.width = this->tile.width * (float)this->puzzle->getWidth();
+	this->Frame.width = std::min(this->Frame.width, (float)GetMonitorWidth(GetCurrentMonitor()) - this->HUD.Frame.width);
+	this->Frame.height = this->tile.height * this->puzzle->getHeight();
+	this->Frame.height = std::min(this->Frame.height, (float)GetMonitorHeight(GetCurrentMonitor()) - 2 * this->margin);
+	Display::logRectangle("Frame", this->Frame);
+}
+
+void	Display::configureHUDFrameSize(void)
+{
+	this->HUD.Frame.width = 0;
+	this->HUD.Frame.height = (float)this->margin;
+	for (const Rectangle& rect : { this->HUD.Data, this->HUD.Controls, this->HUD.Movement })
+	{
+		this->HUD.Frame.width = std::max(this->HUD.Frame.width, rect.width);
+		this->HUD.Frame.height += rect.height + this->margin;
+	}
+	this->HUD.Frame.width += 2 * (float)this->margin;
+	Display::logRectangle("HUD.Frame", this->HUD.Frame);
+}
+
+void	Display::configureMaximumSizes(void)
+{
+	int	monitor;
+
+	monitor = GetCurrentMonitor();
+	SetWindowMaxSize(GetMonitorWidth(monitor) / 2, GetMonitorHeight(monitor) / 2);
+	
+	TraceLog(LOG_DEBUG, "%s[%i] Render %i", __func__, __LINE__, GetRenderHeight());
+	TraceLog(LOG_DEBUG, "%s[%i] Screen %i", __func__, __LINE__, GetScreenHeight());
+	TraceLog(LOG_DEBUG, "%s[%i] Monitor %i", __func__, __LINE__, GetMonitorHeight(monitor));
+	TraceLog(LOG_DEBUG, "%s[%i] MonitorP %i", __func__, __LINE__, GetMonitorPhysicalHeight(monitor));
+}
+
+void	Display::configureSizes(void)
+{
+	this->configureFrameSize();
+	this->configureTileSize();
+}
+
+void	Display::configureFrameSize(void)
+{
+	this->Frame.width = (float)GetRenderWidth() - this->HUD.Frame.width - 3 * this->margin;
+	this->Frame.height = GetRenderHeight() - 2 * this->margin;
+	Display::logRectangle("Frame", this->Frame);
+}
+
+void	Display::configureTileSize(void)
+{
+	this->tile.width = Frame.width / this->puzzle->getWidth();
+	this->tile.height = Frame.height / this->puzzle->getHeight();
+	Display::logRectangle("tile", this->tile);
+}
+
+bool	Display::setFontSize(const float size)
+{
+	if (size < 2 || size > 99)
+	{
+		TraceLog(LOG_ERROR, "Invalid font size of %.0f", size);
+		return (false);
+	}
+	this->fontSize = size;
+	this->fontHeight = MeasureTextEx(GetFontDefault(), "X", this->fontSize, 0).y;
+	this->reconfigure();
+	return (true);
+}
+
+bool	Display::setMargin(const int margin)
+{
+	if (margin < 0 || margin > 99)
+	{
+		TraceLog(LOG_ERROR, "Invalid margin size of %.0f", margin);
+		return (false);
+	}
+	this->margin = margin;
+	this->reconfigure();
+	return (true);
+}
+
+void	Display::configurePositions(void)
+{
+	this->configureHUDFramePosition();
+	this->configureHUDDataPosition();
+	this->configureHUDControlsPosition();
+	this->configureHUDMovementPosition();
+	this->configureFramePosition();
+}
+void	Display::configureHUDFramePosition(void)
+{
+	this->HUD.Frame.x = this->margin;
+	this->HUD.Frame.y = this->margin;
+	Display::logRectangle("HUD.Frame", this->HUD.Frame);
+}
+void	Display::configureHUDDataPosition(void)
+{
+	this->HUD.Data.x = this->HUD.Frame.x + this->margin;
+	this->HUD.Data.y = this->HUD.Frame.y + this->margin;
+	Display::logRectangle("HUD.Data", this->HUD.Data);
+}
+void	Display::configureHUDControlsPosition(void)
+{
+	this->HUD.Controls.x = this->HUD.Frame.x + this->margin;
+	this->HUD.Controls.y = this->HUD.Data.y + this->HUD.Data.height + this->margin;
+	Display::logRectangle("HUD.Controls", this->HUD.Controls);
+}
+void	Display::configureHUDMovementPosition(void)
+{
+	this->HUD.Movement.x = this->HUD.Frame.x + (this->HUD.Frame.width - this->HUD.Movement.width) / 2;
+	this->HUD.Movement.y = this->HUD.Controls.y + this->HUD.Controls.height + this->margin;
+	Display::logRectangle("HUD.Movement", this->HUD.Movement);
+}
+void	Display::configureFramePosition(void)
+{
+	this->Frame.x = this->HUD.Frame.x + this->HUD.Frame.width + this->margin;
+	this->Frame.y = this->margin;
+	Display::logRectangle("Frame", this->Frame);
+	this->tile.x = this->Frame.x;
+	this->tile.y = this->Frame.y;
+	Display::logRectangle("tile", this->tile);
+}
+
+void	Display::reconfigure(void)
+{
+	this->configureMinimumFrameSizes();
+	this->configureMaximumSizes();
+	this->configureSizes();
+	this->configurePositions();
+}
+
+void	Display::logRectangle(const char* name, const Rectangle& rect)
+{
+	TraceLog(LOG_DEBUG, "%-12s x %4.0f y %4.0f w %4.0f h %4.0f", name, rect.x, rect.y, rect.width, rect.height);
+}
+
+void	Display::renderScreen()
+{
+	// Background
+	ClearBackground(Color{127, 63, 23, 255});
+	// HUD
+	DrawRectangleRec(this->HUD.Frame, Color{23, 23, 23, 255});
+	this->renderHUDData();
+	this->renderHUDControls();
+	this->renderHUDMovement();
+}
+void	Display::renderHUDData()
+{
+	const char*	buffer;
+
+	// DrawRectangleLinesEx(this->HUD.Data, 1, Color{255,23,23,255});
+	for (size_t i = 0; ; i++)
+	{
+		switch (i)
+		{
+			case 0:
+				buffer = TextFormat("Size: %ix%i", this->puzzle->getWidth(), this->puzzle->getHeight());
+				break;
+			case 1:
+				buffer = TextFormat("Solvbility");
+				break;
+			case 2:
+				buffer = TextFormat("Moves: %i", 0);
+				break;
+			case 3:
+				buffer = TextFormat("Heuristics");
+				break;
+			case 4:
+				buffer = TextFormat("  [M]anhattan: %i", 0);
+				break;
+			default:
+				goto endLoop;
+		}
+		DrawText(buffer, this->HUD.Data.x, this->HUD.Data.y + i * this->fontHeight, this->fontSize, WHITE);
+	}
+	endLoop:
+	return;
+}
+
+void	Display::renderHUDControls()
+{
+	const char*	buffer;
+	size_t		i;
+
+	// DrawRectangleLinesEx(this->HUD.Controls, 1, Color{23,255,23,255});
+	i = 0;
+	for (auto it = Display::hotkeyList.begin(); it != Display::hotkeyList.end(); ++it, ++i)
+	{
+		buffer = TextFormat("[%c] %s", it->first, it->second.c_str());
+		DrawText(buffer, this->HUD.Controls.x, this->HUD.Controls.y + i * this->fontHeight, this->fontSize, WHITE);
+	}
+}
+
+void	Display::renderHUDMovement()
+{
+	int	length;
+	int width;
+
+	// DrawRectangleLinesEx(this->HUD.Movement, 1, Color{23,23,255,255});
+	length = std::min(this->HUD.Movement.width, this->HUD.Movement.height);
+	width = length / 3;
+	DrawRectangle(this->HUD.Movement.x, this->HUD.Movement.y + (length - width) / 2, length, width, Color{192,192,192,255});
+	DrawRectangle(this->HUD.Movement.x + (length - width) / 2, this->HUD.Movement.y, width, length, Color{192,192,192,255});
 }
 
 void	Display::renderTiles(nPuzzleState& state)
@@ -190,6 +340,7 @@ void	Display::renderTiles(nPuzzleState& state)
 	int	xOffset = (this->tile.width - 20) / 2;
 	int	yOffset = (this->tile.height - 20) / 2;
 
+	DrawRectangleRec(this->Frame, Color{23, 23, 23, 255});
 	for (int x = 0; x < this->puzzle->getWidth(); ++x)
 	{
 		this->tile.x = this->Frame.x + x * this->tile.width;
@@ -208,16 +359,6 @@ void	Display::renderTiles(nPuzzleState& state)
 			DrawText(std::to_string(val).c_str(), this->tile.x + xOffset, this->tile.y + yOffset, 20, ORANGE);
 		}
 	}
-	// for (int i = 0; i < this->puzzle->getSurface(); ++i)
-	// {
-	// 	if (i == 0)
-	// 		continue;
-	// 	this->tile.x = this->Frame.x + (i % this->puzzle->getWidth() * this->tile.width);
-	// 	this->tile.y = this->Frame.y + (i / this->puzzle->getWidth() * this->tile.height);
-	// 	DrawRectangleRec(this->tile, Color{(unsigned char)((int)this->tile.x % 256), (unsigned char)((int)this->tile.y % 256), 0, 255});
-	// 	DrawRectangleLinesEx(this->tile, 2, Color{23, 23, 23, 127});
-	// 	DrawText(std::to_string(i).c_str(), this->tile.x + xOffset, this->tile.y + yOffset, 20, BLUE);
-	// }
 }
 
 /** ************************************************************************ **\

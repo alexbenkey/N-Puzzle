@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   displayNPuzzle.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/02 16:48:19 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/03 17:41:05 by othello          ###   ########.fr       */
+/*   Updated: 2026/07/08 19:29:35 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,6 @@
 #include "Display.hpp"
 #include "colors.hpp"
 
-// void	drawPuzzle(nPuzzle &puzzle);
-// void	drawHUD(void);
 #include <iostream>
 
 void	displayNPuzzle(nPuzzle* puzzle)
@@ -27,9 +25,7 @@ void	displayNPuzzle(nPuzzle* puzzle)
 	{
 		while (!WindowShouldClose())
 		{
-			BeginDrawing();
-			ClearBackground(Color{23, 23, 23, 255});
-			graphics.renderHUD();
+			// Process user input
 			switch (GetKeyPressed())
 			{
 				case KEY_RIGHT:	puzzle->moveRight();	break;
@@ -46,25 +42,19 @@ void	displayNPuzzle(nPuzzle* puzzle)
 					break;
 				default:	break;
 			}
+			if (IsWindowResized())
+				graphics.configureSizes();
+			// Render Puzzle
+			BeginDrawing();
+			graphics.renderScreen();
 			try
 			{
-				
 				if (IsKeyDown(KEY_T))
 					graphics.renderTargetState();
 				else if (IsKeyDown(KEY_S))
 					graphics.renderStartState();
 				else
 					graphics.renderCurrentState();
-
-	for (int i = 0; i < 10; ++i)
-	{
-		// DrawText("[W][X]", 23, 23 + 20 * i, 22, Color{0, (unsigned char)(127 * (i % 2)), 255, 255});
-		DrawTextEx(GetFontDefault(), "[X][W]", {23, float(23 + 25 * i)}, 25, 10, Color{0, (unsigned char)(127 * (i % 2)), 255, 255});
-	}
-				// if (IsKeyPressed(KEY_T))
-				// 	puzzle->printTarget();
-				// if (IsKeyPressed(KEY_S))
-				// 	puzzle->printPuzzle();
 			}
 			catch(const std::exception& e)
 			{
@@ -72,7 +62,6 @@ void	displayNPuzzle(nPuzzle* puzzle)
 							<< C_RESET	<< e.what()
 							<< std::endl;
 			}
-			
 			EndDrawing();
 		}
 	}
@@ -84,36 +73,3 @@ void	displayNPuzzle(nPuzzle* puzzle)
 	}
 	CloseWindow();
 }
-
-// void	drawHUD(void)
-// {
-// 	DrawRectangle(0, 0, GetRenderWidth() / 5, GetRenderHeight(), ORANGE);
-// 	DrawText("nPuzzle", 23, 20, 20, WHITE);
-// 	DrawText("[S] display Start", 23, 40, 20, RED);
-// 	DrawText("[T] display Target", 23, 60, 20, WHITE);
-// }
-
-// void	drawPuzzle(nPuzzle &puzzle)
-// {
-// 	if (IsKeyPressed(KEY_T))
-// 		puzzle.printTarget();
-// 	else if (IsKeyPressed(KEY_S))
-// 		puzzle.printPuzzle();
-
-// 	Rectangle	rect;
-// 	rect.height = GetRenderHeight() / 5;
-// 	rect.width = GetRenderWidth() / 5;
-// 	rect.x = 0;
-// 	rect.y = 0;
-// 	DrawRectangleRec(rect, RED);
-// 	rect.x += rect.width;
-// 	DrawRectangleGradientEx(rect, RED, GREEN, BLUE, YELLOW);
-// 	// rect.x += rect.width;
-// 	// DrawRectangleRoundedLinesEx(rect, 1, 2, 2, RED);
-// 	DrawRectangleLinesEx(rect, 2, Color{0,0,0,127});
-// }
-
-// // void	DrawTile(nPuzzleState::Tile& tile)
-// // {
-// // 	state.getTile()
-// // }
