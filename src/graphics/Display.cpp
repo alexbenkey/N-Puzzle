@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   Display.cpp                                      :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: ohengelm <ohengelm@student.42.fr>            +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2026/07/02 17:58:28 by ohengelm      #+#    #+#                 */
-/*   Updated: 2026/07/02 17:58:28 by ohengelm      ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   Display.cpp                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/07/02 17:58:28 by ohengelm          #+#    #+#             */
+/*   Updated: 2026/07/03 18:20:27 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,11 @@
 #include <iostream>
 // std::
 
-#define MARGIN 23
+std::unordered_map<char, std::string> Display::hotkeyList = {
+	{ 'S', "Display Start" },
+	{ 'T', "Display Target" },
+	{ 'R', "Reset to Start" },
+};
 
 /** ************************************************************************ **\
  * 
@@ -30,14 +34,21 @@ Display::Display(nPuzzle* puzzle): puzzle(puzzle)
 				<< C_GREEN	<< "Display"
 				<< C_DGREEN	<< " called."
 				<< C_RESET	<< std::endl;
+	this->setFontSize(DEFAULT_FONTSIZE);
+	this->setMargin(DEFAULT_MARGIN);
+	this->adjustScale();
 	SetTraceLogLevel(TraceLogLevel::LOG_WARNING);
 	SetConfigFlags(FLAG_WINDOW_RESIZABLE);
 	InitWindow(800, 450, "nPuzzle");
-	SetWindowPosition(MARGIN, MARGIN);
+
+	this->setFontSize(DEFAULT_FONTSIZE);
+	this->setMargin(DEFAULT_MARGIN);
+	SetWindowPosition(DEFAULT_MARGIN, DEFAULT_MARGIN);
 	SetWindowMinSize(800, 450);
+	SetWindowSize(800, 450);
 	// this->cols = 5;
 	// this->rows = 5;
-	this->adjustScale();
+	// this->adjustScale();
 }
 
 Display::Display(const Display &src)
@@ -71,12 +82,77 @@ Display::~Display(void)
 
 void	Display::adjustScale()
 {
-	this->Frame.width = GetRenderWidth() - MeasureText("[T] Display Target", 20) - 69;
-	this->Frame.height = GetRenderHeight() - 46;
-	this->Frame.x = GetRenderWidth() - this->Frame.width - MARGIN;
-	this->Frame.y = GetRenderHeight() - this->Frame.height - MARGIN;
+	// set to minimum size
+	this->configureMinimumSizes();
+	SetWindowMinSize(this->HUD.width + this->Frame.width + 3 * this->margin, this->HUD.height + 2 * this->margin);
+	// Set sizes
+	this->Frame.width = GetRenderWidth() - this->HUD.width - this->margin * 3;
 	this->tile.width = this->Frame.width / this->puzzle->getWidth();
 	this->tile.height = this->Frame.height / this->puzzle->getHeight();
+	// Set locations
+	this->HUD.x = this->margin;
+	this->HUD.y = this->margin;
+	this->HUDData.x = this->HUD.x;
+	this->HUDData.y = this->HUD.y;
+	this->HUDControls.x = this->HUD.x;
+	this->HUDControls.y = this->HUDData.y + this->HUDData.height;
+	this->Frame.x = this->HUD.x + this->HUD.width + this->margin;
+	this->Frame.y = this->margin;
+
+
+	// this->Frame.width = GetRenderWidth() - MeasureText("[T] Display Target", 20) - 69;
+	// this->Frame.height = GetRenderHeight() - 46;
+	// this->Frame.x = GetRenderWidth() - this->Frame.width - this->margin;
+	// this->Frame.y = GetRenderHeight() - this->Frame.height - this->margin;
+	// this->tile.width = this->Frame.width / this->puzzle->getWidth();
+	// this->tile.height = this->Frame.height / this->puzzle->getHeight();
+	// getMinHUDWidth();
+}
+
+void	Display::configureMinimumSizes()
+{
+	configureMinimumHUDSizes();
+	configureMinimumFrameSizes();
+	if (this->Frame.height < this->HUD.height)
+		this->Frame.height = this->HUD.height;
+	else
+		this->HUD.height = this->Frame.height;
+}
+
+void	Display::getMinHUDWidth()
+{
+	int	width;
+
+	this->HUDControls.width = this->getMinHUDKeyWidth() + this->getMinHUDDescriptionWidth();
+	this->HUDControls.height = Display::hotkeyList.size() * this->fontHeight;
+	this->HUD.width = this->HUDControls.width;
+	this->HUD.height = this->HUDControls.height;
+	// width = this->getMinHUDKeyWidth() + this->getMinHUDDescriptionWidth();
+	// if (width != 0)
+	// 	width += this->margin;
+	// float height = MeasureTextEx(GetFontDefault(), "-", 20, 0).y;
+	// TraceLog(LOG_WARNING, "w %i h %f", width, height);
+}
+
+int	Display::getMinHUDKeyWidth()
+{
+	int width = 0;
+
+	for (const auto& key : Display::hotkeyList)
+	{
+		std::string text = "[" + std::string(1, key.first) + "]";
+		width = std::max(width, MeasureText(text.c_str(), 20));
+	}
+	return width;
+}
+
+int	Display::getMinHUDDescriptionWidth()
+{
+	int width = 0;
+
+	for (const auto& key : Display::hotkeyList)
+		width = std::max(width, MeasureText(key.second.c_str(), 20));
+	return width;
 }
 
 // void	Display::render()
@@ -103,9 +179,9 @@ void	Display::renderHUD()
 {
 	ClearBackground(Color{255, 127, 0, 255});
 	DrawRectangleRec(this->Frame, Color{23, 23, 23, 255});
-	DrawText("nPuzzle", MARGIN, MARGIN, 20, WHITE);
-	DrawText("[S] Display Start", MARGIN, MARGIN * 2, 20, RED);
-	DrawText("[T] Display Target", MARGIN, MARGIN * 3, 20, WHITE);
+	DrawText("nPuzzle", this->margin, this->margin, 20, WHITE);
+	DrawText("[S] Display Start", this->margin, this->margin * 2, 20, RED);
+	DrawText("[T] Display Target", this->margin, this->margin * 3, 20, WHITE);
 }
 
 void	Display::renderTiles(nPuzzleState& state)

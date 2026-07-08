@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   displayNPuzzle.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
+/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/02 16:48:19 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/02 19:05:08 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/07/03 17:41:05 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,18 +30,24 @@ void	displayNPuzzle(nPuzzle* puzzle)
 			BeginDrawing();
 			ClearBackground(Color{23, 23, 23, 255});
 			graphics.renderHUD();
+			switch (GetKeyPressed())
+			{
+				case KEY_RIGHT:	puzzle->moveRight();	break;
+				case KEY_LEFT:	puzzle->moveLeft();	break;
+				case KEY_DOWN:	puzzle->moveDown();	break;
+				case KEY_UP:	puzzle->moveUp();	break;
+				case KEY_T:	puzzle->printTarget();	break;
+				case KEY_S:	puzzle->printPuzzle();	break;
+				case KEY_R:
+					if (IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT))
+						TraceLog(LOG_WARNING, "Should reset to start now");
+					else
+						TraceLog(LOG_WARNING, "Press uppercase R to reset.");
+					break;
+				default:	break;
+			}
 			try
 			{
-				switch (GetKeyPressed())
-				{
-					case KEY_RIGHT:	puzzle->moveRight();	break;
-					case KEY_LEFT:	puzzle->moveLeft();	break;
-					case KEY_DOWN:	puzzle->moveDown();	break;
-					case KEY_UP:	puzzle->moveUp();	break;
-					case KEY_T:		puzzle->printTarget();	break;
-					case KEY_S:		puzzle->printPuzzle();	break;
-					default:		break ;
-				}
 				
 				if (IsKeyDown(KEY_T))
 					graphics.renderTargetState();
@@ -50,6 +56,11 @@ void	displayNPuzzle(nPuzzle* puzzle)
 				else
 					graphics.renderCurrentState();
 
+	for (int i = 0; i < 10; ++i)
+	{
+		// DrawText("[W][X]", 23, 23 + 20 * i, 22, Color{0, (unsigned char)(127 * (i % 2)), 255, 255});
+		DrawTextEx(GetFontDefault(), "[X][W]", {23, float(23 + 25 * i)}, 25, 10, Color{0, (unsigned char)(127 * (i % 2)), 255, 255});
+	}
 				// if (IsKeyPressed(KEY_T))
 				// 	puzzle->printTarget();
 				// if (IsKeyPressed(KEY_S))
