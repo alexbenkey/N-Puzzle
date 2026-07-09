@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
+/*   By: avon-ben <avon-ben@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/10 18:29:47 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/09 17:25:51 by avon-ben         ###   ########.fr       */
+/*   Updated: 2026/07/09 18:48:52 by avon-ben         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,27 +28,26 @@ static std::vector<int>	convertLineToNumbers(const std::string& line);
 
 nPuzzle	parse()
 {
-	std::string line;
+	nPuzzle puzzle = nPuzzle(0, 0);
 
-	while (std::getline(std::cin, line))
+	int32_t	row = 0;
+	bool created = 0;
+	for (std::string line; std::getline(std::cin, line);)
 	{
-		if (!emptyLine(line))
+		std::cerr	<< "#> "<< line	<< std::endl;
+		if (emptyLine(line))
+			continue;
+		if (!validLine(line))
 			break;
-	}
-	nPuzzle puzzle = createPuzzle(line);
-	int32_t row = 0;
-	while (std::getline(std::cin, line))
-	{
-		// if (!validLine(line))
-		// 	throw std::runtime_error("Invalid line: " + line);
-		if (!emptyLine(line) && validLine(line))
+		if (!created){
+			nPuzzle puzzle = createPuzzle(line);
+			created = 1;
+			}
+		else
 			puzzle.setRow(row++, convertLineToNumbers(line));
 	}
-
-	// if (!puzzle)
-		//throw std::runtime_error("No puzzle created from input");
-		
-	puzzle.printPuzzle();
+	std::cout << "puzzle size: " << puzzle.getSize() << std::endl;
+	// puzzle.printPuzzle();
 	// puzzle.printTarget();
 	// puzzle.printEmptyTilePos();
 	return puzzle;
@@ -76,6 +75,7 @@ static bool	validLine(const std::string &line)
 
 static nPuzzle createPuzzle(const std::string &line)
 {
+	
 	std::vector<int> numbers = convertLineToNumbers(line);;
 
 	if (numbers.size() == 1)

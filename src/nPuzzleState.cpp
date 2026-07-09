@@ -90,7 +90,7 @@ nPuzzleState::~nPuzzleState(void)
 
 void	nPuzzleState::printPuzzle(void) const
 {
-	if (this->validPuzzle())
+	if (validPuzzle())
 		std::cout	<< "# Unknown puzzle solvability\n";
 	else
 		std::cout	<< "# This puzzle is unsolvable\n";
@@ -120,8 +120,8 @@ bool	nPuzzleState::validPuzzleContent(void) const
 {
 	std::set<int32_t>	set;
 
-	for (size_t y = 0; y < this->tiles.size(); ++y)
-		for (size_t x = 0; x < this->tiles[y].size(); ++x)
+	for (size_t y = 0; y < tiles.size(); ++y)
+		for (size_t x = 0; x < tiles[y].size(); ++x)
 			if (!set.insert(tiles[y][x].getVal()).second)
 				throw std::runtime_error("Duplicate tile value");
 	if (*set.begin() != 0)
@@ -142,7 +142,7 @@ bool	nPuzzleState::validPuzzlePlacement(void) const
 
 nPuzzleState::Tile&	nPuzzleState::getTile(int32_t value)
 {
-	if ((size_t)value > this->tiles.size()){
+	if ((size_t)value > tiles.size()){
 		std::runtime_error("Out of bounds Value");
 	}
 	for (size_t y = 0; y < this->tiles.size(); ++y)
@@ -164,7 +164,6 @@ void	nPuzzleState::printTilePos(const nPuzzleState::Tile& Tile) const
 
 void 	nPuzzleState::moveTile(nPuzzleState::Tile& tile)
 {
-
 	// Check if the tile is adjacent to the empty square
 	int32_t emptyX = emptyPos.x;
 	int32_t emptyY = emptyPos.y;
