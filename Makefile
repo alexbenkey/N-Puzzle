@@ -18,7 +18,7 @@ WARNFLAGS :=	-Wall -Wextra -Werror
 
 # C++ Compiler
 CXX ?=		c++
-CXXFLAGS ?=	-std=c++98
+CXXFLAGS ?=	-std=c++11
 CXXFLAGS +=	$(WARNFLAGS)
 
 # Dependency generation
@@ -37,7 +37,7 @@ LDLIBS ?=
 # Build types
 # =========================
 
-BUILD ?=	release
+BUILD ?=	debug
 # Release
 ifeq ($(BUILD),release)
 	CXXFLAGS +=		-O3

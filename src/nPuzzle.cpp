@@ -22,6 +22,20 @@
  * 
 \* ************************************************************************** */
 
+// nPuzzle::nPuzzle(void):
+// 	width(0),
+// 	height(0),
+// 	size(0 * 0),
+// 	target(nPuzzleTarget(this->width, this->height)),
+// 	state(nPuzzleState(this->width, this->height))
+// {
+// 	std::cout	<< C_DGREEN	<< "Default constructor "
+// 				<< C_GREEN	<< "nPuzzle"
+// 				<< C_DGREEN	<< " called."
+// 				<< C_RESET	<< std::endl;
+// }
+
+
 nPuzzle::nPuzzle(const int32_t size):
 	width(size),
 	height(size),
@@ -90,7 +104,7 @@ void	nPuzzle::setRow(int32_t row, const std::vector<int>& numbers)
 	{
 		this->state.getTile(x, row).setVal(numbers[x]);
 		if (numbers[x] == 0)
-			this->state.setEmptysquare(&this->state.getTile(x, row));
+			this->state.setEmptyPos(x, row);
 		this->state.getTile(x, row).setxPos(x);
 		this->state.getTile(x, row).setyPos(row);
 	}

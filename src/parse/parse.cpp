@@ -6,7 +6,7 @@
 /*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/10 18:29:47 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/03 14:51:23 by avon-ben         ###   ########.fr       */
+/*   Updated: 2026/07/09 17:25:51 by avon-ben         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,30 +23,35 @@
 
 static bool				emptyLine(const std::string &line);
 static bool				validLine(const std::string &line);
-static nPuzzle* 		createPuzzle(const std::string &line);
+static nPuzzle 		createPuzzle(const std::string &line);
 static std::vector<int>	convertLineToNumbers(const std::string& line);
 
-nPuzzle&	parse()
+nPuzzle	parse()
 {
-	nPuzzle*	puzzle = NULL;
+	std::string line;
 
-	int32_t	row = 0;
-	for (std::string line; std::getline(std::cin, line);)
+	while (std::getline(std::cin, line))
 	{
-		std::cerr	<< "#> "<< line	<< std::endl;
-		if (emptyLine(line))
-			continue;
-		if (!validLine(line))
+		if (!emptyLine(line))
 			break;
-		if (puzzle == NULL)
-			puzzle = createPuzzle(line);
-		else
-			puzzle->setRow(row++, convertLineToNumbers(line));
 	}
-	puzzle->printPuzzle();
-	puzzle->printTarget();
-	puzzle->printEmptyTilePos();
-	return *puzzle;
+	nPuzzle puzzle = createPuzzle(line);
+	int32_t row = 0;
+	while (std::getline(std::cin, line))
+	{
+		// if (!validLine(line))
+		// 	throw std::runtime_error("Invalid line: " + line);
+		if (!emptyLine(line) && validLine(line))
+			puzzle.setRow(row++, convertLineToNumbers(line));
+	}
+
+	// if (!puzzle)
+		//throw std::runtime_error("No puzzle created from input");
+		
+	puzzle.printPuzzle();
+	// puzzle.printTarget();
+	// puzzle.printEmptyTilePos();
+	return puzzle;
 }
 
 static bool	emptyLine(const std::string &line)
@@ -69,14 +74,14 @@ static bool	validLine(const std::string &line)
 	return (i == size || line[i] == '#');
 }
 
-static nPuzzle* createPuzzle(const std::string &line)
+static nPuzzle createPuzzle(const std::string &line)
 {
 	std::vector<int> numbers = convertLineToNumbers(line);;
 
 	if (numbers.size() == 1)
-		return new nPuzzle(numbers[0]);
+		return nPuzzle(numbers[0]);
 	if (numbers.size() == 2)
-		return new nPuzzle(numbers[0], numbers[1]);
+		return nPuzzle(numbers[0], numbers[1]);
 	throw std::runtime_error("Invalid puzzle size line: expected 1 or 2 integers");
 }
 
