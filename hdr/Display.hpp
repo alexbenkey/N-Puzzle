@@ -13,57 +13,78 @@
 #ifndef DISPLAY_HPP
 # define DISPLAY_HPP
 
-#include "../assets/raylib/src/raylib.h"
-#include "nPuzzle.hpp"
+# include <cstring>	// strrchr
+# define LOG_LINE(level, format, ...) \
+    TraceLog(level, \
+        C_DGRAY "%s" C_RESET ":" C_DORANGE "%s" C_RESET "[" C_ORANGE "%i" C_RESET "] " format, \
+        strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__, \
+        __func__, \
+        __LINE__, \
+        ##__VA_ARGS__)
 
-#include <unordered_map>
-#include <string>
+# define LOG_AS_TRACE(format, ...) LOG_LINE(LOG_TRACE, format, ##__VA_ARGS__)
+# define LOG_AS_DEBUG(format, ...) LOG_LINE(LOG_DEBUG, format, ##__VA_ARGS__)
+# define LOG_AS_INFO(format, ...)  LOG_LINE(LOG_INFO, format, ##__VA_ARGS__)
+# define LOG_AS_WARN(format, ...)  LOG_LINE(LOG_WARNING, format, ##__VA_ARGS__)
+# define LOG_AS_ERROR(format, ...) LOG_LINE(LOG_ERROR, format, ##__VA_ARGS__)
 
-// struct hotKey
-// {
-// 	std::string_view	key;
-// 	std::string_view	description;
-// };
+# include "../assets/raylib/src/raylib.h"
+# include "nPuzzle.hpp"
 
-#define DEFAULT_MARGIN		23
-#define DEFAULT_FONTSIZE	20
+# include <unordered_map>
+# include <string>
+
+# define DEFAULT_MARGIN		23
+# define DEFAULT_FONTSIZE	20
 
 class Display
 {
 	private:
 		nPuzzle*	puzzle;
 
-		class HUD
+		struct HUD
 		{
-			public:
+			private:
 				int margin;
+				float	fontSize;
+				float	fontHeight;
 
 				Rectangle	Frame;
 				Rectangle	Data;
 				Rectangle	Controls;
 				Rectangle	Movement;
-
+				// Positions
+				void	configureFramePosition(void);
+				void	configureDataPosition(void);
+				void	configureControlsPosition(void);
+				void	configureMovementPosition(void);
+				// Render
+				void	renderFrame(void) const;
+				void	renderData(nPuzzle* puzzle) const;
+				void	renderControls(void) const;
+				void	renderMovement(void) const;
+			
 			public:
-				HUD()
-				{
-					this->margin = 23;
-					this->Frame.width = this->margin;
-					this->Frame.height = this->margin;
-					this->Data.width = 1;
-					this->Data.height = 1;
-					this->Controls.width = 1;
-					this->Controls.height = 1;
-					this->Movement.width = 1;
-					this->Movement.height = 1;
-				}
-				void	adjustSizes()
-				{
-					this->Frame.width = std::max(this->Data.width, this->Controls.width) + 2 * margin;
-					// this->width = (int)this->Frame.width;
+				HUD(void);
+				~HUD(void);
 
-					this->Frame.height = this->Data.height + this->Controls.height + 2 * margin;
-					// this->height = (int)this->Frame.height;
-				}
+				void	setMargin(const int& margin, bool updateSizes = true);
+				void	setFontsize(const float& fontSize, bool updateSizes = true);
+
+				float	width(void) const	{ return (this->Frame.width); }
+				float	height(void) const	{ return (this->Frame.height); }
+				float	x(void) const		{ return (this->Frame.x); }
+				float	y(void) const		{ return (this->Frame.y); }
+				// Sizes
+				void	configureSizes(bool updatePositions = false);
+				void	configureDataSize(bool updateFrame = true);
+				void	configureControlSize(bool updateFrame = true);
+				void	configureMovementSize(bool updateFrame = true);
+				void	configureFrameSize(bool updatePositions = true);
+				// Positions
+				void	configurePositions(void);
+				// Render
+				void	render(void) const;
 		};
 		struct HUD	HUD;
 		Rectangle	Frame;
@@ -78,51 +99,43 @@ class Display
 		// Sizes
 		void	configureMinimumSizes(void);
 		void	configureMaximumSizes(void);
+		void	configureScreen(void);
 
-		void	configureHUDDataSize(void);
-		void	configureHUDControlSize(void);
-		void	configureHUDMovementSize(void);
-		void	configureHUDFrameSize(void);
 		void	configureMinimumFrameSizes(void);
 		void	configureFrameSize(void);
 		void	configureTileSize(void);
 
 		// Positions
 		void	configurePositions(void);
-		void	configureHUDFramePosition(void);
-		void	configureHUDDataPosition(void);
-		void	configureHUDControlsPosition(void);
-		void	configureHUDMovementPosition(void);
 		void	configureFramePosition(void);
 
 		// Log
 		static void	logRectangle(const char* name, const Rectangle& rect);
 
 		// Rendering
-		void	renderHUDData();
-		void	renderHUDControls();
-		void	renderHUDMovement();
 		void	renderTiles(nPuzzleState& state);
 
 	protected:
 
 	public:
 		Display(nPuzzle* puzzle);
-		Display(const Display &src);
+		// Display(const Display &src);
 		~Display(void);
+
+		void	setPuzzle(nPuzzle* puzzle);
 
 		// Sizes
 		void	configureSizes(void);
 		void	reconfigure(void);
-		bool	setFontSize(const float size);
-		bool	setMargin(const int margin);
+		bool	setFontSize(const float size, bool updateSizes = true, bool includeHUD = true);
+		bool	setMargin(const int margin, bool updateSizes = true, bool includeHUD = true);
 		// Rendering
 		void	renderScreen(void);
 		void	renderCurrentState()	{ this->renderTiles(this->puzzle->getCurrentState()); }
 		void	renderTargetState()		{ this->renderTiles(this->puzzle->getTargetState()); }
 		void	renderStartState()		{ this->renderTiles(this->puzzle->getStartState()); }
 
-		Display	&operator=(const Display &src);
+		// Display	&operator=(const Display &src);
 };
 
 #endif
