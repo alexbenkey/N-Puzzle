@@ -6,7 +6,7 @@
 /*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 16:13:50 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/10 18:11:48 by avon-ben         ###   ########.fr       */
+/*   Updated: 2026/07/10 18:16:46 by avon-ben         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -233,8 +233,8 @@ void nPuzzleState::moveLeft(void)
 	}	
 	Tile& tileLeft = getTile(emptyPos.x - 1, emptyPos.y);
 	this->moveTile(tileLeft);
-
-this->increaseCost();	std::cout	<< C_GREEN	<< "Tile moved left successfully"
+	this->increaseCost();	
+	std::cout	<< C_GREEN	<< "Tile moved left successfully"
 				<< C_RESET	<< std::endl;
 }
 
