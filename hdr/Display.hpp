@@ -13,6 +13,7 @@
 #ifndef DISPLAY_HPP
 # define DISPLAY_HPP
 
+# include "Errors.hpp"
 # include <cstring>	// strrchr
 # define LOG_LINE(level, format, ...) \
     TraceLog(level, \

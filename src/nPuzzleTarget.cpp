@@ -1,20 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   nPuzzleTarget.cpp                                      :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: ohengelm <ohengelm@student.42.fr>            +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2026/06/12 16:13:50 by ohengelm      #+#    #+#                 */
-/*   Updated: 2026/06/12 16:13:50 by ohengelm      ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   nPuzzleTarget.cpp                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/06/12 16:13:50 by ohengelm          #+#    #+#             */
+/*   Updated: 2026/07/10 13:59:41 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "nPuzzleTarget.hpp"
 #include "colors.hpp"
 
-#include <iostream>
-// std::
+#include <iostream>	// std::stream
 
 /** ************************************************************************ **\
  * 
@@ -25,18 +24,20 @@
 nPuzzleTarget::nPuzzleTarget(const int32_t width, const int32_t height):
 	nPuzzleState(width, height)
 {
-	this->setTargetTiles();
+#if DEBUG >= DEBUG_TRACE
 	std::cout	<< C_DGREEN	<< "Default constructor "
-				<< C_GREEN	<< "nPuzzleTarget"
+				<< C_GREEN	<< __func__
 				<< C_DGREEN	<< " called."
 				<< C_RESET	<< std::endl;
+#endif
+	this->setTargetTiles();
 }
 
 // nPuzzleTarget::nPuzzleTarget(const nPuzzleTarget &src)
 // {
 // 	*this = src;
 // 	std::cout	<< C_DGREEN	<< "Copy constructor "
-// 				<< C_GREEN	<< "nPuzzleTarget"
+// 				<< C_GREEN	<< __func__
 // 				<< C_DGREEN	<< " called."
 // 				<< C_RESET	<< std::endl;
 // }
@@ -50,7 +51,7 @@ nPuzzleTarget::nPuzzleTarget(const int32_t width, const int32_t height):
 // nPuzzleTarget::~nPuzzleTarget(void)
 // {
 // 	std::cout	<< C_RED	<< "Deconstructor "
-// 				<< C_RED	<< "nPuzzleTarget"
+// 				<< C_RED	<< __func__
 // 				<< C_DRED	<< " called"
 // 				<< C_RESET	<< std::endl;
 // }
@@ -64,31 +65,31 @@ nPuzzleTarget::nPuzzleTarget(const int32_t width, const int32_t height):
 void	nPuzzleTarget::setTargetTiles(void)
 {
 	int32_t top = 0;
-	int32_t bottom = this->height - 1;
+	int32_t bottom = getPuzzleHeight() - 1;
 	int32_t left = 0;
-	int32_t right = this->width - 1;
+	int32_t right = getPuzzleWidth() - 1;
 
 	int32_t i = 1;
 
-	while (i < this->size)
+	while (i < getPuzzleSize())
 	{
 		// left → right
-		for (int32_t x = left; x <= right && i < this->size; ++x)
+		for (int32_t x = left; x <= right && i < getPuzzleSize(); ++x)
 			this->getTile(x, top).setVal(i++);
 		++top;
 
 		// top → bottom
-		for (int32_t y = top; y <= bottom && i < this->size; ++y)
+		for (int32_t y = top; y <= bottom && i < getPuzzleSize(); ++y)
 			this->getTile(right, y).setVal(i++);
 		--right;
 
 		// right → left
-		for (int32_t x = right; x >= left && i < this->size; --x)
+		for (int32_t x = right; x >= left && i < getPuzzleSize(); --x)
 			this->getTile(x, bottom).setVal(i++);
 		--bottom;
 
 		// bottom → top
-		for (int32_t y = bottom; y >= top && i < this->size; --y)
+		for (int32_t y = bottom; y >= top && i < getPuzzleSize(); --y)
 			this->getTile(left, y).setVal(i++);
 		++left;
 	}

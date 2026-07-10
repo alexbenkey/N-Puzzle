@@ -1,20 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   nPuzzle.cpp                                      :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: ohengelm <ohengelm@student.42.fr>            +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2026/06/12 16:13:50 by ohengelm      #+#    #+#                 */
-/*   Updated: 2026/06/12 16:13:50 by ohengelm      ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   nPuzzle.cpp                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/06/12 16:13:50 by ohengelm          #+#    #+#             */
+/*   Updated: 2026/07/10 17:39:29 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "nPuzzle.hpp"
 #include "colors.hpp"
 
-#include <iostream>
-// std::
+#include <iostream>	// std::stream
 #include <algorithm>	// std::sort
 
 /** ************************************************************************ **\
@@ -31,10 +30,12 @@ nPuzzle::nPuzzle(const int32_t size):
 	target(nPuzzleTarget(this->width, this->height)),
 	state(this->start)
 {
+#if DEBUG >= DEBUG_TRACE
 	std::cout	<< C_DGREEN	<< "Default constructor "
-				<< C_GREEN	<< "nPuzzle"
+				<< C_GREEN	<< __func__
 				<< C_DGREEN	<< " called."
 				<< C_RESET	<< std::endl;
+#endif
 }
 
 nPuzzle::nPuzzle(const int32_t width, const int32_t height):
@@ -45,10 +46,12 @@ nPuzzle::nPuzzle(const int32_t width, const int32_t height):
 	target(nPuzzleTarget(this->width, this->height)),
 	state(this->start)
 {
+#if DEBUG >= DEBUG_TRACE
 	std::cout	<< C_DGREEN	<< "Default constructor "
-				<< C_GREEN	<< "nPuzzle"
+				<< C_GREEN	<< __func__
 				<< C_DGREEN	<< " called."
 				<< C_RESET	<< std::endl;
+#endif
 }
 
 nPuzzle::nPuzzle(const nPuzzle &src):
@@ -59,11 +62,13 @@ nPuzzle::nPuzzle(const nPuzzle &src):
 	target(src.target),
 	state(src.state)
 {
-	*this = src;
+#if DEBUG >= DEBUG_TRACE
 	std::cout	<< C_DGREEN	<< "Copy constructor "
-				<< C_GREEN	<< "nPuzzle"
+				<< C_GREEN	<< __func__
 				<< C_DGREEN	<< " called."
 				<< C_RESET	<< std::endl;
+#endif
+	*this = src;
 }
 
 /** ************************************************************************ **\
@@ -74,10 +79,12 @@ nPuzzle::nPuzzle(const nPuzzle &src):
 
 nPuzzle::~nPuzzle(void)
 {
+#if DEBUG >= DEBUG_TRACE
 	std::cout	<< C_RED	<< "Deconstructor "
-				<< C_RED	<< "nPuzzle"
+				<< C_RED	<< __func__
 				<< C_DRED	<< " called"
 				<< C_RESET	<< std::endl;
+#endif
 }
 
 /** ************************************************************************ **\
@@ -88,13 +95,15 @@ nPuzzle::~nPuzzle(void)
 
 void	nPuzzle::setRow(int32_t row, const std::vector<int>& numbers)
 {
-	if (row > this->height)
+	if (row < 0 || row >= this->height)
 		throw std::runtime_error(std::string("Invalid puzzle row: "));
+	if (numbers.size() != static_cast<size_t>(this->width))
+		throw std::runtime_error(std::string("Invalid number of tiles in row "));
 	for (int32_t x = 0; x < this->width; ++x)
 	{
 		this->state.getTile(x, row).setVal(numbers[x]);
 		if (numbers[x] == 0)
-			this->state.setEmptysquare(&this->state.getTile(x, row));
+			this->state.setEmptyPos(x, row);
 		this->state.getTile(x, row).setxPos(x);
 		this->state.getTile(x, row).setyPos(row);
 	}
