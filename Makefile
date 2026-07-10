@@ -37,7 +37,7 @@ LDLIBS ?=	-lraylib -lGL -lm -lpthread -ldl -lrt -lX11
 # Build types
 # =========================
 
-BUILD ?=	release
+BUILD ?=	debug
 # Release
 ifeq ($(BUILD),release)
 	CXXFLAGS +=		-O3

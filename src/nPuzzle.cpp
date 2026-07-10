@@ -94,13 +94,15 @@ nPuzzle::~nPuzzle(void)
 
 void	nPuzzle::setRow(int32_t row, const std::vector<int>& numbers)
 {
-	if (row > this->height)
+	if (row < 0 || row >= this->height)
 		throw std::runtime_error(std::string("Invalid puzzle row: "));
+	if (numbers.size() != static_cast<size_t>(this->width))
+		throw std::runtime_error(std::string("Invalid number of tiles in row "));
 	for (int32_t x = 0; x < this->width; ++x)
 	{
 		this->state.getTile(x, row).setVal(numbers[x]);
 		if (numbers[x] == 0)
-			this->state.setEmptysquare(&this->state.getTile(x, row));
+			this->state.setEmptyPos(x, row);
 		this->state.getTile(x, row).setxPos(x);
 		this->state.getTile(x, row).setyPos(row);
 	}

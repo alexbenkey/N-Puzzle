@@ -65,31 +65,31 @@ nPuzzleTarget::nPuzzleTarget(const int32_t width, const int32_t height):
 void	nPuzzleTarget::setTargetTiles(void)
 {
 	int32_t top = 0;
-	int32_t bottom = this->height - 1;
+	int32_t bottom = getPuzzleHeight() - 1;
 	int32_t left = 0;
-	int32_t right = this->width - 1;
+	int32_t right = getPuzzleWidth() - 1;
 
 	int32_t i = 1;
 
-	while (i < this->size)
+	while (i < getPuzzleSize())
 	{
 		// left → right
-		for (int32_t x = left; x <= right && i < this->size; ++x)
+		for (int32_t x = left; x <= right && i < getPuzzleSize(); ++x)
 			this->getTile(x, top).setVal(i++);
 		++top;
 
 		// top → bottom
-		for (int32_t y = top; y <= bottom && i < this->size; ++y)
+		for (int32_t y = top; y <= bottom && i < getPuzzleSize(); ++y)
 			this->getTile(right, y).setVal(i++);
 		--right;
 
 		// right → left
-		for (int32_t x = right; x >= left && i < this->size; --x)
+		for (int32_t x = right; x >= left && i < getPuzzleSize(); --x)
 			this->getTile(x, bottom).setVal(i++);
 		--bottom;
 
 		// bottom → top
-		for (int32_t y = bottom; y >= top && i < this->size; --y)
+		for (int32_t y = bottom; y >= top && i < getPuzzleSize(); --y)
 			this->getTile(left, y).setVal(i++);
 		++left;
 	}

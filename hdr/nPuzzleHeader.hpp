@@ -15,7 +15,6 @@
 
 # include "nPuzzle.hpp"
 
-nPuzzle&	parse();
-void		displayNPuzzle(nPuzzle* puzzle);
+nPuzzle	*parse(nPuzzle *&puzzle);
 
 #endif
