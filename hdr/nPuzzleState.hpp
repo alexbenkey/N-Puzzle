@@ -101,6 +101,7 @@ class nPuzzleState
 		void 	moveLeft(void);
 		void 	moveRight(void);
 
+		int	getCost(void) const	{ return (this->cost); }
 
 		nPuzzleState	&operator=(const nPuzzleState &src);
 };

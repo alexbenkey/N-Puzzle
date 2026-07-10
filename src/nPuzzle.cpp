@@ -6,7 +6,7 @@
 /*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 16:13:50 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/10 17:39:29 by othello          ###   ########.fr       */
+/*   Updated: 2026/07/10 20:04:19 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -163,9 +163,9 @@ bool	nPuzzle::stateHasAlreadyBeenVisited(nPuzzleState* state)
 	foundItem = std::find(this->visited.begin(), this->visited.end(), state);
 	if (foundItem == this->visited.end())
 		return (false);
-#warning requires state cost
-	if (false)
-	// if (state.getCost() < (*foundItem).getCost())
+// #warning requires state cost
+// 	if (false)
+	if (state->getCost() < (*foundItem)->getCost())
 	{
 		this->visited.erase(foundItem);
 		return (false);
@@ -180,9 +180,9 @@ bool	nPuzzle::stateIsAlreadyInQueue(nPuzzleState* state)
 	foundItem = std::find(this->queue.begin(), this->queue.end(), state);
 	if (foundItem == this->queue.end())
 		return (false);
-#warning requires state cost
-	if (false)
-	// if (state.getCost() < (*foundItem).getCost())
+// #warning requires state cost
+	// if (false)
+	if (state->getCost() < (*foundItem)->getCost())
 	{
 		this->queue.erase(foundItem);
 		return (false);
