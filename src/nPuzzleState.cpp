@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   nPuzzleState.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
+/*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 16:13:50 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/10 13:54:31 by othello          ###   ########.fr       */
+/*   Updated: 2026/07/10 18:11:48 by avon-ben         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -203,6 +203,7 @@ void nPuzzleState::moveUp(void)
 	}
 	Tile& tileAbove = getTile(emptyPos.x, emptyPos.y - 1);
 	this->moveTile(tileAbove);
+	this->increaseCost();
 	std::cout	<< C_GREEN	<< "Tile moved up successfully"
 				<< C_RESET	<< std::endl;
 }
@@ -217,6 +218,7 @@ void nPuzzleState::moveDown(void)
 	}
 	Tile& tileBelow = getTile(emptyPos.x, emptyPos.y + 1);
 	this->moveTile(tileBelow);
+	this->increaseCost();
 	std::cout	<< C_GREEN	<< "Tile moved down successfully"
 				<< C_RESET	<< std::endl;
 }
@@ -231,7 +233,8 @@ void nPuzzleState::moveLeft(void)
 	}	
 	Tile& tileLeft = getTile(emptyPos.x - 1, emptyPos.y);
 	this->moveTile(tileLeft);
-	std::cout	<< C_GREEN	<< "Tile moved left successfully"
+
+this->increaseCost();	std::cout	<< C_GREEN	<< "Tile moved left successfully"
 				<< C_RESET	<< std::endl;
 }
 
@@ -245,6 +248,7 @@ void nPuzzleState::moveRight(void)
 	}
 	Tile& tileRight = getTile(emptyPos.x + 1, emptyPos.y);
 	this->moveTile(tileRight);
+	this->increaseCost();
 	std::cout	<< C_GREEN	<< "Tile moved right successfully"
 				<< C_RESET	<< std::endl;
 }
