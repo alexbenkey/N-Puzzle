@@ -6,7 +6,7 @@
 /*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/02 16:48:19 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/10 12:22:15 by othello          ###   ########.fr       */
+/*   Updated: 2026/07/10 13:54:48 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,27 @@
 #include "nPuzzle.hpp"
 #include "Display.hpp"
 #include "colors.hpp"
+#include "Errors.hpp"
 
-#include <iostream>
+#include <iostream>	// std::stream
 
 void	displayNPuzzle(nPuzzle* puzzle)
 {
+#if DEBUG == DEBUG_SILENT
+	SetTraceLogLevel(TraceLogLevel::LOG_NONE);
+#elif DEBUG <= DEBUG_ERROR
+	SetTraceLogLevel(TraceLogLevel::LOG_ERROR);
+#elif DEBUG <= DEBUG_WARNING
+	SetTraceLogLevel(TraceLogLevel::LOG_WARNING);
+#elif DEBUG <= DEBUG_INFO
+	SetTraceLogLevel(TraceLogLevel::LOG_INFO);
+#elif DEBUG <= DEBUG_DEBUG
+	SetTraceLogLevel(TraceLogLevel::LOG_DEBUG);
+#elif DEBUG <= DEBUG_TRACE
 	SetTraceLogLevel(TraceLogLevel::LOG_TRACE);
+#elif DEBUG <= DEBUG_ALL
+	SetTraceLogLevel(TraceLogLevel::LOG_ALL);
+#endif
 	Display	graphics(puzzle);
 
 	try

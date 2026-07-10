@@ -18,6 +18,8 @@
 
 #include <vector>
 
+# include "Errors.hpp"
+
 class nPuzzleState
 {
 	private:

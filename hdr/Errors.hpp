@@ -1,21 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   nPuzzleHeader.hpp                                  :+:      :+:    :+:   */
+/*   Errors.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/10 17:52:56 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/10 13:36:16 by othello          ###   ########.fr       */
+/*   Created: 2026/07/10 12:38:06 by othello           #+#    #+#             */
+/*   Updated: 2026/07/10 12:40:40 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef NPUZZLEHEADER_HPP
-# define NPUZZLEHEADER_HPP
+#ifndef ERROR_HPP
+# define ERROR_HPP
 
-# include "nPuzzle.hpp"
-
-nPuzzle&	parse();
-void		displayNPuzzle(nPuzzle* puzzle);
+# define	DEBUG_SILENT	0
+# define	DEBUG_ERROR	1
+# define	DEBUG_WARNING	2
+# define	DEBUG_INFO	3
+# define	DEBUG_DEBUG	4
+# define	DEBUG_TRACE	5
+# define	DEBUG_ALL	6
 
 #endif
