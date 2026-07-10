@@ -29,6 +29,7 @@ class nPuzzle
 	protected:
 
 	public:
+		// nPuzzle(void); 
 		nPuzzle(const int32_t size);
 		nPuzzle(const int32_t width, const int32_t height);
 		nPuzzle(const nPuzzle &src);
@@ -47,6 +48,10 @@ class nPuzzle
 		void	printPuzzle(void) { this->state.printPuzzle(); }
 		void	printTarget(void) { this->target.printPuzzle(); }
 		void	printEmptyTilePos(void) {this->state.printTilePos( this->state.getTile(0)); }
+
+		int32_t getWidth(void) const { return this->width; }
+		int32_t getHeight(void) const { return this->height; }
+		int32_t getSize(void) const { return this->size; }
 
 		void moveUp(void) { this->state.moveUp(); }
 		void moveDown(void) { this->state.moveDown(); }

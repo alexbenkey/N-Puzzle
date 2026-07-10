@@ -14,7 +14,6 @@
 #include "colors.hpp"
 
 #include <iostream>
-// std::
 
 /** ************************************************************************ **\
  * 
@@ -25,6 +24,8 @@
 nPuzzleState::Tile::Tile(void)
 {
 	this->value = 0;
+	this->xPos = 0;
+	this->yPos = 0;
 	std::cout	<< C_DGREEN	<< "Default constructor "
 				<< C_GREEN	<< "Tile"
 				<< C_DGREEN	<< " called."
@@ -34,6 +35,7 @@ nPuzzleState::Tile::Tile(void)
 nPuzzleState::Tile::Tile(const Tile &src)
 {
 	*this = src;
+	
 	std::cout	<< C_DGREEN	<< "Copy constructor "
 				<< C_GREEN	<< "Tile"
 				<< C_DGREEN	<< " called."
