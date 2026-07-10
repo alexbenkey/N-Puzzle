@@ -6,7 +6,7 @@
 /*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 16:13:50 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/10 18:16:46 by avon-ben         ###   ########.fr       */
+/*   Updated: 2026/07/10 19:11:42 by avon-ben         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -197,60 +197,76 @@ void nPuzzleState::moveUp(void)
 {
 	if (emptyPos.y == 0)
 	{
+		#ifdef DEBUG:
 		std::cout	<< C_RED	<< "cannot move up, empty square is at the top"
 					<< C_RESET	<< std::endl;
+		#endif
 		return;
 	}
 	Tile& tileAbove = getTile(emptyPos.x, emptyPos.y - 1);
 	this->moveTile(tileAbove);
 	this->increaseCost();
+	#ifdef DEBUG:
 	std::cout	<< C_GREEN	<< "Tile moved up successfully"
 				<< C_RESET	<< std::endl;
+	#endif
 }
 
 void nPuzzleState::moveDown(void)
 {
 	if (emptyPos.y == this->height - 1)
 	{
+		#ifdef DEBUG:
 		std::cout	<< C_RED	<< "cannot move down, empty square is at the bottom"
 					<< C_RESET	<< std::endl;
+		#endif
 		return;
 	}
 	Tile& tileBelow = getTile(emptyPos.x, emptyPos.y + 1);
 	this->moveTile(tileBelow);
 	this->increaseCost();
+	#ifdef DEBUG:
 	std::cout	<< C_GREEN	<< "Tile moved down successfully"
 				<< C_RESET	<< std::endl;
+	#endif
 }
 
 void nPuzzleState::moveLeft(void)
 {
 	if (emptyPos.x == 0)
 	{
+		#ifdef DEBUG:
 		std::cout	<< C_RED	<< "cannot move left, empty square is at the left edge"
 					<< C_RESET	<< std::endl;
+		#endif
 		return;
 	}	
 	Tile& tileLeft = getTile(emptyPos.x - 1, emptyPos.y);
 	this->moveTile(tileLeft);
-	this->increaseCost();	
+	this->increaseCost();
+	#ifdef DEBUG:	
 	std::cout	<< C_GREEN	<< "Tile moved left successfully"
 				<< C_RESET	<< std::endl;
+	#endif
 }
 
 void nPuzzleState::moveRight(void)
 {
 	if (emptyPos.x == this->width - 1)
 	{
+		#ifdef DEBUG:
 		std::cout	<< C_RED	<< "cannot move right, empty square is at the right edge"
 					<< C_RESET	<< std::endl;
+		#endif
 		return;
 	}
 	Tile& tileRight = getTile(emptyPos.x + 1, emptyPos.y);
 	this->moveTile(tileRight);
 	this->increaseCost();
+	#ifdef DEBUG:
 	std::cout	<< C_GREEN	<< "Tile moved right successfully"
 				<< C_RESET	<< std::endl;
+	#endif
 }
 /** ************************************************************************ **\
  * 
