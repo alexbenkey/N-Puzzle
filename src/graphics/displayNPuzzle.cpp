@@ -12,6 +12,7 @@
 
 #include "../../assets/raylib/src/raylib.h"
 #include "nPuzzle.hpp"
+#include "displayNPuzzle.hpp"
 #include "Display.hpp"
 #include "colors.hpp"
 #include "Errors.hpp"

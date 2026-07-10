@@ -29,8 +29,14 @@ CXXFLAGS +=	$(WARNFLAGS)
 DEPFLAGS =		-MMD -MP -MF $(DEP_DIR)$*.d -MT $@
 
 # Linking
-LDFLAGS ?=	-Lassets/raylib/src
-LDLIBS ?=	-lraylib -lGL -lm -lpthread -ldl -lrt -lX11
+LDFLAGS ?=
+UNAME_S :=	$(shell uname -s)
+ifeq ($(UNAME_S),Darwin)
+	LDLIBS ?=	-framework OpenGL -framework Cocoa -framework IOKit \
+				-framework CoreAudio -framework CoreVideo
+else
+	LDLIBS ?=	-lGL -lm -lpthread -ldl -lrt -lX11
+endif
 # LDLIBS +=	-lft
 
 # =========================
