@@ -26,8 +26,9 @@ nPuzzle::nPuzzle(const int32_t size):
 	width(size),
 	height(size),
 	size(size * size),
+	start(nPuzzleState(this->width, this->height)),
 	target(nPuzzleTarget(this->width, this->height)),
-	state(nPuzzleState(this->width, this->height))
+	state(this->start)
 {
 	std::cout	<< C_DGREEN	<< "Default constructor "
 				<< C_GREEN	<< "nPuzzle"
@@ -39,8 +40,9 @@ nPuzzle::nPuzzle(const int32_t width, const int32_t height):
 	width(width),
 	height(height),
 	size(width * height),
+	start(nPuzzleState(this->width, this->height)),
 	target(nPuzzleTarget(this->width, this->height)),
-	state(nPuzzleState(this->width, this->height))
+	state(this->start)
 {
 	std::cout	<< C_DGREEN	<< "Default constructor "
 				<< C_GREEN	<< "nPuzzle"
@@ -52,6 +54,7 @@ nPuzzle::nPuzzle(const nPuzzle &src):
 	width(src.width),
 	height(src.height),
 	size(src.size),
+	start(src.start),
 	target(src.target),
 	state(src.state)
 {

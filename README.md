@@ -45,6 +45,8 @@ make
 
 [Admissible heuristic](https://en.wikipedia.org/wiki/Admissible_heuristic)
 
+[Raylib](https://github.com/raysan5/raylib)
+
 ---
 
 # Credits
@@ -76,3 +78,22 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+# Note
+
+```sh
+# See branches
+git branch
+git branch -r
+# Create branches
+git switch -c [name]
+# Create upstream branch and push
+git push -u origin [name]
+# Add other repo's to project as children
+git submodule add [link] [dest]
+# merge
+
+# Clean after merge
+git branch -d [name]
+git fetch --prune
+```

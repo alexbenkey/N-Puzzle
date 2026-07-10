@@ -123,7 +123,12 @@ bool	nPuzzleState::validPuzzleContent(void) const
 	for (size_t y = 0; y < tiles.size(); ++y)
 		for (size_t x = 0; x < tiles[y].size(); ++x)
 			if (!set.insert(tiles[y][x].getVal()).second)
-				throw std::runtime_error("Duplicate tile value");
+			{
+				if (tiles[y][x].getVal() == 0)
+					throw std::runtime_error("Duplicate 0 tile, probably incomplete puzzle");
+				else
+					throw std::runtime_error("Duplicate tile value");
+			}
 	if (*set.begin() != 0)
 		throw std::runtime_error("Missing 0 tile");
 	if (*set.rbegin() != this->size - 1)
