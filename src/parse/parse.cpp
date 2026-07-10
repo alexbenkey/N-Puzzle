@@ -6,7 +6,7 @@
 /*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/10 18:29:47 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/10 12:41:52 by avon-ben         ###   ########.fr       */
+/*   Updated: 2026/07/10 12:54:03 by avon-ben         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,11 +28,16 @@ static std::vector<int>	convertLineToNumbers(const std::string& line);
 
 nPuzzle	parse()
 {
-	std::string line;
+	nPuzzle puzzle = nPuzzle(0, 0);
 
-	while (std::getline(std::cin, line))
+	int32_t	row = 0;
+	bool created = 0;
+	for (std::string line; std::getline(std::cin, line);)
 	{
-		if (!emptyLine(line))
+		std::cerr	<< "#> "<< line	<< std::endl;
+		if (emptyLine(line))
+			continue;
+		if (!validLine(line))
 			break;
 	}
 	nPuzzle puzzle = createPuzzle(line);
@@ -71,6 +76,7 @@ static bool	validLine(const std::string &line)
 
 static nPuzzle createPuzzle(const std::string &line)
 {
+	
 	std::vector<int> numbers = convertLineToNumbers(line);;
 
 	if (numbers.size() == 1)
