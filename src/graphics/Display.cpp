@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Display.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
+/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/02 17:58:28 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/09 18:47:51 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/07/10 12:19:08 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,10 +107,20 @@ void	Display::configureMinimumFrameSizes()
 	this->tile.height = this->fontSize + 2 * margin;
 	Display::logRectangle("tile", this->tile);
 
-	this->Frame.width = this->tile.width * (float)this->puzzle->getWidth();
-	this->Frame.width = std::min(this->Frame.width, (float)GetMonitorWidth(GetCurrentMonitor()) - this->HUD.width());
-	this->Frame.height = this->tile.height * this->puzzle->getHeight();
-	this->Frame.height = std::min(this->Frame.height, (float)GetMonitorHeight(GetCurrentMonitor()) - 2 * this->margin);
+	if (this->puzzle)
+	{
+		this->Frame.width = (float)this->puzzle->getWidth();
+		this->Frame.height = (float)this->puzzle->getHeight();
+	}
+	else
+	{
+		this->Frame.width = 1;
+		this->Frame.height = 1;
+	}
+	this->Frame.width = std::min(this->Frame.width * this->tile.width, 
+								(float)GetMonitorWidth(GetCurrentMonitor()) - this->HUD.width());
+	this->Frame.height = std::min(this->Frame.height * this->tile.height, 
+								(float)GetMonitorHeight(GetCurrentMonitor()) - 2 * this->margin);
 	Display::logRectangle("Frame", this->Frame);
 }
 
@@ -159,8 +169,19 @@ void	Display::configureFrameSize(void)
 void	Display::configureTileSize(void)
 {
 	LOG_AS_TRACE();
-	this->tile.width = Frame.width / this->puzzle->getWidth();
-	this->tile.height = Frame.height / this->puzzle->getHeight();
+
+	if (this->puzzle)
+	{
+		this->tile.width = (float)this->puzzle->getWidth();
+		this->tile.height = (float)this->puzzle->getHeight();
+	}
+	else
+	{
+		this->tile.width = 1;
+		this->tile.height = 1;
+	}
+	this->tile.width = Frame.width / this->tile.width;
+	this->tile.height = Frame.height / this->tile.height;
 	Display::logRectangle("tile", this->tile);
 }
 
@@ -242,24 +263,25 @@ void	Display::renderTiles(nPuzzleState& state)
 	int	yOffset = (this->tile.height - 20) / 2;
 
 	DrawRectangleRec(this->Frame, Color{23, 23, 23, 255});
-	for (int x = 0; x < this->puzzle->getWidth(); ++x)
-	{
-		this->tile.x = this->Frame.x + x * this->tile.width;
-		for (int y = 0; y < this->puzzle->getHeight(); ++y)
+	if (this->puzzle)
+		for (int x = 0; x < this->puzzle->getWidth(); ++x)
 		{
-			this->tile.y = this->Frame.y + y * this->tile.height;
-			int	val = state.getTileValue(x, y);
-			if (val == 0)
-				continue;
-			if (val == this->puzzle->getTargetState().getTileValue(x, y))
-				tileColor = {69, 69, 69, 255};
-			else
-				tileColor = {123, 123, 123, 255};
-			DrawRectangleRec(this->tile, tileColor);
-			DrawRectangleLinesEx(this->tile, 2, Color{23, 23, 23, 127});
-			DrawText(std::to_string(val).c_str(), this->tile.x + xOffset, this->tile.y + yOffset, 20, ORANGE);
+			this->tile.x = this->Frame.x + x * this->tile.width;
+			for (int y = 0; y < this->puzzle->getHeight(); ++y)
+			{
+				this->tile.y = this->Frame.y + y * this->tile.height;
+				int	val = state.getTileValue(x, y);
+				if (val == 0)
+					continue;
+				if (val == this->puzzle->getTargetState().getTileValue(x, y))
+					tileColor = {69, 69, 69, 255};
+				else
+					tileColor = {123, 123, 123, 255};
+				DrawRectangleRec(this->tile, tileColor);
+				DrawRectangleLinesEx(this->tile, 2, Color{23, 23, 23, 127});
+				DrawText(std::to_string(val).c_str(), this->tile.x + xOffset, this->tile.y + yOffset, 20, ORANGE);
+			}
 		}
-	}
 }
 
 /** ************************************************************************ **\

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   displayNPuzzle.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
+/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/02 16:48:19 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/09 18:57:37 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/07/10 12:22:15 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,6 @@ void	displayNPuzzle(nPuzzle* puzzle)
 {
 	SetTraceLogLevel(TraceLogLevel::LOG_TRACE);
 	Display	graphics(puzzle);
-	// graphics.setPuzzle(nullptr);
 
 	try
 	{
