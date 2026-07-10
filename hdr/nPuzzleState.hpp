@@ -57,6 +57,8 @@ class nPuzzleState
 		const int32_t	width;
 		const int32_t	height;
 		const int32_t	size;
+		int32_t	heuristic = 0;
+		int32_t	cost = 0;
 
 		Position emptyPos = {0, 0};
 
@@ -92,11 +94,13 @@ class nPuzzleState
 		Position getEmptyPos() const {return emptyPos; }
 
 		void 	moveTile(Tile& tile);
+		void 	increaseCost(void) { ++this->cost; };
 
 		void 	moveUp(void);
 		void 	moveDown(void);
 		void 	moveLeft(void);
 		void 	moveRight(void);
+
 
 		nPuzzleState	&operator=(const nPuzzleState &src);
 };
