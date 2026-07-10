@@ -22,20 +22,6 @@
  * 
 \* ************************************************************************** */
 
-// nPuzzle::nPuzzle(void):
-// 	width(0),
-// 	height(0),
-// 	size(0 * 0),
-// 	target(nPuzzleTarget(this->width, this->height)),
-// 	state(nPuzzleState(this->width, this->height))
-// {
-// 	std::cout	<< C_DGREEN	<< "Default constructor "
-// 				<< C_GREEN	<< "nPuzzle"
-// 				<< C_DGREEN	<< " called."
-// 				<< C_RESET	<< std::endl;
-// }
-
-
 nPuzzle::nPuzzle(const int32_t size):
 	width(size),
 	height(size),
@@ -98,8 +84,10 @@ nPuzzle::~nPuzzle(void)
 
 void	nPuzzle::setRow(int32_t row, const std::vector<int>& numbers)
 {
-	if (row > this->height)
+	if (row < 0 || row >= this->height)
 		throw std::runtime_error(std::string("Invalid puzzle row: "));
+	if (numbers.size() != static_cast<size_t>(this->width))
+		throw std::runtime_error(std::string("Invalid number of tiles in row "));
 	for (int32_t x = 0; x < this->width; ++x)
 	{
 		this->state.getTile(x, row).setVal(numbers[x]);

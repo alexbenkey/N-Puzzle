@@ -98,7 +98,7 @@ void	nPuzzleState::printPuzzle(void) const
 		std::cout	<< "puzzle width " << getPuzzleWidth()	<< ' ';
 
 	std::cout	<< getPuzzleHeight()	<< '\n';
-	for (int32_t y = 0; y < getPuzzleSize(); ++y)
+	for (int32_t y = 0; y < getPuzzleHeight(); ++y)
 	{
 		for (int32_t x = 0; x < getPuzzleWidth(); ++x)
 		{
@@ -164,7 +164,6 @@ void	nPuzzleState::printTilePos(const nPuzzleState::Tile& Tile) const
 
 void 	nPuzzleState::moveTile(nPuzzleState::Tile& tile)
 {
-
 	// Check if the tile is adjacent to the empty square
 	int32_t emptyX = emptyPos.x;
 	int32_t emptyY = emptyPos.y;
@@ -174,11 +173,9 @@ void 	nPuzzleState::moveTile(nPuzzleState::Tile& tile)
 	// check of tile is adjacent to empty square
 	if ((abs(emptyX - tileX) == 1 && emptyY == tileY) || (abs(emptyY - tileY) == 1 && emptyX == tileX))
 	{
-		//swap the values of the empty tile and the given tile
+		//swap the values of the empty tile and the given tile, update the empty position to the tile's position
 		getTile(emptyX, emptyY).setVal(tile.getVal());
 		tile.setVal(0);
-
-		// Update the position of the empty square
 		setEmptyPos(tileX, tileY);
 	}
 	else
@@ -188,33 +185,57 @@ void 	nPuzzleState::moveTile(nPuzzleState::Tile& tile)
 void nPuzzleState::moveUp(void)
 {
 	if (emptyPos.y == 0)
-		throw std::runtime_error("Cannot move up, empty square is at the top");
+	{
+		std::cout	<< C_RED	<< "cannot move up, empty square is at the top"
+					<< C_RESET	<< std::endl;
+		return;
+	}
 	Tile& tileAbove = getTile(emptyPos.x, emptyPos.y - 1);
 	this->moveTile(tileAbove);
+	std::cout	<< C_GREEN	<< "Tile moved up successfully"
+				<< C_RESET	<< std::endl;
 }
 
 void nPuzzleState::moveDown(void)
 {
 	if (emptyPos.y == this->height - 1)
-		throw std::runtime_error("Cannot move down, empty square is at the bottom");
+	{
+		std::cout	<< C_RED	<< "cannot move down, empty square is at the bottom"
+					<< C_RESET	<< std::endl;
+		return;
+	}
 	Tile& tileBelow = getTile(emptyPos.x, emptyPos.y + 1);
 	this->moveTile(tileBelow);
+	std::cout	<< C_GREEN	<< "Tile moved down successfully"
+				<< C_RESET	<< std::endl;
 }
 
 void nPuzzleState::moveLeft(void)
 {
 	if (emptyPos.x == 0)
-		throw std::runtime_error("Cannot move left, empty square is at the left edge");
+	{
+		std::cout	<< C_RED	<< "cannot move left, empty square is at the left edge"
+					<< C_RESET	<< std::endl;
+		return;
+	}	
 	Tile& tileLeft = getTile(emptyPos.x - 1, emptyPos.y);
 	this->moveTile(tileLeft);
+	std::cout	<< C_GREEN	<< "Tile moved left successfully"
+				<< C_RESET	<< std::endl;
 }
 
 void nPuzzleState::moveRight(void)
 {
 	if (emptyPos.x == this->width - 1)
-		throw std::runtime_error("Cannot move right, empty square is at the right edge");
+	{
+		std::cout	<< C_RED	<< "cannot move right, empty square is at the right edge"
+					<< C_RESET	<< std::endl;
+		return;
+	}
 	Tile& tileRight = getTile(emptyPos.x + 1, emptyPos.y);
 	this->moveTile(tileRight);
+	std::cout	<< C_GREEN	<< "Tile moved right successfully"
+				<< C_RESET	<< std::endl;
 }
 /** ************************************************************************ **\
  * 

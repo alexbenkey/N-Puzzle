@@ -6,7 +6,7 @@
 /*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/10 18:29:47 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/09 17:25:51 by avon-ben         ###   ########.fr       */
+/*   Updated: 2026/07/10 12:41:52 by avon-ben         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,18 +39,13 @@ nPuzzle	parse()
 	int32_t row = 0;
 	while (std::getline(std::cin, line))
 	{
-		// if (!validLine(line))
-		// 	throw std::runtime_error("Invalid line: " + line);
-		if (!emptyLine(line) && validLine(line))
-			puzzle.setRow(row++, convertLineToNumbers(line));
+		if (emptyLine(line) || !validLine(line))
+			throw std::runtime_error("Invalid puzzle row line: " + line);
+		puzzle.setRow(row++, convertLineToNumbers(line));
 	}
+	if (puzzle.getSize() == 0)
+		throw std::runtime_error("No puzzle created from input");
 
-	// if (!puzzle)
-		//throw std::runtime_error("No puzzle created from input");
-		
-	puzzle.printPuzzle();
-	// puzzle.printTarget();
-	// puzzle.printEmptyTilePos();
 	return puzzle;
 }
 
