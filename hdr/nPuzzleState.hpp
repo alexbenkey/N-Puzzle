@@ -44,7 +44,7 @@ class nPuzzleState
 				Tile& operator=(const Tile& src);
 		};
 
-	private:
+	protected: 
 		std::vector<std::vector<Tile> >	tiles;
 
 		struct Position {

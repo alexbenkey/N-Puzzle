@@ -6,7 +6,7 @@
 /*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/10 17:52:53 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/10 12:52:11 by avon-ben         ###   ########.fr       */
+/*   Updated: 2026/07/10 15:40:36 by avon-ben         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,14 @@ void simulate(nPuzzle &puzzle);
 int	main(void)
 {
 	std::cout << "Starting the nPuzzle program..." << std::endl;
-	nPuzzle puzzle = parse();
-	simulate(puzzle);
+	nPuzzle *puzzle = NULL;
+	if (parse(puzzle) == NULL)
+	{
+		std::cerr << "Failed to parse puzzle" << std::endl;
+		return (1);
+	}
+	simulate(*puzzle);
+	delete puzzle;
 	return (0);
 }
 

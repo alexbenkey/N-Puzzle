@@ -18,7 +18,7 @@
 
 class nPuzzle
 {
-	private: 
+	private:
 		const int32_t		width;
 		const int32_t		height;
 		const int32_t		size;
