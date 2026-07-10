@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   Display.HUD.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
+/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/09 13:44:29 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/09 18:44:57 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/07/10 13:41:26 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Display.hpp"
 #include "colors.hpp"
 
-#include <iostream>	// std::
+#include <iostream>	// std::stream
 
 /** ************************************************************************ **\
  * 
@@ -21,12 +21,14 @@
  * 
 \* ************************************************************************** */
 
-Display::HUD::HUD()
+Display::HUD::HUD(void)
 {
+#if DEBUG >= DEBUG_TRACE
 	std::cout	<< C_DGREEN	<< "Default constructor "
 				<< C_GREEN	<< __func__
 				<< C_DGREEN	<< " called."
 				<< C_RESET	<< std::endl;
+#endif
 
 	this->setMargin(DEFAULT_MARGIN, false);
 	this->setFontsize(DEFAULT_FONTSIZE, false);
@@ -42,10 +44,12 @@ Display::HUD::HUD()
 
 Display::HUD::~HUD(void)
 {
+#if DEBUG >= DEBUG_TRACE
 	std::cout	<< C_DRED	<< "Deconstructor "
 				<< C_RED	<< __func__
 				<< C_DRED	<< " called"
 				<< C_RESET	<< std::endl;
+#endif
 }
 
 /** ************************************************************************ **\
@@ -56,43 +60,71 @@ Display::HUD::~HUD(void)
 
 void	Display::HUD::setMargin(const int& margin, bool updateSizes)
 {
+#if DEBUG >= DEBUG_TRACE
+	LOG_AS_TRACE();
+#endif
 	this->margin = margin;
 	if (updateSizes)
 		this->configureSizes();
+
+#if DEBUG >= DEBUG_TRACE
+	LOG_AS_TRACE();
+#endif
 }
 
 void	Display::HUD::setFontsize(const float& fontSize, bool updateSizes)
 {
+#if DEBUG >= DEBUG_TRACE
+	LOG_AS_TRACE();
+#endif
 	this->fontSize = fontSize;
 	this->fontHeight = MeasureTextEx(GetFontDefault(), "X", this->fontSize, 0).y;
 	if (!this->fontHeight)
 		this->fontHeight = this->fontSize;
 	if (updateSizes)
 		this->configureSizes();
+
+#if DEBUG >= DEBUG_TRACE
+	LOG_AS_TRACE();
+#endif
 }
 
 void	Display::HUD::configureSizes(bool updatePositions)
 {
+#if DEBUG >= DEBUG_TRACE
 	LOG_AS_TRACE();
+#endif
 	this->configureDataSize(false);
 	this->configureControlSize(false);
 	this->configureMovementSize(false);
 	this->configureFrameSize(updatePositions);
+
+#if DEBUG >= DEBUG_TRACE
+	LOG_AS_TRACE();
+#endif
 }
 
 void	Display::HUD::configureDataSize(bool updateFrame)
 {
+#if DEBUG >= DEBUG_TRACE
 	LOG_AS_TRACE();
+#endif
 	this->Data.width = MeasureText("  [M]anhattan: 00", this->fontSize);
 	this->Data.height = 7 * this->fontHeight;
 	Display::logRectangle("HUD.Data", this->Data);
 	if (updateFrame)
 		this->configureFrameSize();
+
+#if DEBUG >= DEBUG_TRACE
+	LOG_AS_TRACE();
+#endif
 }
 
 void	Display::HUD::configureControlSize(bool updateFrame)
 {
+#if DEBUG >= DEBUG_TRACE
 	LOG_AS_TRACE();
+#endif
 	this->Controls.width = 0;
 	for (const auto& key : Display::hotkeyList)
 	{
@@ -103,21 +135,33 @@ void	Display::HUD::configureControlSize(bool updateFrame)
 	Display::logRectangle("HUD.Controls", this->Controls);
 	if (updateFrame)
 		this->configureFrameSize();
+
+#if DEBUG >= DEBUG_TRACE
+	LOG_AS_TRACE();
+#endif
 }
 
 void	Display::HUD::configureMovementSize(bool updateFrame)
 {
+#if DEBUG >= DEBUG_TRACE
 	LOG_AS_TRACE();
+#endif
 	this->Movement.width = this->margin * 5;
 	this->Movement.height = this->Movement.width;
 	Display::logRectangle("HUD.Movement", this->Movement);
 	if (updateFrame)
 		this->configureFrameSize();
+
+#if DEBUG >= DEBUG_TRACE
+	LOG_AS_TRACE();
+#endif
 }
 
 void	Display::HUD::configureFrameSize(bool updatePositions)
 {
+#if DEBUG >= DEBUG_TRACE
 	LOG_AS_TRACE();
+#endif
 	this->Frame.width = 0;
 	this->Frame.height = (float)this->margin;
 	for (const Rectangle& rect : { this->Data, this->Controls, this->Movement })
@@ -129,64 +173,112 @@ void	Display::HUD::configureFrameSize(bool updatePositions)
 	Display::logRectangle("HUD.Frame", this->Frame);
 	if (updatePositions)
 		this->configurePositions();
+
+#if DEBUG >= DEBUG_TRACE
+	LOG_AS_TRACE();
+#endif
 }
 
 void	Display::HUD::configurePositions(void)
 {
+#if DEBUG >= DEBUG_TRACE
 	LOG_AS_TRACE();
+#endif
 	this->configureFramePosition();
 	this->configureDataPosition();
 	this->configureControlsPosition();
 	this->configureMovementPosition();
+
+#if DEBUG >= DEBUG_TRACE
+	LOG_AS_TRACE();
+#endif
 }
 
 void	Display::HUD::configureFramePosition(void)
 {
+#if DEBUG >= DEBUG_TRACE
 	LOG_AS_TRACE();
+#endif
 	this->Frame.x = this->margin;
 	this->Frame.y = this->margin;
 	Display::logRectangle("HUD.Frame", this->Frame);
+
+#if DEBUG >= DEBUG_TRACE
+	LOG_AS_TRACE();
+#endif
 }
 
 void	Display::HUD::configureDataPosition(void)
 {
+#if DEBUG >= DEBUG_TRACE
 	LOG_AS_TRACE();
+#endif
 	this->Data.x = this->Frame.x + this->margin;
 	this->Data.y = this->Frame.y + this->margin;
 	Display::logRectangle("HUD.Data", this->Data);
+
+#if DEBUG >= DEBUG_TRACE
+	LOG_AS_TRACE();
+#endif
 }
 
 void	Display::HUD::configureControlsPosition(void)
 {
+#if DEBUG >= DEBUG_TRACE
 	LOG_AS_TRACE();
+#endif
 	this->Controls.x = this->Frame.x + this->margin;
 	this->Controls.y = this->Data.y + this->Data.height + this->margin;
 	Display::logRectangle("HUD.Controls", this->Controls);
+
+#if DEBUG >= DEBUG_TRACE
+	LOG_AS_TRACE();
+#endif
 }
 
 void	Display::HUD::configureMovementPosition(void)
 {
+#if DEBUG >= DEBUG_TRACE
 	LOG_AS_TRACE();
+#endif
 	this->Movement.x = this->Frame.x + (this->Frame.width - this->Movement.width) / 2;
 	this->Movement.y = this->Controls.y + this->Controls.height + this->margin;
 	Display::logRectangle("HUD.Movement", this->Movement);
+
+#if DEBUG >= DEBUG_TRACE
+	LOG_AS_TRACE();
+#endif
 }
 
 void	Display::HUD::render(void) const
 {
+#if DEBUG >= DEBUG_ALL
+	LOG_AS_TRACE();
+#endif
 	this->renderFrame();
 	this->renderData(nullptr);
 	this->renderControls();
 	this->renderMovement();
+
+#if DEBUG >= DEBUG_ALL
+	LOG_AS_TRACE();
+#endif
 }
 
 void	Display::HUD::renderFrame(void) const
 {
 	DrawRectangleRec(this->Frame, Color{23,23,23,255});
+
+#if DEBUG >= DEBUG_ALL
+	LOG_AS_TRACE();
+#endif
 }
 
 void	Display::HUD::renderData(nPuzzle* puzzle) const
 {
+#if DEBUG >= DEBUG_ALL
+	LOG_AS_TRACE();
+#endif
 	const char*	buffer;
 
 	// DrawRectangleLinesEx(this->Data, 1, Color{255,23,23,255});
@@ -222,10 +314,17 @@ void	Display::HUD::renderData(nPuzzle* puzzle) const
 	}
 	endLoop:
 	return;
+
+#if DEBUG >= DEBUG_ALL
+	LOG_AS_TRACE();
+#endif
 }
 
 void	Display::HUD::renderControls(void) const
 {
+#if DEBUG >= DEBUG_ALL
+	LOG_AS_TRACE();
+#endif
 	const char*	buffer;
 	size_t		i;
 
@@ -240,6 +339,9 @@ void	Display::HUD::renderControls(void) const
 
 void	Display::HUD::renderMovement(void) const
 {
+#if DEBUG >= DEBUG_ALL
+	LOG_AS_TRACE();
+#endif
 	int	length;
 	int width;
 
@@ -248,6 +350,10 @@ void	Display::HUD::renderMovement(void) const
 	width = length / 3;
 	DrawRectangle(this->Movement.x, this->Movement.y + (length - width) / 2, length, width, Color{192,192,192,255});
 	DrawRectangle(this->Movement.x + (length - width) / 2, this->Movement.y, width, length, Color{192,192,192,255});
+
+#if DEBUG >= DEBUG_ALL
+	LOG_AS_TRACE();
+#endif
 }
 
 /** ************************************************************************ **\

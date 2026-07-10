@@ -1,19 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   nPuzzleState.cpp                                      :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: ohengelm <ohengelm@student.42.fr>            +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2026/06/12 16:13:50 by ohengelm      #+#    #+#                 */
-/*   Updated: 2026/06/12 16:13:50 by ohengelm      ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   nPuzzleState.cpp                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/06/12 16:13:50 by ohengelm          #+#    #+#             */
+/*   Updated: 2026/07/10 13:54:31 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "nPuzzleState.hpp"
 #include "colors.hpp"
 
-#include <iostream>
+#include <iostream>	// std::stream
 
 /** ************************************************************************ **\
  * 
@@ -26,12 +26,13 @@ nPuzzleState::nPuzzleState(const int32_t size):
 	height(size),
 	size(size * size)
 {
-	this->generateTiles();
-	this->setEmptyPos(0, 0);
+#if DEBUG >= DEBUG_TRACE
 	std::cout	<< C_DGREEN	<< "Default constructor "
-				<< C_GREEN	<< "nPuzzleState"
+				<< C_GREEN	<< __func__
 				<< C_DGREEN	<< " called."
 				<< C_RESET	<< std::endl;
+#endif
+	this->generateTiles();
 }
 
 nPuzzleState::nPuzzleState(const int32_t width, const int32_t height):
@@ -39,12 +40,13 @@ nPuzzleState::nPuzzleState(const int32_t width, const int32_t height):
 	height(height),
 	size(width * height)
 {
-	this->generateTiles();
-	this->setEmptyPos(0, 0);
+#if DEBUG >= DEBUG_TRACE
 	std::cout	<< C_DGREEN	<< "Default constructor "
-				<< C_GREEN	<< "nPuzzleState"
+				<< C_GREEN	<< __func__
 				<< C_DGREEN	<< " called."
 				<< C_RESET	<< std::endl;
+#endif
+	this->generateTiles();
 }
 
 void	nPuzzleState::generateTiles(void)
@@ -59,11 +61,13 @@ nPuzzleState::nPuzzleState(const nPuzzleState &src):
 	height(src.getPuzzleHeight()),
 	size(src.getPuzzleSize())
 {
-	*this = src;
+#if DEBUG >= DEBUG_TRACE
 	std::cout	<< C_DGREEN	<< "Copy constructor "
-				<< C_GREEN	<< "nPuzzleState"
+				<< C_GREEN	<< __func__
 				<< C_DGREEN	<< " called."
 				<< C_RESET	<< std::endl;
+#endif
+	*this = src;
 }
 
 /** ************************************************************************ **\
@@ -74,10 +78,12 @@ nPuzzleState::nPuzzleState(const nPuzzleState &src):
 
 nPuzzleState::~nPuzzleState(void)
 {
+#if DEBUG >= DEBUG_TRACE
 	std::cout	<< C_RED	<< "Deconstructor "
-				<< C_RED	<< "nPuzzleState"
+				<< C_RED	<< __func__
 				<< C_DRED	<< " called"
 				<< C_RESET	<< std::endl;
+#endif
 }
 
 /** ************************************************************************ **\

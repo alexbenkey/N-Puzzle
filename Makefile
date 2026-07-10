@@ -8,9 +8,9 @@ NAME :=	npuzzle
 
 # Preprocessor
 INCLUDES :=	-Ihdr
-DEFINES :=	-DDEBUG=0
+DEFINES ?=	
 CPPFLAGS ?=	
-CPPFLAGS +=	$(INCLUDES) $(DEFINES)
+CPPFLAGS +=	$(INCLUDES) $(DEFINES) -DDEBUG=$(DEBUG)
 
 WARNFLAGS :=	-Wall -Wextra -Werror
 # WARNFLAGS +=	-Wno-unused-result
@@ -41,9 +41,11 @@ BUILD ?=	debug
 # Release
 ifeq ($(BUILD),release)
 	CXXFLAGS +=		-O3
+	DEBUG ?=		1
 # debug
 else ifeq ($(BUILD),debug)
 	CXXFLAGS +=		-O0 -g3
+	DEBUG ?=		4
 # Sanitizer (ASan / UBSan)
 #
 # Debug helpers (ASan symbols)
@@ -63,6 +65,7 @@ else ifeq ($(BUILD),sanitize)
 					-fno-sanitize-recover=all
 	LDFLAGS +=		-fsanitize=address,undefined \
 					-fsanitize-address-use-after-scope
+	DEBUG ?=		4
 else
 	$(error Unknown BUILD='$(BUILD)')
 endif
