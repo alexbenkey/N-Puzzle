@@ -44,6 +44,7 @@ class nPuzzle
 		nPuzzleState&	getCurrentState()	{ return (this->state); }
 		nPuzzleState&	getTargetState()	{ return (this->target); }
 		nPuzzleState&	getStartState()		{ return (this->start); }
+		void	storeStartState(void) { this->start = this->state; }
 
 		void	printPuzzle(void) { this->state.printPuzzle(); }
 		void	printTarget(void) { this->target.printPuzzle(); }
