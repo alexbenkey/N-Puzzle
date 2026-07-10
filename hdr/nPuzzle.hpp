@@ -13,8 +13,10 @@
 #ifndef NPUZZLE_HPP
 # define NPUZZLE_HPP
 
-#include "nPuzzleState.hpp"
-#include "nPuzzleTarget.hpp"
+# include "nPuzzleState.hpp"
+# include "nPuzzleTarget.hpp"
+
+# include <vector>
 
 class nPuzzle
 {
@@ -25,6 +27,9 @@ class nPuzzle
 		nPuzzleState	start;
 		nPuzzleTarget	target;
 		nPuzzleState	state;
+
+		std::vector<nPuzzleState*>	queue;
+		std::vector<nPuzzleState*>	visited;
 
 	protected:
 
@@ -52,6 +57,12 @@ class nPuzzle
 		void moveDown(void) { this->state.moveDown(); }
 		void moveLeft(void) { this->state.moveLeft(); }
 		void moveRight(void) { this->state.moveRight(); }
+
+		void	solve(void);
+		void	processState(nPuzzleState* state);
+		bool	stateHasAlreadyBeenVisited(nPuzzleState* state);
+		bool	stateIsAlreadyInQueue(nPuzzleState* state);
+		void	calculateHeuristic(nPuzzleState* state, nPuzzle* puzzle);
 
 		nPuzzle	&operator=(const nPuzzle &src);
 };
