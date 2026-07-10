@@ -37,9 +37,9 @@ class nPuzzle
 
 		void	setRow(int32_t row, const std::vector<int>& numbers);
 
-		int	getWidth() const	{ return (this->width); }
-		int	getHeight() const	{ return (this->height); }
-		int	getSurface() const	{ return (this->width * this->height); }
+		// int	getWidth() const	{ return (this->width); }
+		// int	getHeight() const	{ return (this->height); }
+		// int	getSurface() const	{ return (this->width * this->height); }
 
 		nPuzzleState&	getCurrentState()	{ return (this->state); }
 		nPuzzleState&	getTargetState()	{ return (this->target); }

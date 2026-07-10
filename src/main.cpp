@@ -6,11 +6,12 @@
 /*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/10 17:52:53 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/10 15:40:36 by avon-ben         ###   ########.fr       */
+/*   Updated: 2026/07/10 16:58:13 by avon-ben         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "nPuzzleHeader.hpp"
+#include "displayNPuzzle.hpp"
 #include <iostream>
 
 void simulate(nPuzzle &puzzle); 
@@ -25,6 +26,7 @@ int	main(void)
 		return (1);
 	}
 	simulate(*puzzle);
+	displayNPuzzle(puzzle);
 	delete puzzle;
 	return (0);
 }

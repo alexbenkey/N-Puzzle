@@ -83,6 +83,7 @@ class nPuzzleState
 		void	printPuzzle(void) const;
 		bool	validPuzzle(void) const;
 		void	printTilePos(const Tile& Tile) const;
+		int32_t getTileValue(const int32_t x, const int32_t y) const { return tiles[y][x].getVal(); }
 
     	Tile& getEmptyTile() { return tiles[emptyPos.y][emptyPos.x]; }
     	const Tile& getEmptyTile() const { return tiles[emptyPos.y][emptyPos.x]; }
