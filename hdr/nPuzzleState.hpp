@@ -36,12 +36,13 @@ class nPuzzleState
 
 				~Tile(void);
 
-				int32_t	getVal(void) const	{ return value; } 
+				int32_t	getVal(void) const	{ return value; }
 				void	setVal(int32_t v) { value = v;}
 				int32_t	getxPos(void) const { return xPos; }
-				void	setxPos(int32_t x) { xPos = x; } 
+				void	setxPos(int32_t x) { xPos = x; }
 				int32_t getyPos(void) const {return yPos; }
-				void	setyPos(int32_t y) { yPos = y; }  
+				void	setyPos(int32_t y) { yPos = y; }
+				void	setContent(int32_t value, int32_t x, int32_t y) { this->value = value; this->xPos = x; this->yPos = y; }
 
 				Tile& operator=(const Tile& src);
 		};
