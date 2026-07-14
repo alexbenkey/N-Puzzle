@@ -6,7 +6,7 @@
 /*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 16:13:55 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/10 13:43:03 by othello          ###   ########.fr       */
+/*   Updated: 2026/07/14 16:49:33 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,7 @@ nPuzzleState::Tile	&nPuzzleState::Tile::operator=(const Tile &src)
 	if (this == &src)
 		return (*this);
 	this->value = src.value;
-
+	this->xPos = src.xPos;
+	this->yPos = src.yPos;
 	return (*this);
 }
