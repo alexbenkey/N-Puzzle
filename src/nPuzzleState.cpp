@@ -6,7 +6,7 @@
 /*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 16:13:50 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/10 20:02:47 by othello          ###   ########.fr       */
+/*   Updated: 2026/07/14 13:49:22 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,6 +152,22 @@ bool	nPuzzleState::validPuzzlePlacement(void) const
 }
 
 nPuzzleState::Tile&	nPuzzleState::getTile(int32_t value)
+{
+	if ((size_t)value > tiles.size()){
+		std::runtime_error("Out of bounds Value");
+	}
+	for (size_t y = 0; y < this->tiles.size(); ++y)
+	{
+		for (size_t x = 0; x < this->tiles[y].size(); ++x)
+		{
+			if (this->tiles[y][x].getVal() == value)
+				return (this->tiles[y][x]);
+		}
+	}
+	return (this->tiles[0][0]);
+}
+
+const nPuzzleState::Tile&	nPuzzleState::getTile(const int32_t value) const
 {
 	if ((size_t)value > tiles.size()){
 		std::runtime_error("Out of bounds Value");

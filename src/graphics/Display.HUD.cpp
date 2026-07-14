@@ -6,12 +6,13 @@
 /*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/09 13:44:29 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/10 13:41:26 by othello          ###   ########.fr       */
+/*   Updated: 2026/07/14 14:08:08 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Display.hpp"
 #include "colors.hpp"
+#include "heuristic.hpp"
 
 #include <iostream>	// std::stream
 
@@ -250,13 +251,13 @@ void	Display::HUD::configureMovementPosition(void)
 #endif
 }
 
-void	Display::HUD::render(void) const
+void	Display::HUD::render(nPuzzle* puzzle) const
 {
 #if DEBUG >= DEBUG_ALL
 	LOG_AS_TRACE();
 #endif
 	this->renderFrame();
-	this->renderData(nullptr);
+	this->renderData(puzzle);
 	this->renderControls();
 	this->renderMovement();
 
@@ -301,9 +302,9 @@ void	Display::HUD::renderData(nPuzzle* puzzle) const
 			case 3:
 				buffer = TextFormat("Heuristics");
 				break;
-			case 4:
+				case 4:
 				if (puzzle)
-					buffer = TextFormat("  [M]anhattan: %i", 0);
+					buffer = TextFormat("  [%i] %s: %i", 0, heuristic::function[0].name, heuristic::function[0].f(&puzzle->getCurrentState(), &puzzle->getTargetState()));
 				else
 					buffer = TextFormat("  [M]anhattan: %s", "N/A");
 				break;

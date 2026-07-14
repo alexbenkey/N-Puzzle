@@ -85,7 +85,7 @@ class Display
 				// Positions
 				void	configurePositions(void);
 				// Render
-				void	render(void) const;
+				void	render(nPuzzle* puzzle) const;
 		};
 		struct HUD	HUD;
 		Rectangle	Frame;

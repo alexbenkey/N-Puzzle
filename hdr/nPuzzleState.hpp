@@ -77,6 +77,7 @@ class nPuzzleState
 
 		void	generateTiles(void);
 		Tile&   getTile(const int32_t value);
+		const Tile&   getTile(const int32_t value) const;
 		Tile&	getTile(const int32_t x, const int32_t y) { return tiles[y][x]; }
 		
 		const Tile&	getTile(const int32_t x, const int32_t y) const { return tiles[y][x]; }

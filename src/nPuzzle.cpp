@@ -6,7 +6,7 @@
 /*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 16:13:50 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/10 20:04:19 by othello          ###   ########.fr       */
+/*   Updated: 2026/07/14 15:00:49 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -205,6 +205,62 @@ void	nPuzzle::calculateHeuristic(nPuzzleState* state, nPuzzle* puzzle)
 #warning need to actuall set heursitc
 	// state.setH(heuristic);
 }
+
+void	nPuzzle::printAllTiles(const nPuzzleState& state) const
+{
+	for (int32_t x = 0, width = state.getPuzzleWidth(); x < width; ++x)
+	{
+		for (int32_t y = 0, height = state.getPuzzleHeight(); y < height; ++y)
+		{
+			nPuzzleState::Tile tile = state.getTile(x, y);
+			std::printf("%2i [%2i][%2i] ", tile.getVal(), tile.getxPos(), tile.getyPos());
+			state.printTilePos(tile);
+		}
+	}
+	std::cout	<< std::endl;
+}
+
+void	nPuzzle::printAllTilesFlex(nPuzzleState& state)
+{
+	// for (int32_t x = 0, width = state.getPuzzleWidth(); x < width; ++x)
+	// {
+	// 	for (int32_t y = 0, height = state.getPuzzleHeight(); y < height; ++y)
+	// 	{
+
+	// 		nPuzzleState::Tile tile = state.getTile(x, y);
+	// 		std::printf("[%2i][%2i] > %2i [%2i][%2i] ", x, y, tile.getVal(), tile.getxPos(), tile.getyPos());
+	// 		state.printTilePos(tile);
+	// 	}
+	// }
+	for (int32_t value = 1, size = state.getPuzzleSize(); value < size; ++value)
+	{
+		nPuzzleState::Tile tile = state.getTile(value);
+		std::printf("%2i [%2i][%2i] ", tile.getVal(), tile.getxPos(), tile.getyPos());
+		state.printTilePos(tile);
+	}
+	std::cout	<< std::endl;
+}
+
+// int32_t	nPuzzle::heuristicManhattan(nPuzzleState* state, nPuzzle* puzzle)
+// {
+// 	nPuzzleState	target = puzzle->getTargetState();
+// 	int32_t	heuristic = 0;
+
+// 	for (int32_t x = 0, width = target.getPuzzleWidth(); x < width; ++x)
+// 	{
+// 		for (int32_t y = 0, height = target.getPuzzleHeight(); y < height; ++y)
+// 		{
+// 			nPuzzleState::Tile	comp = target.getTile(x, y);
+// 			int32_t	value = target.getTile(x, y).getVal();
+// 			if (value <= 0)
+// 				continue;
+// 			nPuzzleState::Tile	src = state->getTile(value);
+// 			heuristic += std::abs(x - src.getxPos());
+// 			heuristic += std::abs(y - src.getyPos());
+// 		}
+// 	}
+// 	return (heuristic);
+// }
 
 /** ************************************************************************ **\
  * 
