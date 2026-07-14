@@ -6,7 +6,7 @@
 /*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/02 16:48:19 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/14 14:52:30 by othello          ###   ########.fr       */
+/*   Updated: 2026/07/14 18:19:42 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,11 +37,6 @@ void	displayNPuzzle(nPuzzle* puzzle)
 	SetTraceLogLevel(TraceLogLevel::LOG_ALL);
 #endif
 	Display	graphics(puzzle);
-
-	puzzle->printTarget();
-	puzzle->printAllTilesFlex(puzzle->getStartState());
-	puzzle->printAllTilesFlex(puzzle->getCurrentState());
-	puzzle->printAllTilesFlex(puzzle->getTargetState());
 
 	try
 	{
