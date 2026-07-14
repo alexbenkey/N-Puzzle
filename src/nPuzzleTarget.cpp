@@ -6,7 +6,7 @@
 /*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 16:13:50 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/10 13:59:41 by othello          ###   ########.fr       */
+/*   Updated: 2026/07/14 16:53:24 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,22 +75,22 @@ void	nPuzzleTarget::setTargetTiles(void)
 	{
 		// left → right
 		for (int32_t x = left; x <= right && i < getPuzzleSize(); ++x)
-			this->getTile(x, top).setVal(i++);
+			this->getTile(x, top).setContent(i++, x, top);
 		++top;
 
 		// top → bottom
 		for (int32_t y = top; y <= bottom && i < getPuzzleSize(); ++y)
-			this->getTile(right, y).setVal(i++);
+			this->getTile(right, y).setContent(i++, right, y);
 		--right;
 
 		// right → left
 		for (int32_t x = right; x >= left && i < getPuzzleSize(); --x)
-			this->getTile(x, bottom).setVal(i++);
+			this->getTile(x, bottom).setContent(i++, x, bottom);
 		--bottom;
 
 		// bottom → top
 		for (int32_t y = bottom; y >= top && i < getPuzzleSize(); --y)
-			this->getTile(left, y).setVal(i++);
+			this->getTile(left, y).setContent(i++, y, top);
 		++left;
 	}
 }
