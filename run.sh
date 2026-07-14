@@ -6,7 +6,7 @@
 #    By: othello <othello@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/06/10 18:24:25 by ohengelm          #+#    #+#              #
-#    Updated: 2026/07/10 18:41:34 by othello          ###   ########.fr        #
+#    Updated: 2026/07/14 17:00:10 by othello          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -88,4 +88,4 @@ fi
 
 clear
 make BUILD=debug || exit 1
-python3 assets/npuzzle-gen.py ${solvable}${unsolvable}${iterations}${size}
+python3 assets/npuzzle-gen.py ${solvable}${unsolvable}${iterations}${size} | ./npuzzle
