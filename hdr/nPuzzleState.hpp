@@ -98,17 +98,31 @@ class nPuzzleState
 		void 	moveTile(Tile& tile);
 		void 	increaseCost(void) { ++this->cost; };
 
-		void 	moveUp(void);
-		void 	moveDown(void);
-		void 	moveLeft(void);
-		void 	moveRight(void);
+		bool	move(int32_t direction);
+		// void 	moveUp(void);
+		// void 	moveDown(void);
+		// void 	moveLeft(void);
+		// void 	moveRight(void);
 
 		int32_t	getCost(void) const	{ return (this->cost); }
 		int32_t getHeuristic(void) const {return (this->heuristic); }
+
+		bool			sameState(const nPuzzleState &rhs) const noexcept;
+		bool			notSameState(const nPuzzleState &rhs) const noexcept;
 		
 		nPuzzleState	&operator=(const nPuzzleState &src);
-		bool			operator==(const nPuzzleState &rhs) const noexcept;
+
 		bool			operator<(const nPuzzleState &rhs) const noexcept;
+		bool			operator<=(const nPuzzleState &rhs) const noexcept;
+		bool			operator>(const nPuzzleState &rhs) const noexcept;
+		bool			operator>=(const nPuzzleState &rhs) const noexcept;
+};
+
+enum direction { 
+	UP, 
+	RIGHT,
+	DOWN,
+	LEFT
 };
 
 #endif

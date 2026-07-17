@@ -6,7 +6,7 @@
 /*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 16:13:50 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/17 12:45:58 by avon-ben         ###   ########.fr       */
+/*   Updated: 2026/07/17 13:54:01 by avon-ben         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,9 +119,7 @@ void	nPuzzle::solve(void)
 	{
 		current = this->queue.front();
 		this->queue.erase(this->queue.begin());
-#warning needs == overload
-		if (false)
-		if (*current == this->target)
+		if (current->sameState(this->target))
 			break ;
 		this->visited.push_back(current);
 		for (auto move : {
