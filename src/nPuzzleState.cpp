@@ -6,7 +6,7 @@
 /*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 16:13:50 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/17 16:02:14 by avon-ben         ###   ########.fr       */
+/*   Updated: 2026/07/17 17:13:29 by avon-ben         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -210,11 +210,11 @@ void 	nPuzzleState::moveTile(nPuzzleState::Tile& tile)
 		throw std::runtime_error("Tile is not adjacent to the empty square");
 }
 
-bool nPuzzleState::move(int32_t direction){
+bool nPuzzleState::move(Direction direction){
 	Tile *toMove = nullptr; 
 	switch (direction){
 
-		case 0: // up
+		case Direction::UP:
 			if (emptyPos.y == 0)
 			{
 				#if DEBUG >= DEBUG_TRACE
@@ -225,7 +225,7 @@ bool nPuzzleState::move(int32_t direction){
 			}
 			toMove = &getTile(emptyPos.x, emptyPos.y - 1);
 			break ;
-		case 1: // right
+		case Direction::RIGHT:
 			if (emptyPos.x == this->width - 1)
 			{
 				#if DEBUG >= DEBUG_TRACE
@@ -237,7 +237,7 @@ bool nPuzzleState::move(int32_t direction){
 			toMove = &getTile(emptyPos.x + 1, emptyPos.y);
 			break ;
 
-		case(2): // down
+		case(Direction::DOWN):
 			if (emptyPos.y == this->height - 1)
 			{
 				#if DEBUG >= DEBUG_TRACE
@@ -249,7 +249,7 @@ bool nPuzzleState::move(int32_t direction){
 			toMove =  &getTile(emptyPos.x, emptyPos.y + 1);
 			break ;
 
-		case(3): // left
+		case(Direction::LEFT):
 			if (emptyPos.x == 0)
 			{
 				#if DEBUG >= DEBUG_TRACE
@@ -268,6 +268,7 @@ bool nPuzzleState::move(int32_t direction){
 	std::cout	<< C_GREEN	<< "Tile moved successfully"
 				<< C_RESET	<< std::endl;
 	#endif
+	return (true);
 }
 
 // void nPuzzleState::moveUp(void)
@@ -374,45 +375,6 @@ bool	nPuzzleState::notSameState(const nPuzzleState &rhs) const noexcept
 	return (true);
 }
 
-<<<<<<< HEAD
-=======
-void nPuzzleState::moveRight(void)
-{
-	if (emptyPos.x == this->width - 1)
-	{
-		#if DEBUG >= DEBUG_TRACE
-		std::cout	<< C_RED	<< "cannot move right, empty square is at the right edge"
-					<< C_RESET	<< std::endl;
-		#endif
-		return;
-	}
-	Tile& tileRight = getTile(emptyPos.x + 1, emptyPos.y);
-	this->moveTile(tileRight);
-	this->increaseCost();
-	#if DEBUG >= DEBUG_TRACE
-	std::cout	<< C_GREEN	<< "Tile moved right successfully"
-				<< C_RESET	<< std::endl;
-	#endif
-}
-
-
-void	nPuzzleState::calculateHeuristic(const nPuzzleState* target)
-{
-	for (int32_t h = 0; h < heuristic::size; ++h)
-		this->calculateHeuristic(h, target);
-}
-
-void	nPuzzleState::calculateHeuristic(int32_t h, const nPuzzleState* target)
-{
-	this->heuristic[h] = heuristic::getHeuristic(h, this, target);
-}
-
-int32_t	nPuzzleState::getHeuristic(int32_t h) const
-{
-	return (this->heuristic.count(h) ? this->heuristic.at(h) : -1);
-}
-
->>>>>>> origin/main
 /** ************************************************************************ **\
  * 
  * 	Operators
@@ -421,7 +383,9 @@ int32_t	nPuzzleState::getHeuristic(int32_t h) const
 
 bool	nPuzzleState::operator<(const nPuzzleState &rhs) const noexcept
 {
-	if ((this->getCost() + this->getHeuristic()) < (rhs.getCost() + rhs.getHeuristic()))
+	#warning it is now required to set the particular used heuristic in the state class. 
+ 	int32_t hKey = this->usedHeuristic;
+	if ((this->getCost() + this->getHeuristic(hKey)) < (rhs.getCost() + rhs.getHeuristic(hKey)))
 		return true;
 	else if (this->getCost() < rhs.getCost())
 		return true;
@@ -430,7 +394,8 @@ bool	nPuzzleState::operator<(const nPuzzleState &rhs) const noexcept
 
 bool	nPuzzleState::operator<=(const nPuzzleState &rhs) const noexcept
 {
-	if ((this->getCost() + this->getHeuristic()) <= (rhs.getCost() + rhs.getHeuristic()))
+ 	int32_t hKey = this->usedHeuristic;
+	if ((this->getCost() + this->getHeuristic(hKey)) <= (rhs.getCost() + rhs.getHeuristic(hKey)))
 		return true;
 	else if (this->getCost() <= rhs.getCost())
 		return true;
@@ -439,7 +404,8 @@ bool	nPuzzleState::operator<=(const nPuzzleState &rhs) const noexcept
 
 bool	nPuzzleState::operator>(const nPuzzleState &rhs) const noexcept
 {
-	if ((this->getCost() + this->getHeuristic()) > (rhs.getCost() + rhs.getHeuristic()))
+ 	int32_t hKey = this->usedHeuristic;
+	if ((this->getCost() + this->getHeuristic(hKey)) > (rhs.getCost() + rhs.getHeuristic(hKey)))
 		return 1;
 	else if (this->getCost() > rhs.getCost())
 		return 1;
@@ -447,8 +413,8 @@ bool	nPuzzleState::operator>(const nPuzzleState &rhs) const noexcept
 }
 bool	nPuzzleState::operator>=(const nPuzzleState &rhs) const noexcept
 {
-
-	if ((this->getCost() + this->getHeuristic()) > (rhs.getCost() + rhs.getHeuristic()))
+ 	int32_t hKey = this->usedHeuristic;
+	if ((this->getCost() + this->getHeuristic(hKey)) > (rhs.getCost() + rhs.getHeuristic(hKey)))
 		return 1;
 	else if (this->getCost() > rhs.getCost())
 		return 1;

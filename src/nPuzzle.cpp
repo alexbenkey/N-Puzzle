@@ -6,7 +6,7 @@
 /*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 16:13:50 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/17 16:02:06 by avon-ben         ###   ########.fr       */
+/*   Updated: 2026/07/17 16:26:46 by avon-ben         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,17 +110,16 @@ void	nPuzzle::setRow(int32_t row, const std::vector<int>& numbers)
 	}
 }
 
-#warning needs to be adjusted to use the enum with this->state.move(enum)
 bool	nPuzzle::move(int32_t direction, int32_t h)
 {
-	bool	validMove = true;
+	bool	validMove;
 
 	switch (direction)
 	{
-		case 0:	this->state.moveUp();	break;
-		case 1:	this->state.moveDown();	break;
-		case 2:	this->state.moveLeft();	break;
-		case 3:	this->state.moveRight();	break;
+		case 0:	validMove = this->state.move(nPuzzleState::Direction::UP);		break;
+		case 1:	validMove = this->state.move(nPuzzleState::Direction::RIGHT);	break;
+		case 2:	validMove = this->state.move(nPuzzleState::Direction::DOWN);	break;
+		case 3:	validMove = this->state.move(nPuzzleState::Direction::LEFT);	break;
 	}
 	if (validMove)
 	{
@@ -151,16 +150,17 @@ void	nPuzzle::solve(int32_t h)
 		if (current->sameState(this->target))
 			break ;
 		this->visited.push_back(current);
-#warning needs to be adjusted to use nPuzzleState::move with (next->*move(enum))
-		for (auto move : {
-			&nPuzzleState::moveDown,
-			&nPuzzleState::moveUp,
-			&nPuzzleState::moveLeft,
-			&nPuzzleState::moveRight
-		}){
+		for (nPuzzleState::Direction direction : {
+			nPuzzleState::Direction::UP,
+			nPuzzleState::Direction::RIGHT,
+			nPuzzleState::Direction::DOWN,
+			nPuzzleState::Direction::LEFT
+		}) {
 			next = new nPuzzleState(*current);
-			(next->*move)();
-			this->processState(next, h);
+			if (next->move(direction))
+				this->processState(next, h);
+			else
+				delete next;
 		}
 	}
 }

@@ -60,6 +60,7 @@ class nPuzzleState
 		const int32_t	height;
 		const int32_t	size;
 		std::map<int32_t, int32_t>	heuristic;
+		const int32_t   usedHeuristic = 0;
 		int32_t	cost = 0;
 
 		Position emptyPos = {0, 0};
@@ -68,6 +69,13 @@ class nPuzzleState
 		bool	validPuzzlePlacement(void) const;
 
 	public:
+		enum class Direction { 
+			UP, 
+			RIGHT,
+			DOWN,
+			LEFT
+		};
+
 		nPuzzleState(const int32_t size);
 		nPuzzleState(const int32_t width, const int32_t height);
 		nPuzzleState(const nPuzzleState &src);
@@ -99,17 +107,14 @@ class nPuzzleState
 		void 	moveTile(Tile& tile);
 		void 	increaseCost(void) { ++this->cost; };
 
-		// void 	moveUp(void);
-		// void 	moveDown(void);
-		// void 	moveLeft(void);
-		// void 	moveRight(void);
+		bool	move(Direction direction);
 	
 		void	calculateHeuristic(const nPuzzleState* target);
 		void	calculateHeuristic(int32_t h, const nPuzzleState* target);
 		int32_t	getHeuristic(int32_t h) const;
 
 		int32_t	getCost(void) const	{ return (this->cost); }
-		int32_t getHeuristic(void) const {return (this->heuristic); }
+		// int32_t getHeuristic(void) const {return (this->heuristic); }
 
 		bool			sameState(const nPuzzleState &rhs) const noexcept;
 		bool			notSameState(const nPuzzleState &rhs) const noexcept;
@@ -120,13 +125,9 @@ class nPuzzleState
 		bool			operator<=(const nPuzzleState &rhs) const noexcept;
 		bool			operator>(const nPuzzleState &rhs) const noexcept;
 		bool			operator>=(const nPuzzleState &rhs) const noexcept;
+
+
 };
 
-enum direction { 
-	UP, 
-	RIGHT,
-	DOWN,
-	LEFT
-};
 
 #endif
