@@ -6,7 +6,7 @@
 /*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/09 13:44:29 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/17 16:59:46 by othello          ###   ########.fr       */
+/*   Updated: 2026/07/17 18:17:08 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,7 +128,7 @@ void	Display::HUD::configureHeuristicsSize(bool updateFrame)
 	LOG_AS_TRACE();
 #endif
 	this->Heuristics.height = (heuristic::size + 1) * this->fontHeight;
-	for (size_t line = 0; line < heuristic::size; ++line)
+	for (int32_t line = 0; line < heuristic::size; ++line)
 	{
 		float	width = (float)MeasureText(TextFormat("[0] %s: 000", heuristic::function[line].name), this->fontSize);
 		if (width > this->Heuristics.width)

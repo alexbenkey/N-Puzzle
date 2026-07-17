@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   nPuzzleState.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
+/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 16:13:50 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/17 17:55:58 by avon-ben         ###   ########.fr       */
+/*   Updated: 2026/07/17 18:14:44 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -283,6 +283,22 @@ bool	nPuzzleState::sameState(const nPuzzleState &rhs) const noexcept
 			if (this->tiles[y][x].getVal() != rhs.tiles[y][x].getVal())
 				return (false);
 	return (true);
+}
+
+void	nPuzzleState::calculateHeuristic(const nPuzzleState* target)
+{
+	for (int32_t h = 0; h < heuristic::size; ++h)
+		this->calculateHeuristic(h, target);
+}
+
+void	nPuzzleState::calculateHeuristic(int32_t h, const nPuzzleState* target)
+{
+	this->heuristic[h] = heuristic::getHeuristic(h, this, target);
+}
+
+int32_t	nPuzzleState::getHeuristic(int32_t h) const
+{
+	return (this->heuristic.count(h) ? this->heuristic.at(h) : -1);
 }
 
 /** ************************************************************************ **\

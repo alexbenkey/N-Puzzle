@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   nPuzzle.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
+/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 16:13:50 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/17 17:11:18 by othello          ###   ########.fr       */
+/*   Updated: 2026/07/17 18:19:08 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,7 +126,7 @@ void	nPuzzle::maintainValidQueue(void)
 		this->queueIndex = -1;
 	else if (this->queueIndex < 0)
 		this->queueIndex = 0;
-	else if (this->queueIndex >= size)
+	else if (this->queueIndex >= (int32_t)size)
 		this->queueIndex = size - 1;
 
 #if DEBUG >= DEBUG_DEBUG
@@ -160,9 +160,6 @@ bool	nPuzzle::move(int32_t direction, int32_t h)
 
 void	nPuzzle::solve(int32_t h)
 {
-	nPuzzleState*	current;
-	nPuzzleState*	next;
-
 	if (h >= heuristic::size)
 		return ;
 #warning needs to validate puzzle solved state
@@ -196,13 +193,12 @@ void	nPuzzle::solveStep(int32_t h)
 			nPuzzleState::Direction::DOWN,
 			nPuzzleState::Direction::LEFT
 		}) {
-			next = new nPuzzleState(*current);
+			nPuzzleState*	next = new nPuzzleState(*current);
 			if (next->move(direction))
 				this->processState(next, h);
 			else
 				delete next;
 		}
-	}
 
 	this->maintainValidQueue();
 #if DEBUG >= DEBUG_DEBUG
@@ -218,8 +214,7 @@ void	nPuzzle::processState(nPuzzleState* state, int32_t h)
 		return ;
 	state->calculateHeuristic(h, &this->target);
 	this->queue.push_back(state);
-#warning sorting requires proper < overload
-	// std::sort(this->queue.begin(), this->queue.end());
+	std::sort(this->queue.begin(), this->queue.end());
 }
 
 bool	nPuzzle::stateHasAlreadyBeenVisited(nPuzzleState* state)
