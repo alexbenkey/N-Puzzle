@@ -6,7 +6,7 @@
 /*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 16:13:50 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/17 12:40:00 by avon-ben         ###   ########.fr       */
+/*   Updated: 2026/07/17 12:45:10 by avon-ben         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -306,7 +306,9 @@ bool	nPuzzleState::operator==(const nPuzzleState &rhs) const noexcept
 
 bool	nPuzzleState::operator<(const nPuzzleState &rhs) const noexcept
 {
-	// implementation required
+	if ((this->getCost() + this->getHeuristic()) < (rhs.getCost() + rhs.getHeuristic()))
+		return 1;
+	return 0; 
 }
 
 nPuzzleState	&nPuzzleState::operator=(const nPuzzleState &src)

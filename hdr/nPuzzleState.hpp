@@ -103,8 +103,9 @@ class nPuzzleState
 		void 	moveLeft(void);
 		void 	moveRight(void);
 
-		int	getCost(void) const	{ return (this->cost); }
-
+		int32_t	getCost(void) const	{ return (this->cost); }
+		int32_t getHeuristic(void) const {return (this->heuristic); }
+		
 		nPuzzleState	&operator=(const nPuzzleState &src);
 		bool			operator==(const nPuzzleState &rhs) const noexcept;
 		bool			operator<(const nPuzzleState &rhs) const noexcept;

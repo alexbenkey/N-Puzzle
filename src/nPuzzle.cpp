@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   nPuzzle.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
+/*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 16:13:50 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/17 11:57:35 by othello          ###   ########.fr       */
+/*   Updated: 2026/07/17 12:45:58 by avon-ben         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,7 +121,7 @@ void	nPuzzle::solve(void)
 		this->queue.erase(this->queue.begin());
 #warning needs == overload
 		if (false)
-		// if (*current == this->target)
+		if (*current == this->target)
 			break ;
 		this->visited.push_back(current);
 		for (auto move : {
