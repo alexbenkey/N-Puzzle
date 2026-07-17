@@ -6,7 +6,7 @@
 /*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 16:13:50 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/14 15:00:49 by othello          ###   ########.fr       */
+/*   Updated: 2026/07/17 11:57:35 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -202,7 +202,7 @@ void	nPuzzle::calculateHeuristic(nPuzzleState* state, nPuzzle* puzzle)
 		for (int y = 0; y < height; ++y)
 			if (state->getTile(x, y).getVal() != target.getTile(x, y).getVal())
 				++heuristic;
-#warning need to actuall set heursitc
+#warning need to actually set heursitc
 	// state.setH(heuristic);
 }
 
@@ -240,27 +240,6 @@ void	nPuzzle::printAllTilesFlex(nPuzzleState& state)
 	}
 	std::cout	<< std::endl;
 }
-
-// int32_t	nPuzzle::heuristicManhattan(nPuzzleState* state, nPuzzle* puzzle)
-// {
-// 	nPuzzleState	target = puzzle->getTargetState();
-// 	int32_t	heuristic = 0;
-
-// 	for (int32_t x = 0, width = target.getPuzzleWidth(); x < width; ++x)
-// 	{
-// 		for (int32_t y = 0, height = target.getPuzzleHeight(); y < height; ++y)
-// 		{
-// 			nPuzzleState::Tile	comp = target.getTile(x, y);
-// 			int32_t	value = target.getTile(x, y).getVal();
-// 			if (value <= 0)
-// 				continue;
-// 			nPuzzleState::Tile	src = state->getTile(value);
-// 			heuristic += std::abs(x - src.getxPos());
-// 			heuristic += std::abs(y - src.getyPos());
-// 		}
-// 	}
-// 	return (heuristic);
-// }
 
 /** ************************************************************************ **\
  * 
