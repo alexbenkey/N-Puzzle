@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   nPuzzleState.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
+/*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 16:13:50 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/10 13:54:31 by othello          ###   ########.fr       */
+/*   Updated: 2026/07/17 12:37:59 by avon-ben         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -253,6 +253,25 @@ void nPuzzleState::moveRight(void)
  * 	Operators
  * 
 \* ************************************************************************** */
+
+bool	nPuzzleState::operator==(const nPuzzleState &rhs) const noexcept
+{
+	if (this == &rhs)
+		return (true);
+	// possibly an excessive check (?), but avoids potential bounds issues.
+	if (this->width != rhs.width || this->height != rhs.height)
+		return (false);
+	for (int32_t y = 0; y < this->height; ++y)
+		for (int32_t x = 0; x < this->width; ++x)
+			if (this->tiles[y][x].getVal() != rhs.tiles[y][x].getVal())
+				return (false);
+	return (true);
+}
+
+bool	nPuzzleState::operator<(const nPuzzleState &rhs) const noexcept
+{
+	// implementation required
+}
 
 nPuzzleState	&nPuzzleState::operator=(const nPuzzleState &src)
 {

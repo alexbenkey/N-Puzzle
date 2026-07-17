@@ -100,6 +100,8 @@ class nPuzzleState
 		void 	moveRight(void);
 
 		nPuzzleState	&operator=(const nPuzzleState &src);
+		bool			operator==(const nPuzzleState &rhs) const noexcept;
+		bool			operator<(const nPuzzleState &rhs) const noexcept;
 };
 
 #endif
