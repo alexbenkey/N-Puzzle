@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   nPuzzleState.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
+/*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 16:13:50 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/17 13:49:33 by othello          ###   ########.fr       */
+/*   Updated: 2026/07/17 17:55:58 by avon-ben         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -210,97 +210,79 @@ void 	nPuzzleState::moveTile(nPuzzleState::Tile& tile)
 		throw std::runtime_error("Tile is not adjacent to the empty square");
 }
 
-void nPuzzleState::moveUp(void)
-{
-	if (emptyPos.y == 0)
-	{
-		#if DEBUG >= DEBUG_TRACE
-		std::cout	<< C_RED	<< "cannot move up, empty square is at the top"
-					<< C_RESET	<< std::endl;
-		#endif
-		return;
+bool nPuzzleState::move(Direction direction){
+	Tile *toMove = nullptr; 
+	switch (direction){
+
+		case Direction::UP:
+			if (emptyPos.y == 0)
+			{
+				#if DEBUG >= DEBUG_TRACE
+				std::cout	<< C_RED	<< "cannot move up, empty square is at the top"
+							<< C_RESET	<< std::endl;
+				#endif
+				return false;
+			}
+			toMove = &getTile(emptyPos.x, emptyPos.y - 1);
+			break ;
+		case Direction::RIGHT:
+			if (emptyPos.x == this->width - 1)
+			{
+				#if DEBUG >= DEBUG_TRACE
+				std::cout	<< C_RED	<< "cannot move right, empty square is at the right edge"
+							<< C_RESET	<< std::endl;
+				#endif
+				return false;
+			}
+			toMove = &getTile(emptyPos.x + 1, emptyPos.y);
+			break ;
+
+		case(Direction::DOWN):
+			if (emptyPos.y == this->height - 1)
+			{
+				#if DEBUG >= DEBUG_TRACE
+				std::cout	<< C_RED	<< "cannot move down, empty square is at the bottom"
+							<< C_RESET	<< std::endl;
+				#endif
+				return false;
+			}
+			toMove =  &getTile(emptyPos.x, emptyPos.y + 1);
+			break ;
+
+		case(Direction::LEFT):
+			if (emptyPos.x == 0)
+			{
+				#if DEBUG >= DEBUG_TRACE
+				std::cout	<< C_RED	<< "cannot move left, empty square is at the left edge"
+							<< C_RESET	<< std::endl;
+				#endif
+				return false;
+			}
+			toMove =  &getTile(emptyPos.x - 1, emptyPos.y);
+			break ;
 	}
-	Tile& tileAbove = getTile(emptyPos.x, emptyPos.y - 1);
-	this->moveTile(tileAbove);
+		
+	this->moveTile(*toMove);
 	this->increaseCost();
 	#if DEBUG >= DEBUG_TRACE
-	std::cout	<< C_GREEN	<< "Tile moved up successfully"
+	std::cout	<< C_GREEN	<< "Tile moved successfully"
 				<< C_RESET	<< std::endl;
 	#endif
+	return (true);
 }
 
-void nPuzzleState::moveDown(void)
+bool	nPuzzleState::sameState(const nPuzzleState &rhs) const noexcept
 {
-	if (emptyPos.y == this->height - 1)
-	{
-		#if DEBUG >= DEBUG_TRACE
-		std::cout	<< C_RED	<< "cannot move down, empty square is at the bottom"
-					<< C_RESET	<< std::endl;
-		#endif
-		return;
-	}
-	Tile& tileBelow = getTile(emptyPos.x, emptyPos.y + 1);
-	this->moveTile(tileBelow);
-	this->increaseCost();
-	#if DEBUG >= DEBUG_TRACE
-	std::cout	<< C_GREEN	<< "Tile moved down successfully"
-				<< C_RESET	<< std::endl;
-	#endif
-}
-
-void nPuzzleState::moveLeft(void)
-{
-	if (emptyPos.x == 0)
-	{
-		#if DEBUG >= DEBUG_TRACE
-		std::cout	<< C_RED	<< "cannot move left, empty square is at the left edge"
-					<< C_RESET	<< std::endl;
-		#endif
-		return;
-	}	
-	Tile& tileLeft = getTile(emptyPos.x - 1, emptyPos.y);
-	this->moveTile(tileLeft);
-	this->increaseCost();
-	#if DEBUG >= DEBUG_TRACE
-	std::cout	<< C_GREEN	<< "Tile moved left successfully"
-				<< C_RESET	<< std::endl;
-	#endif
-}
-
-void nPuzzleState::moveRight(void)
-{
-	if (emptyPos.x == this->width - 1)
-	{
-		#if DEBUG >= DEBUG_TRACE
-		std::cout	<< C_RED	<< "cannot move right, empty square is at the right edge"
-					<< C_RESET	<< std::endl;
-		#endif
-		return;
-	}
-	Tile& tileRight = getTile(emptyPos.x + 1, emptyPos.y);
-	this->moveTile(tileRight);
-	this->increaseCost();
-	#if DEBUG >= DEBUG_TRACE
-	std::cout	<< C_GREEN	<< "Tile moved right successfully"
-				<< C_RESET	<< std::endl;
-	#endif
-}
-
-
-void	nPuzzleState::calculateHeuristic(const nPuzzleState* target)
-{
-	for (int32_t h = 0; h < heuristic::size; ++h)
-		this->calculateHeuristic(h, target);
-}
-
-void	nPuzzleState::calculateHeuristic(int32_t h, const nPuzzleState* target)
-{
-	this->heuristic[h] = heuristic::getHeuristic(h, this, target);
-}
-
-int32_t	nPuzzleState::getHeuristic(int32_t h) const
-{
-	return (this->heuristic.count(h) ? this->heuristic.at(h) : -1);
+	if (this == &rhs)
+		return (true);
+	// possibly an excessive check (?), but avoids potential bounds issues.
+	if (this->width != rhs.width || this->height != rhs.height)
+		return (false);
+	for (int32_t y = 0; y < this->height; ++y)
+		for (int32_t x = 0; x < this->width; ++x)
+			if (this->tiles[y][x].getVal() != rhs.tiles[y][x].getVal())
+				return (false);
+	return (true);
 }
 
 /** ************************************************************************ **\
@@ -308,6 +290,46 @@ int32_t	nPuzzleState::getHeuristic(int32_t h) const
  * 	Operators
  * 
 \* ************************************************************************** */
+
+bool	nPuzzleState::operator<(const nPuzzleState &rhs) const noexcept
+{
+	#warning it is now required to set the particular used heuristic in the state class. 
+ 	int32_t hKey = this->usedHeuristic;
+	if ((this->getCost() + this->getHeuristic(hKey)) < (rhs.getCost() + rhs.getHeuristic(hKey)))
+		return true;
+	else if (this->getCost() < rhs.getCost())
+		return true;
+	return false; 
+}
+
+bool	nPuzzleState::operator<=(const nPuzzleState &rhs) const noexcept
+{
+ 	int32_t hKey = this->usedHeuristic;
+	if ((this->getCost() + this->getHeuristic(hKey)) <= (rhs.getCost() + rhs.getHeuristic(hKey)))
+		return true;
+	else if (this->getCost() <= rhs.getCost())
+		return true;
+	return false; 
+}
+
+bool	nPuzzleState::operator>(const nPuzzleState &rhs) const noexcept
+{
+ 	int32_t hKey = this->usedHeuristic;
+	if ((this->getCost() + this->getHeuristic(hKey)) > (rhs.getCost() + rhs.getHeuristic(hKey)))
+		return 1;
+	else if (this->getCost() > rhs.getCost())
+		return 1;
+	return 0; 
+}
+bool	nPuzzleState::operator>=(const nPuzzleState &rhs) const noexcept
+{
+ 	int32_t hKey = this->usedHeuristic;
+	if ((this->getCost() + this->getHeuristic(hKey)) > (rhs.getCost() + rhs.getHeuristic(hKey)))
+		return 1;
+	else if (this->getCost() > rhs.getCost())
+		return 1;
+	return 0; 
+}
 
 nPuzzleState	&nPuzzleState::operator=(const nPuzzleState &src)
 {

@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   nPuzzle.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
+/*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 16:13:50 by ohengelm          #+#    #+#             */
 /*   Updated: 2026/07/17 17:11:18 by othello          ###   ########.fr       */
@@ -139,14 +139,14 @@ void	nPuzzle::maintainValidQueue(void)
 #warning needs to be adjusted to use the enum with this->state.move(enum)
 bool	nPuzzle::move(int32_t direction, int32_t h)
 {
-	bool	validMove = true;
+	bool	validMove;
 
 	switch (direction)
 	{
-		case 0:	this->state.moveUp();	break;
-		case 1:	this->state.moveDown();	break;
-		case 2:	this->state.moveLeft();	break;
-		case 3:	this->state.moveRight();	break;
+		case 0:	validMove = this->state.move(nPuzzleState::Direction::UP);		break;
+		case 1:	validMove = this->state.move(nPuzzleState::Direction::RIGHT);	break;
+		case 2:	validMove = this->state.move(nPuzzleState::Direction::DOWN);	break;
+		case 3:	validMove = this->state.move(nPuzzleState::Direction::LEFT);	break;
 	}
 	if (validMove)
 	{
@@ -187,21 +187,21 @@ void	nPuzzle::solveStep(int32_t h)
 
 	nPuzzleState*	current = this->queue.front();
 	this->queue.erase(this->queue.begin());
-#warning needs == overload
-	if (false)
-	// if (*current == this->target)
+	if (current->sameState(this->target))
 		return ;
 	this->visited.push_back(current);
-#warning needs to be adjusted to use nPuzzleState::move with (next->*move(enum))
-	for (auto move : {
-		&nPuzzleState::moveDown,
-		&nPuzzleState::moveUp,
-		&nPuzzleState::moveLeft,
-		&nPuzzleState::moveRight
-	}){
-		nPuzzleState*	next = new nPuzzleState(*current);
-		(next->*move)();
-		this->processState(next, h);
+	for (nPuzzleState::Direction direction : {
+			nPuzzleState::Direction::UP,
+			nPuzzleState::Direction::RIGHT,
+			nPuzzleState::Direction::DOWN,
+			nPuzzleState::Direction::LEFT
+		}) {
+			next = new nPuzzleState(*current);
+			if (next->move(direction))
+				this->processState(next, h);
+			else
+				delete next;
+		}
 	}
 
 	this->maintainValidQueue();
@@ -229,8 +229,6 @@ bool	nPuzzle::stateHasAlreadyBeenVisited(nPuzzleState* state)
 	foundItem = std::find(this->visited.begin(), this->visited.end(), state);
 	if (foundItem == this->visited.end())
 		return (false);
-// #warning requires state cost
-// 	if (false)
 	if (state->getCost() < (*foundItem)->getCost())
 	{
 		this->visited.erase(foundItem);
@@ -246,8 +244,6 @@ bool	nPuzzle::stateIsAlreadyInQueue(nPuzzleState* state)
 	foundItem = std::find(this->queue.begin(), this->queue.end(), state);
 	if (foundItem == this->queue.end())
 		return (false);
-// #warning requires state cost
-	// if (false)
 	if (state->getCost() < (*foundItem)->getCost())
 	{
 		this->queue.erase(foundItem);
