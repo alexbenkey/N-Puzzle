@@ -6,7 +6,7 @@
 /*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/02 17:58:28 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/14 14:05:08 by othello          ###   ########.fr       */
+/*   Updated: 2026/07/17 16:45:49 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 
 std::unordered_map<char, std::string> Display::hotkeyList = {
 	{ 'R', "Reset to Start" },
+	{ 'Q', "Display Queue" },
 	{ 'T', "Display Target" },
 	{ 'S', "Display Start" },
 };

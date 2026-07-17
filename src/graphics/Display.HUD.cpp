@@ -6,7 +6,7 @@
 /*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/09 13:44:29 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/17 12:38:58 by othello          ###   ########.fr       */
+/*   Updated: 2026/07/17 16:59:46 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,7 +112,7 @@ void	Display::HUD::configureDataSize(bool updateFrame)
 	LOG_AS_TRACE();
 #endif
 	this->Data.width = MeasureText("  [M]anhattan: 00", this->fontSize);
-	this->Data.height = 3 * this->fontHeight;
+	this->Data.height = 4 * this->fontHeight;
 	Display::logRectangle("HUD.Data", this->Data);
 	if (updateFrame)
 		this->configureFrameSize();
@@ -338,6 +338,12 @@ void	Display::HUD::renderData(nPuzzle* puzzle) const
 				break;
 			case 2:
 				buffer = TextFormat("Moves: %i", 0);
+				break;
+			case 3:
+				if (puzzle->getQueueIndex() == -1)
+					buffer = TextFormat("Queue: %i", puzzle->getQueueSize());
+				else
+					buffer = TextFormat("Queue: %i/%i", puzzle->getQueueIndex() + 1, puzzle->getQueueSize());
 				break;
 			default:
 				goto endLoop;

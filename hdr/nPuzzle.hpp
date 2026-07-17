@@ -29,6 +29,7 @@ class nPuzzle
 		nPuzzleState	state;
 
 		std::vector<nPuzzleState*>	queue;
+		int32_t						queueIndex = -1;
 		std::vector<nPuzzleState*>	visited;
 
 		bool	move(int32_t direction, int32_t h);
@@ -47,6 +48,13 @@ class nPuzzle
 		nPuzzleState&	getCurrentState()	{ return (this->state); }
 		nPuzzleState&	getTargetState()	{ return (this->target); }
 		nPuzzleState&	getStartState()		{ return (this->start); }
+		nPuzzleState&	getQueueState(void);
+		void	incrementQueue(void)	{ ++this->queueIndex; this->maintainValidQueue(); }
+		void	decrementQueue(void)	{ --this->queueIndex; this->maintainValidQueue(); }
+		void	maintainValidQueue(void);
+		int32_t	getQueueIndex(void) const	{ return (this->queueIndex); }
+		int32_t getQueueSize(void) const { return (this->queue.size()); }
+
 		void	storeStartState(void) { this->start = this->state; }
 
 		void	printPuzzle(void) { this->state.printPuzzle(); }
@@ -65,6 +73,7 @@ class nPuzzle
 		bool	moveRight(int32_t h = -1)	{ return(this->move(3, h)); }
 	
 		void	solve(int32_t h);
+		void	solveStep(int32_t h);
 		void	processState(nPuzzleState* state, int32_t h);
 		bool	stateHasAlreadyBeenVisited(nPuzzleState* state);
 		bool	stateIsAlreadyInQueue(nPuzzleState* state);
