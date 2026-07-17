@@ -16,7 +16,8 @@
 
 # include <aio.h>	// size_t int32_t
 
-#include <vector>
+# include <vector>	// std::vector
+# include <map>
 
 # include "Errors.hpp"
 
@@ -58,7 +59,7 @@ class nPuzzleState
 		const int32_t	width;
 		const int32_t	height;
 		const int32_t	size;
-		int32_t	heuristic = 0;
+		std::map<int32_t, int32_t>	heuristic;
 		int32_t	cost = 0;
 
 		Position emptyPos = {0, 0};
@@ -98,11 +99,14 @@ class nPuzzleState
 		void 	moveTile(Tile& tile);
 		void 	increaseCost(void) { ++this->cost; };
 
-		bool	move(int32_t direction);
 		// void 	moveUp(void);
 		// void 	moveDown(void);
 		// void 	moveLeft(void);
 		// void 	moveRight(void);
+	
+		void	calculateHeuristic(const nPuzzleState* target);
+		void	calculateHeuristic(int32_t h, const nPuzzleState* target);
+		int32_t	getHeuristic(int32_t h) const;
 
 		int32_t	getCost(void) const	{ return (this->cost); }
 		int32_t getHeuristic(void) const {return (this->heuristic); }

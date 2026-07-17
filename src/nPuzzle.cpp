@@ -6,12 +6,13 @@
 /*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 16:13:50 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/17 13:54:01 by avon-ben         ###   ########.fr       */
+/*   Updated: 2026/07/17 16:02:06 by avon-ben         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "nPuzzle.hpp"
 #include "colors.hpp"
+#include "heuristic.hpp"
 
 #include <iostream>	// std::stream
 #include <algorithm>	// std::sort
@@ -109,19 +110,48 @@ void	nPuzzle::setRow(int32_t row, const std::vector<int>& numbers)
 	}
 }
 
-void	nPuzzle::solve(void)
+#warning needs to be adjusted to use the enum with this->state.move(enum)
+bool	nPuzzle::move(int32_t direction, int32_t h)
+{
+	bool	validMove = true;
+
+	switch (direction)
+	{
+		case 0:	this->state.moveUp();	break;
+		case 1:	this->state.moveDown();	break;
+		case 2:	this->state.moveLeft();	break;
+		case 3:	this->state.moveRight();	break;
+	}
+	if (validMove)
+	{
+		if (h != -1)
+			this->calculateHeuristic(h);
+		else
+			this->calculateHeuristic();
+	}
+	return (validMove);
+}
+
+void	nPuzzle::solve(int32_t h)
 {
 	nPuzzleState*	current;
 	nPuzzleState*	next;
 
-	this->processState(new nPuzzleState(this->state));
+	if (h >= heuristic::size)
+		return ;
+
+	this->processState(new nPuzzleState(this->state), h);
 	while(this->queue.size())
 	{
+#if DEBUG <= DEBUG_DEBUG
+		std::cerr	<< "this->queue.size(): "	<< this->queue.size()	<< std::endl;
+#endif
 		current = this->queue.front();
 		this->queue.erase(this->queue.begin());
 		if (current->sameState(this->target))
 			break ;
 		this->visited.push_back(current);
+#warning needs to be adjusted to use nPuzzleState::move with (next->*move(enum))
 		for (auto move : {
 			&nPuzzleState::moveDown,
 			&nPuzzleState::moveUp,
@@ -130,25 +160,18 @@ void	nPuzzle::solve(void)
 		}){
 			next = new nPuzzleState(*current);
 			(next->*move)();
-			this->processState(next);
+			this->processState(next, h);
 		}
 	}
 }
 
-void	nPuzzle::processState(nPuzzleState* state)
+void	nPuzzle::processState(nPuzzleState* state, int32_t h)
 {
 	if (this->stateHasAlreadyBeenVisited(state))
 		return ;
 	if (this->stateIsAlreadyInQueue(state))
 		return ;
-	switch (1)
-	{
-		case 1:
-			this->calculateHeuristic(state, this);
-			break;
-		default:
-			break;
-	}
+	state->calculateHeuristic(h, &this->target);
 	this->queue.push_back(state);
 #warning sorting requires proper < overload
 	// std::sort(this->queue.begin(), this->queue.end());
@@ -188,20 +211,15 @@ bool	nPuzzle::stateIsAlreadyInQueue(nPuzzleState* state)
 	return (true);
 }
 
-#warning passing nPuzzle as argument for now, because heursitcs might be extracted from class
-void	nPuzzle::calculateHeuristic(nPuzzleState* state, nPuzzle* puzzle)
+void	nPuzzle::calculateHeuristic(void)
 {
-	nPuzzleState	target = puzzle->getTargetState();
-	int	width = puzzle->getWidth();
-	int	height = puzzle->getHeight();
-	int	heuristic = 0;
+	for (int32_t h = 0; h < heuristic::size; ++h)
+		this->state.calculateHeuristic(h, &this->target);
+}
 
-	for (int x = 0; x < width; ++x)
-		for (int y = 0; y < height; ++y)
-			if (state->getTile(x, y).getVal() != target.getTile(x, y).getVal())
-				++heuristic;
-#warning need to actually set heursitc
-	// state.setH(heuristic);
+void	nPuzzle::calculateHeuristic(int32_t h)
+{
+	this->state.calculateHeuristic(h, &this->target);
 }
 
 void	nPuzzle::printAllTiles(const nPuzzleState& state) const

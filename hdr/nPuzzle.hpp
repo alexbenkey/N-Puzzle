@@ -31,6 +31,8 @@ class nPuzzle
 		std::vector<nPuzzleState*>	queue;
 		std::vector<nPuzzleState*>	visited;
 
+		bool	move(int32_t direction, int32_t h);
+
 	protected:
 
 	public:
@@ -41,10 +43,6 @@ class nPuzzle
 		~nPuzzle(void);
 
 		void	setRow(int32_t row, const std::vector<int>& numbers);
-
-		// int	getWidth() const	{ return (this->width); }
-		// int	getHeight() const	{ return (this->height); }
-		// int	getSurface() const	{ return (this->width * this->height); }
 
 		nPuzzleState&	getCurrentState()	{ return (this->state); }
 		nPuzzleState&	getTargetState()	{ return (this->target); }
@@ -61,16 +59,17 @@ class nPuzzle
 		int32_t getHeight(void) const { return this->height; }
 		int32_t getSize(void) const { return this->size; }
 
-		void moveUp(void) { this->state.moveUp(); }
-		void moveDown(void) { this->state.moveDown(); }
-		void moveLeft(void) { this->state.moveLeft(); }
-		void moveRight(void) { this->state.moveRight(); }
-
-		void	solve(void);
-		void	processState(nPuzzleState* state);
+		bool	moveUp(int32_t h = -1)	{ return(this->move(0, h)); }
+		bool	moveDown(int32_t h = -1)	{ return(this->move(1, h)); }
+		bool	moveLeft(int32_t h = -1)	{ return(this->move(2, h)); }
+		bool	moveRight(int32_t h = -1)	{ return(this->move(3, h)); }
+	
+		void	solve(int32_t h);
+		void	processState(nPuzzleState* state, int32_t h);
 		bool	stateHasAlreadyBeenVisited(nPuzzleState* state);
 		bool	stateIsAlreadyInQueue(nPuzzleState* state);
-		void	calculateHeuristic(nPuzzleState* state, nPuzzle* puzzle);
+		void	calculateHeuristic(void);
+		void	calculateHeuristic(int32_t h);
 
 		nPuzzle	&operator=(const nPuzzle &src);
 };

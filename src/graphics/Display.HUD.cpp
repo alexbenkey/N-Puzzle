@@ -6,7 +6,7 @@
 /*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/09 13:44:29 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/14 18:39:32 by othello          ###   ########.fr       */
+/*   Updated: 2026/07/17 12:38:58 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -363,9 +363,9 @@ void	Display::HUD::renderHeuristics(nPuzzle* puzzle) const
 	const char* buffer;
 
 	DrawText("Heuristics", this->Heuristics.x, this->Heuristics.y, this->fontSize, RED);
-	for (size_t line = 0; line < heuristic::size; ++line)
+	for (int32_t line = 0; line < heuristic::size; ++line)
 	{
-		buffer = TextFormat("[%i] %s: %i", line, heuristic::function[line].name, heuristic::function[line].f(&puzzle->getCurrentState(), &puzzle->getTargetState()));
+		buffer = TextFormat("[%i] %s: %i", line, heuristic::function[line].name, puzzle->getCurrentState().getHeuristic(line));
 		DrawText(buffer, this->Heuristics.x, this->Heuristics.y + (line + 1) * this->fontHeight, this->fontSize, WHITE);
 	}
 #if DEBUG >= DEBUG_ALL

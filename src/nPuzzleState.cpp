@@ -6,12 +6,13 @@
 /*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 16:13:50 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/17 15:59:36 by avon-ben         ###   ########.fr       */
+/*   Updated: 2026/07/17 16:02:14 by avon-ben         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "nPuzzleState.hpp"
 #include "colors.hpp"
+#include "heuristic.hpp"
 
 #include <iostream>	// std::stream
 
@@ -373,6 +374,45 @@ bool	nPuzzleState::notSameState(const nPuzzleState &rhs) const noexcept
 	return (true);
 }
 
+<<<<<<< HEAD
+=======
+void nPuzzleState::moveRight(void)
+{
+	if (emptyPos.x == this->width - 1)
+	{
+		#if DEBUG >= DEBUG_TRACE
+		std::cout	<< C_RED	<< "cannot move right, empty square is at the right edge"
+					<< C_RESET	<< std::endl;
+		#endif
+		return;
+	}
+	Tile& tileRight = getTile(emptyPos.x + 1, emptyPos.y);
+	this->moveTile(tileRight);
+	this->increaseCost();
+	#if DEBUG >= DEBUG_TRACE
+	std::cout	<< C_GREEN	<< "Tile moved right successfully"
+				<< C_RESET	<< std::endl;
+	#endif
+}
+
+
+void	nPuzzleState::calculateHeuristic(const nPuzzleState* target)
+{
+	for (int32_t h = 0; h < heuristic::size; ++h)
+		this->calculateHeuristic(h, target);
+}
+
+void	nPuzzleState::calculateHeuristic(int32_t h, const nPuzzleState* target)
+{
+	this->heuristic[h] = heuristic::getHeuristic(h, this, target);
+}
+
+int32_t	nPuzzleState::getHeuristic(int32_t h) const
+{
+	return (this->heuristic.count(h) ? this->heuristic.at(h) : -1);
+}
+
+>>>>>>> origin/main
 /** ************************************************************************ **\
  * 
  * 	Operators
