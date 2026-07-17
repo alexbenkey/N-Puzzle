@@ -3,18 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
+/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/10 17:52:53 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/10 17:55:40 by avon-ben         ###   ########.fr       */
+/*   Updated: 2026/07/17 14:18:29 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "nPuzzleHeader.hpp"
 #include "displayNPuzzle.hpp"
 #include <iostream>
-
-void simulate(nPuzzle &puzzle); 
 
 int	main(void)
 {
@@ -25,6 +23,8 @@ int	main(void)
 		std::cerr << "Failed to parse puzzle" << std::endl;
 		return (1);
 	}
+	puzzle->calculateHeuristic();
+	puzzle->storeStartState();
 	displayNPuzzle(puzzle);
 	delete puzzle;
 	return (0);
