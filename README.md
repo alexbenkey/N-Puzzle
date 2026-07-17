@@ -96,4 +96,11 @@ git submodule add [link] [dest]
 # Clean after merge
 git branch -d [name]
 git fetch --prune
+
+# Restore file after push
+git fetch origin
+git restore --source=origin/main path/to/file
+git add path/to/file
+git commit -m "Restore path/to/file to main"
+git push
 ```
