@@ -117,7 +117,6 @@ class nPuzzleState
 		// int32_t getHeuristic(void) const {return (this->heuristic); }
 
 		bool			sameState(const nPuzzleState &rhs) const noexcept;
-		bool			notSameState(const nPuzzleState &rhs) const noexcept;
 		
 		nPuzzleState	&operator=(const nPuzzleState &src);
 

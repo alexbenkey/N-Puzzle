@@ -6,7 +6,7 @@
 /*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 16:13:50 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/17 17:13:29 by avon-ben         ###   ########.fr       */
+/*   Updated: 2026/07/17 17:55:58 by avon-ben         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -271,100 +271,10 @@ bool nPuzzleState::move(Direction direction){
 	return (true);
 }
 
-// void nPuzzleState::moveUp(void)
-// {
-// 	if (emptyPos.y == 0)
-// 	{
-// 		#if DEBUG >= DEBUG_TRACE
-// 		std::cout	<< C_RED	<< "cannot move up, empty square is at the top"
-// 					<< C_RESET	<< std::endl;
-// 		#endif
-// 		return;
-// 	}
-// 	Tile& tileAbove = getTile(emptyPos.x, emptyPos.y - 1);
-// 	this->moveTile(tileAbove);
-// 	this->increaseCost();
-// 	#if DEBUG >= DEBUG_TRACE
-// 	std::cout	<< C_GREEN	<< "Tile moved up successfully"
-// 				<< C_RESET	<< std::endl;
-// 	#endif
-// }
-
-// void nPuzzleState::moveDown(void)
-// {
-// 	if (emptyPos.y == this->height - 1)
-// 	{
-// 		#if DEBUG >= DEBUG_TRACE
-// 		std::cout	<< C_RED	<< "cannot move down, empty square is at the bottom"
-// 					<< C_RESET	<< std::endl;
-// 		#endif
-// 		return;
-// 	}
-// 	Tile& tileBelow = getTile(emptyPos.x, emptyPos.y + 1);
-// 	this->moveTile(tileBelow);
-// 	this->increaseCost();
-// 	#if DEBUG >= DEBUG_TRACE
-// 	std::cout	<< C_GREEN	<< "Tile moved down successfully"
-// 				<< C_RESET	<< std::endl;
-// 	#endif
-// }
-
-// void nPuzzleState::moveLeft(void)
-// {
-// 	if (emptyPos.x == 0)
-// 	{
-// 		#if DEBUG >= DEBUG_TRACE
-// 		std::cout	<< C_RED	<< "cannot move left, empty square is at the left edge"
-// 					<< C_RESET	<< std::endl;
-// 		#endif
-// 		return;
-// 	}	
-// 	Tile& tileLeft = getTile(emptyPos.x - 1, emptyPos.y);
-// 	this->moveTile(tileLeft);
-// 	this->increaseCost();
-// 	#if DEBUG >= DEBUG_TRACE
-// 	std::cout	<< C_GREEN	<< "Tile moved left successfully"
-// 				<< C_RESET	<< std::endl;
-// 	#endif
-// }
-
-// void nPuzzleState::moveRight(void)
-// {
-// 	if (emptyPos.x == this->width - 1)
-// 	{
-// 		#if DEBUG >= DEBUG_TRACE
-// 		std::cout	<< C_RED	<< "cannot move right, empty square is at the right edge"
-// 					<< C_RESET	<< std::endl;
-// 		#endif
-// 		return;
-// 	}
-// 	Tile& tileRight = getTile(emptyPos.x + 1, emptyPos.y);
-// 	this->moveTile(tileRight);
-// 	this->increaseCost();
-// 	#if DEBUG >= DEBUG_TRACE
-// 	std::cout	<< C_GREEN	<< "Tile moved right successfully"
-// 				<< C_RESET	<< std::endl;
-// 	#endif
-// }
-
 bool	nPuzzleState::sameState(const nPuzzleState &rhs) const noexcept
 {
 	if (this == &rhs)
 		return (true);
-	// possibly an excessive check (?), but avoids potential bounds issues.
-	if (this->width != rhs.width || this->height != rhs.height)
-		return (false);
-	for (int32_t y = 0; y < this->height; ++y)
-		for (int32_t x = 0; x < this->width; ++x)
-			if (this->tiles[y][x].getVal() != rhs.tiles[y][x].getVal())
-				return (false);
-	return (true);
-}
-
-bool	nPuzzleState::notSameState(const nPuzzleState &rhs) const noexcept
-{
-	if (this == &rhs)
-		return (false);
 	// possibly an excessive check (?), but avoids potential bounds issues.
 	if (this->width != rhs.width || this->height != rhs.height)
 		return (false);
