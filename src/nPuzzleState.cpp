@@ -6,12 +6,13 @@
 /*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 16:13:50 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/14 13:49:22 by othello          ###   ########.fr       */
+/*   Updated: 2026/07/17 13:49:33 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "nPuzzleState.hpp"
 #include "colors.hpp"
+#include "heuristic.hpp"
 
 #include <iostream>	// std::stream
 
@@ -284,6 +285,24 @@ void nPuzzleState::moveRight(void)
 				<< C_RESET	<< std::endl;
 	#endif
 }
+
+
+void	nPuzzleState::calculateHeuristic(const nPuzzleState* target)
+{
+	for (int32_t h = 0; h < heuristic::size; ++h)
+		this->calculateHeuristic(h, target);
+}
+
+void	nPuzzleState::calculateHeuristic(int32_t h, const nPuzzleState* target)
+{
+	this->heuristic[h] = heuristic::getHeuristic(h, this, target);
+}
+
+int32_t	nPuzzleState::getHeuristic(int32_t h) const
+{
+	return (this->heuristic.count(h) ? this->heuristic.at(h) : -1);
+}
+
 /** ************************************************************************ **\
  * 
  * 	Operators
