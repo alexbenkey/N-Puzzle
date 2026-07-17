@@ -136,9 +136,10 @@ class Display
 		bool	setMargin(const int margin, bool updateSizes = true, bool includeHUD = true);
 		// Rendering
 		void	renderScreen(void);
-		void	renderCurrentState()	{ this->renderTiles(this->puzzle->getCurrentState()); }
-		void	renderTargetState()		{ this->renderTiles(this->puzzle->getTargetState()); }
-		void	renderStartState()		{ this->renderTiles(this->puzzle->getStartState()); }
+		void	renderCurrentState(void)	{ this->renderTiles(this->puzzle->getCurrentState()); }
+		void	renderTargetState(void)		{ this->renderTiles(this->puzzle->getTargetState()); }
+		void	renderStartState(void)		{ this->renderTiles(this->puzzle->getStartState()); }
+		void	renderQueueState(void)		{ this->renderTiles(this->puzzle->getQueueState()); }
 
 		// Display	&operator=(const Display &src);
 };

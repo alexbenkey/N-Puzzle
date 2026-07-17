@@ -6,7 +6,7 @@
 /*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 16:13:50 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/17 14:47:10 by othello          ###   ########.fr       */
+/*   Updated: 2026/07/17 17:11:18 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,6 +110,32 @@ void	nPuzzle::setRow(int32_t row, const std::vector<int>& numbers)
 	}
 }
 
+nPuzzleState&	nPuzzle::getQueueState(void)
+{
+	if (this->queueIndex == -1)
+		return (this->state);
+	else
+		return (*this->queue.at(this->queueIndex));
+}
+
+void	nPuzzle::maintainValidQueue(void)
+{
+	size_t	size = this->queue.size();
+
+	if (size == 0)
+		this->queueIndex = -1;
+	else if (this->queueIndex < 0)
+		this->queueIndex = 0;
+	else if (this->queueIndex >= size)
+		this->queueIndex = size - 1;
+
+#if DEBUG >= DEBUG_DEBUG
+	std::cerr	<< __func__	<< '['	<< __LINE__	<< ']'
+				<< "queueIndex: "	<< this->queueIndex
+				<< std::endl;
+#endif
+}
+
 #warning needs to be adjusted to use the enum with this->state.move(enum)
 bool	nPuzzle::move(int32_t direction, int32_t h)
 {
@@ -139,32 +165,49 @@ void	nPuzzle::solve(int32_t h)
 
 	if (h >= heuristic::size)
 		return ;
+#warning needs to validate puzzle solved state
+	// while puzzle is unsolved
+	while (true)
+		this->solveStep(h);
+}
 
-	this->processState(new nPuzzleState(this->state), h);
-	while(this->queue.size())
-	{
-#if DEBUG <= DEBUG_DEBUG
-		std::cerr	<< "this->queue.size(): "	<< this->queue.size()	<< std::endl;
+void	nPuzzle::solveStep(int32_t h)
+{
+#if DEBUG >= DEBUG_DEBUG
+	std::printf("%s[%i]\n", __func__, __LINE__);
 #endif
-		current = this->queue.front();
-		this->queue.erase(this->queue.begin());
+
+#warning needs to validate puzzle solved state
+	// if puzzle is solved
+	if (false)
+		return ;
+
+	if (this->queue.size() == 0)
+		this->processState(new nPuzzleState(this->state), h);
+
+	nPuzzleState*	current = this->queue.front();
+	this->queue.erase(this->queue.begin());
 #warning needs == overload
-		if (false)
-		// if (*current == this->target)
-			break ;
-		this->visited.push_back(current);
+	if (false)
+	// if (*current == this->target)
+		return ;
+	this->visited.push_back(current);
 #warning needs to be adjusted to use nPuzzleState::move with (next->*move(enum))
-		for (auto move : {
-			&nPuzzleState::moveDown,
-			&nPuzzleState::moveUp,
-			&nPuzzleState::moveLeft,
-			&nPuzzleState::moveRight
-		}){
-			next = new nPuzzleState(*current);
-			(next->*move)();
-			this->processState(next, h);
-		}
+	for (auto move : {
+		&nPuzzleState::moveDown,
+		&nPuzzleState::moveUp,
+		&nPuzzleState::moveLeft,
+		&nPuzzleState::moveRight
+	}){
+		nPuzzleState*	next = new nPuzzleState(*current);
+		(next->*move)();
+		this->processState(next, h);
 	}
+
+	this->maintainValidQueue();
+#if DEBUG >= DEBUG_DEBUG
+	std::printf("%s[%i] queue.size = %lu\n", __func__, __LINE__, this->queue.size());
+#endif
 }
 
 void	nPuzzle::processState(nPuzzleState* state, int32_t h)

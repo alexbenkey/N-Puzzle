@@ -6,7 +6,7 @@
 /*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/02 16:48:19 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/17 14:20:47 by othello          ###   ########.fr       */
+/*   Updated: 2026/07/17 17:06:55 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,8 +46,18 @@ void	displayNPuzzle(nPuzzle* puzzle)
 			int	pressedKey = GetKeyPressed();
 			switch (pressedKey)
 			{
-				case KEY_RIGHT:	puzzle->moveRight();	break;
-				case KEY_LEFT:	puzzle->moveLeft();	break;
+				case KEY_RIGHT:
+					if (IsKeyDown(KEY_Q))
+						puzzle->incrementQueue();
+					else
+						puzzle->moveRight();
+					break;
+				case KEY_LEFT:
+					if (IsKeyDown(KEY_Q))
+						puzzle->decrementQueue();
+					else
+						puzzle->moveLeft();
+					break;
 				case KEY_DOWN:	puzzle->moveDown();	break;
 				case KEY_UP:	puzzle->moveUp();	break;
 				case KEY_T:	puzzle->printTarget();	break;
@@ -57,6 +67,9 @@ void	displayNPuzzle(nPuzzle* puzzle)
 						TraceLog(LOG_WARNING, "Should reset to start now");
 					else
 						TraceLog(LOG_WARNING, "Press uppercase R to reset.");
+					break;
+				case KEY_SPACE:
+					puzzle->solveStep(0);
 					break;
 				case KEY_ZERO ... KEY_NINE:
 					puzzle->solve(pressedKey - KEY_ZERO);
@@ -74,6 +87,8 @@ void	displayNPuzzle(nPuzzle* puzzle)
 					graphics.renderTargetState();
 				else if (IsKeyDown(KEY_S))
 					graphics.renderStartState();
+				else if (IsKeyDown(KEY_Q))
+					graphics.renderQueueState();
 				else
 					graphics.renderCurrentState();
 			}
