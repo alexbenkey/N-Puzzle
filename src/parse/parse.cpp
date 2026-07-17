@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
+/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/10 18:29:47 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/10 17:45:37 by avon-ben         ###   ########.fr       */
+/*   Updated: 2026/07/17 13:33:09 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,6 @@ nPuzzle *parse(nPuzzle *&puzzle)
 			tmp_puzzle->setRow(row++, convertLineToNumbers(line));
 		}
 		puzzle = tmp_puzzle.release();
-		puzzle->storeStartState();
 	}
 	catch (const std::exception &)
 	{
