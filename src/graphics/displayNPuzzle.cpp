@@ -6,7 +6,7 @@
 /*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/02 16:48:19 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/10 13:54:48 by othello          ###   ########.fr       */
+/*   Updated: 2026/07/14 18:19:42 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,8 @@ void	displayNPuzzle(nPuzzle* puzzle)
 					else
 						TraceLog(LOG_WARNING, "Press uppercase R to reset.");
 					break;
+				case KEY_ZERO ... KEY_NINE:
+					break ;
 				default:	break;
 			}
 			if (IsWindowResized())

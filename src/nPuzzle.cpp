@@ -6,7 +6,7 @@
 /*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 16:13:50 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/10 13:58:06 by othello          ###   ########.fr       */
+/*   Updated: 2026/07/17 11:57:35 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include "colors.hpp"
 
 #include <iostream>	// std::stream
+#include <algorithm>	// std::sort
 
 /** ************************************************************************ **\
  * 
@@ -106,6 +107,138 @@ void	nPuzzle::setRow(int32_t row, const std::vector<int>& numbers)
 		this->state.getTile(x, row).setxPos(x);
 		this->state.getTile(x, row).setyPos(row);
 	}
+}
+
+void	nPuzzle::solve(void)
+{
+	nPuzzleState*	current;
+	nPuzzleState*	next;
+
+	this->processState(new nPuzzleState(this->state));
+	while(this->queue.size())
+	{
+		current = this->queue.front();
+		this->queue.erase(this->queue.begin());
+#warning needs == overload
+		if (false)
+		// if (*current == this->target)
+			break ;
+		this->visited.push_back(current);
+		for (auto move : {
+			&nPuzzleState::moveDown,
+			&nPuzzleState::moveUp,
+			&nPuzzleState::moveLeft,
+			&nPuzzleState::moveRight
+		}){
+			next = new nPuzzleState(*current);
+			(next->*move)();
+			this->processState(next);
+		}
+	}
+}
+
+void	nPuzzle::processState(nPuzzleState* state)
+{
+	if (this->stateHasAlreadyBeenVisited(state))
+		return ;
+	if (this->stateIsAlreadyInQueue(state))
+		return ;
+	switch (1)
+	{
+		case 1:
+			this->calculateHeuristic(state, this);
+			break;
+		default:
+			break;
+	}
+	this->queue.push_back(state);
+#warning sorting requires proper < overload
+	// std::sort(this->queue.begin(), this->queue.end());
+}
+
+bool	nPuzzle::stateHasAlreadyBeenVisited(nPuzzleState* state)
+{
+	std::vector<nPuzzleState*>::iterator	foundItem;
+
+	foundItem = std::find(this->visited.begin(), this->visited.end(), state);
+	if (foundItem == this->visited.end())
+		return (false);
+// #warning requires state cost
+// 	if (false)
+	if (state->getCost() < (*foundItem)->getCost())
+	{
+		this->visited.erase(foundItem);
+		return (false);
+	}
+	return (true);
+}
+
+bool	nPuzzle::stateIsAlreadyInQueue(nPuzzleState* state)
+{
+	std::vector<nPuzzleState*>::iterator	foundItem;
+
+	foundItem = std::find(this->queue.begin(), this->queue.end(), state);
+	if (foundItem == this->queue.end())
+		return (false);
+// #warning requires state cost
+	// if (false)
+	if (state->getCost() < (*foundItem)->getCost())
+	{
+		this->queue.erase(foundItem);
+		return (false);
+	}
+	return (true);
+}
+
+#warning passing nPuzzle as argument for now, because heursitcs might be extracted from class
+void	nPuzzle::calculateHeuristic(nPuzzleState* state, nPuzzle* puzzle)
+{
+	nPuzzleState	target = puzzle->getTargetState();
+	int	width = puzzle->getWidth();
+	int	height = puzzle->getHeight();
+	int	heuristic = 0;
+
+	for (int x = 0; x < width; ++x)
+		for (int y = 0; y < height; ++y)
+			if (state->getTile(x, y).getVal() != target.getTile(x, y).getVal())
+				++heuristic;
+#warning need to actually set heursitc
+	// state.setH(heuristic);
+}
+
+void	nPuzzle::printAllTiles(const nPuzzleState& state) const
+{
+	for (int32_t x = 0, width = state.getPuzzleWidth(); x < width; ++x)
+	{
+		for (int32_t y = 0, height = state.getPuzzleHeight(); y < height; ++y)
+		{
+			nPuzzleState::Tile tile = state.getTile(x, y);
+			std::printf("%2i [%2i][%2i] ", tile.getVal(), tile.getxPos(), tile.getyPos());
+			state.printTilePos(tile);
+		}
+	}
+	std::cout	<< std::endl;
+}
+
+void	nPuzzle::printAllTilesFlex(nPuzzleState& state)
+{
+	// for (int32_t x = 0, width = state.getPuzzleWidth(); x < width; ++x)
+	// {
+	// 	for (int32_t y = 0, height = state.getPuzzleHeight(); y < height; ++y)
+	// 	{
+
+	// 		nPuzzleState::Tile tile = state.getTile(x, y);
+	// 		std::printf("[%2i][%2i] > %2i [%2i][%2i] ", x, y, tile.getVal(), tile.getxPos(), tile.getyPos());
+	// 		state.printTilePos(tile);
+	// 	}
+	// }
+	for (int32_t value = 1, size = state.getPuzzleSize(); value < size; ++value)
+	{
+		nPuzzleState::Tile tile = state.getTile(value);
+		std::printf("%2i [%2i][%2i] ", tile.getVal(), tile.getxPos(), tile.getyPos());
+		state.printTilePos(tile);
+	}
+	std::cout	<< std::endl;
 }
 
 /** ************************************************************************ **\

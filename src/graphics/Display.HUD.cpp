@@ -6,12 +6,13 @@
 /*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/09 13:44:29 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/10 13:41:26 by othello          ###   ########.fr       */
+/*   Updated: 2026/07/14 18:39:32 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Display.hpp"
 #include "colors.hpp"
+#include "heuristic.hpp"
 
 #include <iostream>	// std::stream
 
@@ -95,6 +96,7 @@ void	Display::HUD::configureSizes(bool updatePositions)
 	LOG_AS_TRACE();
 #endif
 	this->configureDataSize(false);
+	this->configureHeuristicsSize(false);
 	this->configureControlSize(false);
 	this->configureMovementSize(false);
 	this->configureFrameSize(updatePositions);
@@ -110,8 +112,29 @@ void	Display::HUD::configureDataSize(bool updateFrame)
 	LOG_AS_TRACE();
 #endif
 	this->Data.width = MeasureText("  [M]anhattan: 00", this->fontSize);
-	this->Data.height = 7 * this->fontHeight;
+	this->Data.height = 3 * this->fontHeight;
 	Display::logRectangle("HUD.Data", this->Data);
+	if (updateFrame)
+		this->configureFrameSize();
+
+#if DEBUG >= DEBUG_TRACE
+	LOG_AS_TRACE();
+#endif
+}
+
+void	Display::HUD::configureHeuristicsSize(bool updateFrame)
+{
+#if DEBUG >= DEBUG_TRACE
+	LOG_AS_TRACE();
+#endif
+	this->Heuristics.height = (heuristic::size + 1) * this->fontHeight;
+	for (size_t line = 0; line < heuristic::size; ++line)
+	{
+		float	width = (float)MeasureText(TextFormat("[0] %s: 000", heuristic::function[line].name), this->fontSize);
+		if (width > this->Heuristics.width)
+			this->Heuristics.width = width;
+	}
+	Display::logRectangle("HUD.Heuristics", this->Heuristics);
 	if (updateFrame)
 		this->configureFrameSize();
 
@@ -164,7 +187,7 @@ void	Display::HUD::configureFrameSize(bool updatePositions)
 #endif
 	this->Frame.width = 0;
 	this->Frame.height = (float)this->margin;
-	for (const Rectangle& rect : { this->Data, this->Controls, this->Movement })
+	for (const Rectangle& rect : { this->Data, this->Heuristics, this->Controls, this->Movement })
 	{
 		this->Frame.width = std::max(this->Frame.width, rect.width);
 		this->Frame.height += rect.height + this->margin;
@@ -186,6 +209,7 @@ void	Display::HUD::configurePositions(void)
 #endif
 	this->configureFramePosition();
 	this->configureDataPosition();
+	this->configureHeuristicsPosition();
 	this->configureControlsPosition();
 	this->configureMovementPosition();
 
@@ -222,13 +246,27 @@ void	Display::HUD::configureDataPosition(void)
 #endif
 }
 
+void	Display::HUD::configureHeuristicsPosition(void)
+{
+#if DEBUG >= DEBUG_TRACE
+	LOG_AS_TRACE();
+#endif
+	this->Heuristics.x = this->Frame.x + this->margin;
+	this->Heuristics.y = this->Data.y + this->Data.height + this->margin;
+	Display::logRectangle("HUD.Heuristics", this->Data);
+
+#if DEBUG >= DEBUG_TRACE
+	LOG_AS_TRACE();
+#endif
+}
+
 void	Display::HUD::configureControlsPosition(void)
 {
 #if DEBUG >= DEBUG_TRACE
 	LOG_AS_TRACE();
 #endif
 	this->Controls.x = this->Frame.x + this->margin;
-	this->Controls.y = this->Data.y + this->Data.height + this->margin;
+	this->Controls.y = this->Heuristics.y + this->Heuristics.height + this->margin;
 	Display::logRectangle("HUD.Controls", this->Controls);
 
 #if DEBUG >= DEBUG_TRACE
@@ -250,13 +288,14 @@ void	Display::HUD::configureMovementPosition(void)
 #endif
 }
 
-void	Display::HUD::render(void) const
+void	Display::HUD::render(nPuzzle* puzzle) const
 {
 #if DEBUG >= DEBUG_ALL
 	LOG_AS_TRACE();
 #endif
 	this->renderFrame();
-	this->renderData(nullptr);
+	this->renderData(puzzle);
+	this->renderHeuristics(puzzle);
 	this->renderControls();
 	this->renderMovement();
 
@@ -279,9 +318,11 @@ void	Display::HUD::renderData(nPuzzle* puzzle) const
 #if DEBUG >= DEBUG_ALL
 	LOG_AS_TRACE();
 #endif
+#if DEBUG >= DEBUG_DEBUG
+	DrawRectangleLinesEx(this->Data, 1, Color{255,23,23,255});
+#endif
 	const char*	buffer;
 
-	// DrawRectangleLinesEx(this->Data, 1, Color{255,23,23,255});
 	for (size_t i = 0; ; i++)
 	{
 		switch (i)
@@ -298,15 +339,6 @@ void	Display::HUD::renderData(nPuzzle* puzzle) const
 			case 2:
 				buffer = TextFormat("Moves: %i", 0);
 				break;
-			case 3:
-				buffer = TextFormat("Heuristics");
-				break;
-			case 4:
-				if (puzzle)
-					buffer = TextFormat("  [M]anhattan: %i", 0);
-				else
-					buffer = TextFormat("  [M]anhattan: %s", "N/A");
-				break;
 			default:
 				goto endLoop;
 		}
@@ -320,15 +352,37 @@ void	Display::HUD::renderData(nPuzzle* puzzle) const
 #endif
 }
 
+void	Display::HUD::renderHeuristics(nPuzzle* puzzle) const
+{
+#if DEBUG >= DEBUG_ALL
+	LOG_AS_TRACE();
+#endif
+#if DEBUG >= DEBUG_DEBUG
+	DrawRectangleLinesEx(this->Heuristics, 1, Color{255,23,23,255});
+#endif
+	const char* buffer;
+
+	DrawText("Heuristics", this->Heuristics.x, this->Heuristics.y, this->fontSize, RED);
+	for (size_t line = 0; line < heuristic::size; ++line)
+	{
+		buffer = TextFormat("[%i] %s: %i", line, heuristic::function[line].name, heuristic::function[line].f(&puzzle->getCurrentState(), &puzzle->getTargetState()));
+		DrawText(buffer, this->Heuristics.x, this->Heuristics.y + (line + 1) * this->fontHeight, this->fontSize, WHITE);
+	}
+#if DEBUG >= DEBUG_ALL
+	LOG_AS_TRACE();
+#endif
+}
+
 void	Display::HUD::renderControls(void) const
 {
 #if DEBUG >= DEBUG_ALL
 	LOG_AS_TRACE();
 #endif
+#if DEBUG >= DEBUG_DEBUG
+	DrawRectangleLinesEx(this->Controls, 1, Color{23,255,23,255});
+#endif
 	const char*	buffer;
 	size_t		i;
-
-	// DrawRectangleLinesEx(this->Controls, 1, Color{23,255,23,255});
 	i = 0;
 	for (auto it = Display::hotkeyList.begin(); it != Display::hotkeyList.end(); ++it, ++i)
 	{
@@ -342,10 +396,12 @@ void	Display::HUD::renderMovement(void) const
 #if DEBUG >= DEBUG_ALL
 	LOG_AS_TRACE();
 #endif
+#if DEBUG >= DEBUG_DEBUG
+	DrawRectangleLinesEx(this->Movement, 1, Color{23,23,255,255});
+#endif
 	int	length;
 	int width;
 
-	// DrawRectangleLinesEx(this->Movement, 1, Color{23,23,255,255});
 	length = std::min(this->Movement.width, this->Movement.height);
 	width = length / 3;
 	DrawRectangle(this->Movement.x, this->Movement.y + (length - width) / 2, length, width, Color{192,192,192,255});
