@@ -52,16 +52,19 @@ class Display
 
 				Rectangle	Frame;
 				Rectangle	Data;
+				Rectangle	Heuristics;
 				Rectangle	Controls;
 				Rectangle	Movement;
 				// Positions
 				void	configureFramePosition(void);
 				void	configureDataPosition(void);
+				void	configureHeuristicsPosition(void);
 				void	configureControlsPosition(void);
 				void	configureMovementPosition(void);
 				// Render
 				void	renderFrame(void) const;
 				void	renderData(nPuzzle* puzzle) const;
+				void	renderHeuristics(nPuzzle* puzzle) const;
 				void	renderControls(void) const;
 				void	renderMovement(void) const;
 			
@@ -79,13 +82,14 @@ class Display
 				// Sizes
 				void	configureSizes(bool updatePositions = false);
 				void	configureDataSize(bool updateFrame = true);
+				void	configureHeuristicsSize(bool updateFrame = true);
 				void	configureControlSize(bool updateFrame = true);
 				void	configureMovementSize(bool updateFrame = true);
 				void	configureFrameSize(bool updatePositions = true);
 				// Positions
 				void	configurePositions(void);
 				// Render
-				void	render(void) const;
+				void	render(nPuzzle* puzzle) const;
 		};
 		struct HUD	HUD;
 		Rectangle	Frame;

@@ -6,7 +6,7 @@
 /*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/02 17:58:28 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/10 13:45:21 by othello          ###   ########.fr       */
+/*   Updated: 2026/07/14 14:05:08 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -335,7 +335,7 @@ void	Display::renderScreen()
 	// Background
 	ClearBackground(Color{127, 63, 23, 255});
 	// HUD
-	this->HUD.render();
+	this->HUD.render(this->puzzle);
 #if DEBUG >= DEBUG_ALL
 	LOG_AS_TRACE();
 #endif

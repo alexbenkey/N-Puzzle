@@ -6,7 +6,7 @@
 /*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 16:13:50 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/14 16:53:24 by othello          ###   ########.fr       */
+/*   Updated: 2026/07/14 17:45:22 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,7 @@ void	nPuzzleTarget::setTargetTiles(void)
 
 		// bottom → top
 		for (int32_t y = bottom; y >= top && i < getPuzzleSize(); --y)
-			this->getTile(left, y).setContent(i++, y, top);
+			this->getTile(left, y).setContent(i++, left, y);
 		++left;
 	}
 }

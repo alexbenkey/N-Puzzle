@@ -6,7 +6,7 @@
 /*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 16:13:50 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/10 17:39:29 by othello          ###   ########.fr       */
+/*   Updated: 2026/07/17 11:57:35 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -163,9 +163,9 @@ bool	nPuzzle::stateHasAlreadyBeenVisited(nPuzzleState* state)
 	foundItem = std::find(this->visited.begin(), this->visited.end(), state);
 	if (foundItem == this->visited.end())
 		return (false);
-#warning requires state cost
-	if (false)
-	// if (state.getCost() < (*foundItem).getCost())
+// #warning requires state cost
+// 	if (false)
+	if (state->getCost() < (*foundItem)->getCost())
 	{
 		this->visited.erase(foundItem);
 		return (false);
@@ -180,9 +180,9 @@ bool	nPuzzle::stateIsAlreadyInQueue(nPuzzleState* state)
 	foundItem = std::find(this->queue.begin(), this->queue.end(), state);
 	if (foundItem == this->queue.end())
 		return (false);
-#warning requires state cost
-	if (false)
-	// if (state.getCost() < (*foundItem).getCost())
+// #warning requires state cost
+	// if (false)
+	if (state->getCost() < (*foundItem)->getCost())
 	{
 		this->queue.erase(foundItem);
 		return (false);
@@ -202,8 +202,43 @@ void	nPuzzle::calculateHeuristic(nPuzzleState* state, nPuzzle* puzzle)
 		for (int y = 0; y < height; ++y)
 			if (state->getTile(x, y).getVal() != target.getTile(x, y).getVal())
 				++heuristic;
-#warning need to actuall set heursitc
+#warning need to actually set heursitc
 	// state.setH(heuristic);
+}
+
+void	nPuzzle::printAllTiles(const nPuzzleState& state) const
+{
+	for (int32_t x = 0, width = state.getPuzzleWidth(); x < width; ++x)
+	{
+		for (int32_t y = 0, height = state.getPuzzleHeight(); y < height; ++y)
+		{
+			nPuzzleState::Tile tile = state.getTile(x, y);
+			std::printf("%2i [%2i][%2i] ", tile.getVal(), tile.getxPos(), tile.getyPos());
+			state.printTilePos(tile);
+		}
+	}
+	std::cout	<< std::endl;
+}
+
+void	nPuzzle::printAllTilesFlex(nPuzzleState& state)
+{
+	// for (int32_t x = 0, width = state.getPuzzleWidth(); x < width; ++x)
+	// {
+	// 	for (int32_t y = 0, height = state.getPuzzleHeight(); y < height; ++y)
+	// 	{
+
+	// 		nPuzzleState::Tile tile = state.getTile(x, y);
+	// 		std::printf("[%2i][%2i] > %2i [%2i][%2i] ", x, y, tile.getVal(), tile.getxPos(), tile.getyPos());
+	// 		state.printTilePos(tile);
+	// 	}
+	// }
+	for (int32_t value = 1, size = state.getPuzzleSize(); value < size; ++value)
+	{
+		nPuzzleState::Tile tile = state.getTile(value);
+		std::printf("%2i [%2i][%2i] ", tile.getVal(), tile.getxPos(), tile.getyPos());
+		state.printTilePos(tile);
+	}
+	std::cout	<< std::endl;
 }
 
 /** ************************************************************************ **\

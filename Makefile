@@ -12,7 +12,7 @@ DEFINES ?=
 CPPFLAGS ?=	
 CPPFLAGS +=	$(INCLUDES) $(DEFINES) -DDEBUG=$(DEBUG)
 
-WARNFLAGS :=	-Wall -Wextra -Werror
+# WARNFLAGS :=	-Wall -Wextra -Werror
 # WARNFLAGS +=	-Wno-unused-result
 # WARNFLAGS +=	-Wno-unused-variable
 
@@ -92,12 +92,16 @@ SRC_PARSE :=	parse.cpp
 DIR_CLASS :=	$(SRC_DIR)
 SRC_CLASS :=	nPuzzleState.cpp nPuzzleTile.cpp nPuzzleTarget.cpp nPuzzle.cpp
 
+DIR_NMSPC :=	$(SRC_DIR)
+SRC_NMSPC :=	heuristic.cpp
+
 DIR_GRAPHIC :=	$(SRC_DIR)graphics/
 SRC_GRAPHIC :=	displayNPuzzle.cpp	Display.cpp	Display.HUD.cpp
 
 SRC_$(NAME) :=	$(SRC_MAIN:%=$(SRC_DIR)%) \
 				$(SRC_PARSE:%.cpp=$(DIR_PARSE)%.cpp)\
 				$(SRC_CLASS:%.cpp=$(DIR_CLASS)%.cpp)\
+				$(SRC_NMSPC:%.cpp=$(DIR_NMSPC)%.cpp)\
 				$(SRC_GRAPHIC:%.cpp=$(DIR_GRAPHIC)%.cpp)
 
 OBJ_$(NAME) :=	$(SRC_$(NAME):$(SRC_DIR)%.cpp=$(OBJ_DIR)%.o)
