@@ -59,6 +59,7 @@ class nPuzzle
 
 		void	printPuzzle(void) { this->state.printPuzzle(); }
 		void	printTarget(void) { this->target.printPuzzle(); }
+		void	printQueue(void)	{ if (this->queue.size()) this->queue[this->queueIndex]->printPuzzle(); }
 		void	printEmptyTilePos(void) {this->state.printTilePos( this->state.getTile(0)); }
 		void	printAllTiles(const nPuzzleState& state) const;
 		void	printAllTilesFlex(nPuzzleState& state);
