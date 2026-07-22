@@ -6,7 +6,7 @@
 /*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/02 16:48:19 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/22 14:39:27 by avon-ben         ###   ########.fr       */
+/*   Updated: 2026/07/22 15:31:23 by avon-ben         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,10 +64,7 @@ void	displayNPuzzle(nPuzzle* puzzle)
 				case KEY_S:	puzzle->printPuzzle();	break;
 				case KEY_R:
 					if (IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT))
-					{
-						TraceLog(LOG_WARNING, "Should reset to start now");
 						puzzle->resetStates();
-					}
 					else
 						TraceLog(LOG_WARNING, "Press uppercase R to reset.");
 					break;
