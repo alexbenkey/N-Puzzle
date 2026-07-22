@@ -60,7 +60,7 @@ class nPuzzleState
 		int32_t	height;
 		int32_t	size;
 		std::map<int32_t, int32_t>	heuristic;
-		const int32_t   usedHeuristic = 0;
+		int32_t   usedHeuristic = 1;
 		int32_t	cost = 0;
 
 		Position emptyPos = {0, 0};
@@ -85,7 +85,9 @@ class nPuzzleState
 		int32_t getPuzzleHeight(void) const {return this->height; }
 		int32_t getPuzzleWidth(void) const {return this->width; } 
 		int32_t getPuzzleSize(void) const {return this->size; }
+		int32_t getUsedHeuristic(void) const {return this->usedHeuristic; }
 
+		bool	setUsedHeuristic(int32_t value);
 		void	generateTiles(void);
 		Tile&   getTile(const int32_t value);
 		const Tile&   getTile(const int32_t value) const;
