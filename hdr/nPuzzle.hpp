@@ -43,6 +43,8 @@ class nPuzzle
 		nPuzzle(const nPuzzle &src);
 		~nPuzzle(void);
 
+		void	resetStates(void);
+		void	clearStates(void);
 		void	setRow(int32_t row, const std::vector<int>& numbers);
 
 		nPuzzleState&	getCurrentState()	{ return (this->state); }

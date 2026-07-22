@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Display.HUD.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
+/*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/09 13:44:29 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/17 18:17:08 by othello          ###   ########.fr       */
+/*   Updated: 2026/07/22 14:41:10 by avon-ben         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -337,7 +337,7 @@ void	Display::HUD::renderData(nPuzzle* puzzle) const
 				buffer = TextFormat("Solvbility");
 				break;
 			case 2:
-				buffer = TextFormat("Moves: %i", 0);
+				buffer = TextFormat("Moves: %i", puzzle ? puzzle->getCurrentState().getCost() : 0 );
 				break;
 			case 3:
 				if (puzzle->getQueueIndex() == -1)

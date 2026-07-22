@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   nPuzzle.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
+/*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 16:13:50 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/22 13:14:46 by othello          ###   ########.fr       */
+/*   Updated: 2026/07/22 14:39:55 by avon-ben         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,7 @@ nPuzzle::nPuzzle(const nPuzzle &src):
 
 nPuzzle::~nPuzzle(void)
 {
+	this->resetStates();
 #if DEBUG >= DEBUG_TRACE
 	std::cout	<< C_RED	<< "Deconstructor "
 				<< C_RED	<< __func__
@@ -285,6 +286,24 @@ void	nPuzzle::printAllTilesFlex(nPuzzleState& state)
 		state.printTilePos(tile);
 	}
 	std::cout	<< std::endl;
+}
+
+void	nPuzzle::resetStates(void)
+{
+	this->clearStates();
+	this->state = this->start; 
+}
+
+void	nPuzzle::clearStates(void)
+{
+	for (nPuzzleState *state : this->queue)
+		delete state;
+	this->queue.clear();
+	for (nPuzzleState *state : this->visited)
+		delete state;
+	this->visited.clear();
+
+	this->queueIndex = -1;
 }
 
 /** ************************************************************************ **\
