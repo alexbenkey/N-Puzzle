@@ -76,7 +76,7 @@ class nPuzzle
 		bool	moveRight(int32_t h = -1)	{ return(this->move(nPuzzleState::Direction::RIGHT, h)); }
 	
 		void	solve(int32_t h);
-		void	solveStep(int32_t h);
+		void	solveStep(int32_t h = -1);
 		void	processState(nPuzzleState* state, int32_t h);
 		bool	stateHasAlreadyBeenVisited(nPuzzleState* state);
 		bool	stateIsAlreadyInQueue(nPuzzleState* state);

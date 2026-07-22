@@ -6,7 +6,7 @@
 /*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/02 17:58:28 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/17 16:45:49 by othello          ###   ########.fr       */
+/*   Updated: 2026/07/22 14:46:49 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,9 @@ void	Display::setPuzzle(nPuzzle* puzzle)
 void	Display::configureMinimumSizes(void)
 {
 #if DEBUG >= DEBUG_TRACE
-	LOG_AS_TRACE();
+	LOG_AS_TRACE("Configuring Minimum sizes");
+#else if DEBUG >= DEBUG_INFO
+	TraceLog(LOG_INFO, "\tConfiguring Minimum sizes");
 #endif
 	int	width;
 	int	height;
@@ -147,7 +149,9 @@ void	Display::configureMinimumFrameSizes()
 void	Display::configureMaximumSizes(void)
 {
 #if DEBUG >= DEBUG_TRACE
-	LOG_AS_TRACE();
+	LOG_AS_TRACE("Configuring Maximum sizes");
+#else if DEBUG >= DEBUG_INFO
+	TraceLog(LOG_INFO, "\tConfiguring Maximum sizes");
 #endif
 	int	monitor;
 	int	width;
@@ -156,12 +160,16 @@ void	Display::configureMaximumSizes(void)
 	monitor = GetCurrentMonitor();
 	width = GetMonitorWidth(monitor) / 2;
 	height = GetMonitorHeight(monitor) / 2;
-	TraceLog(LOG_INFO, "Setting MaxWindow: %4ix%-4i", width, height);
-	SetWindowMaxSize(width, height);
-	
+#if DEBUG >= DEBUG_DEBUG
 	TraceLog(LOG_DEBUG, "Monitor[%2.2i/%-2.2i] %4ix%-4i", monitor, GetMonitorCount(), GetMonitorWidth(monitor), GetMonitorHeight(monitor));
 	TraceLog(LOG_DEBUG, "Screen        %4ix%-4i", monitor, GetScreenWidth(), GetScreenHeight());
 	TraceLog(LOG_DEBUG, "Render        %4ix%-4i", monitor, GetRenderWidth(), GetRenderHeight());
+#endif
+#if DEBUG >= DEBUG_INFO
+	TraceLog(LOG_INFO, "Setting MaxWindow: %4ix%-4i", width, height);
+#endif
+	SetWindowMaxSize(width, height);
+
 #if DEBUG >= DEBUG_TRACE
 	LOG_AS_TRACE();
 #endif
@@ -170,7 +178,9 @@ void	Display::configureMaximumSizes(void)
 void	Display::configureScreen(void)
 {
 #if DEBUG >= DEBUG_TRACE
-	LOG_AS_TRACE();
+	LOG_AS_TRACE("Configuring Screen Size");
+#else if DEBUG >= DEBUG_INFO
+	TraceLog(LOG_INFO, "\tConfiguring Screen Size");
 #endif
 	int	width = (int)this->HUD.width() + (int)this->Frame.width + this->margin * 3;
 	int	height =(int)std::max(this->HUD.height(), this->Frame.height) + this->margin * 2;
@@ -186,9 +196,10 @@ void	Display::configureScreen(void)
 void	Display::configureSizes(void)
 {
 #if DEBUG >= DEBUG_TRACE
-	LOG_AS_TRACE();
+	LOG_AS_TRACE("Configuring Frame and Tile Sizes");
+#else if DEBUG >= DEBUG_INFO
+	TraceLog(LOG_INFO, "\tConfiguring Frame and Tile sizes");
 #endif
-	LOG_AS_TRACE();
 	this->configureFrameSize();
 	this->configureTileSize();
 #if DEBUG >= DEBUG_TRACE
@@ -201,7 +212,6 @@ void	Display::configureFrameSize(void)
 #if DEBUG >= DEBUG_TRACE
 	LOG_AS_TRACE();
 #endif
-	LOG_AS_TRACE();
 	this->Frame.width = (float)GetScreenWidth() - this->HUD.width() - 3 * (float)this->margin;
 	this->Frame.height = GetScreenHeight() - 2 * (float)this->margin;
 	Display::logRectangle("Frame", this->Frame);
@@ -215,7 +225,6 @@ void	Display::configureTileSize(void)
 #if DEBUG >= DEBUG_TRACE
 	LOG_AS_TRACE();
 #endif
-	LOG_AS_TRACE();
 
 	if (this->puzzle)
 	{
@@ -281,9 +290,10 @@ bool	Display::setMargin(const int margin, bool updateSizes, bool includeHUD)
 void	Display::configurePositions(void)
 {
 #if DEBUG >= DEBUG_TRACE
-	LOG_AS_TRACE();
+	LOG_AS_TRACE("Configuring Positions");
+#else if DEBUG >= DEBUG_INFO
+	TraceLog(LOG_INFO, "\tConfiguring Positions");
 #endif
-	LOG_AS_TRACE();
 	this->HUD.configurePositions();
 	this->configureFramePosition();
 #if DEBUG >= DEBUG_TRACE
@@ -296,7 +306,6 @@ void	Display::configureFramePosition(void)
 #if DEBUG >= DEBUG_TRACE
 	LOG_AS_TRACE();
 #endif
-	LOG_AS_TRACE();
 	this->Frame.x = this->HUD.x() + this->HUD.width() + this->margin;
 	this->Frame.y = this->margin;
 	Display::logRectangle("Frame", this->Frame);
@@ -313,7 +322,6 @@ void	Display::reconfigure(void)
 #if DEBUG >= DEBUG_TRACE
 	LOG_AS_TRACE();
 #endif
-	LOG_AS_TRACE();
 	this->configureMinimumFrameSizes();
 	this->configureMaximumSizes();
 	this->configureSizes();
@@ -328,7 +336,7 @@ void	Display::logRectangle(const char* name, const Rectangle& rect)
 	TraceLog(TraceLogLevel::LOG_INFO, "%-12s x %4.0f y %4.0f w %4.0f h %4.0f", name, rect.x, rect.y, rect.width, rect.height);
 }
 
-void	Display::renderScreen()
+void	Display::renderState(nPuzzleState* state)
 {
 #if DEBUG >= DEBUG_ALL
 	LOG_AS_TRACE();
@@ -336,7 +344,8 @@ void	Display::renderScreen()
 	// Background
 	ClearBackground(Color{127, 63, 23, 255});
 	// HUD
-	this->HUD.render(this->puzzle);
+	this->HUD.render(this->puzzle, state);
+	this->renderTiles(*state);
 #if DEBUG >= DEBUG_ALL
 	LOG_AS_TRACE();
 #endif
