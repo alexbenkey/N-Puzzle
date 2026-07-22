@@ -54,6 +54,8 @@ class nPuzzle
 		~nPuzzle(void);
 
 		void	parse(std::istream& __is);
+		void	resetStates(void);
+		void	clearStates(void);
 
 		nPuzzleState&	getCurrentState()	{ return (this->state); }
 		nPuzzleState&	getTargetState()	{ return (this->target); }

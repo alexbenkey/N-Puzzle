@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   nPuzzleState.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
+/*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 16:13:50 by ohengelm          #+#    #+#             */
 /*   Updated: 2026/07/22 17:09:46 by othello          ###   ########.fr       */
@@ -372,5 +372,7 @@ nPuzzleState	&nPuzzleState::operator=(const nPuzzleState &src)
 	this->size = this->width * this->height;
 	this->tiles = src.tiles;
 	this->emptyPos = src.emptyPos;
+	this->cost = src.cost;
+	this->heuristic = src.heuristic;
 	return (*this);
 }

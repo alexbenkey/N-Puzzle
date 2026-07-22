@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   displayNPuzzle.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
+/*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/02 16:48:19 by ohengelm          #+#    #+#             */
 /*   Updated: 2026/07/22 14:18:16 by othello          ###   ########.fr       */
@@ -50,21 +50,21 @@ void	displayNPuzzle(nPuzzle* puzzle)
 					if (IsKeyDown(KEY_Q))
 						puzzle->incrementQueue();
 					else
-						puzzle->moveRight();
+						puzzle->moveRight(), puzzle->clearStates();
 					break;
 				case KEY_LEFT:
 					if (IsKeyDown(KEY_Q))
 						puzzle->decrementQueue();
 					else
-						puzzle->moveLeft();
+						puzzle->moveLeft(), puzzle->clearStates();
 					break;
-				case KEY_DOWN:	puzzle->moveDown();	break;
-				case KEY_UP:	puzzle->moveUp();	break;
+				case KEY_DOWN:	puzzle->moveDown(), puzzle->clearStates();	break;
+				case KEY_UP:	puzzle->moveUp(), puzzle->clearStates();	break;
 				case KEY_T:	puzzle->printTarget();	break;
 				case KEY_S:	puzzle->printPuzzle();	break;
 				case KEY_R:
 					if (IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT))
-						TraceLog(LOG_WARNING, "Should reset to start now");
+						puzzle->resetStates();
 					else
 						TraceLog(LOG_WARNING, "Press uppercase R to reset.");
 					break;
