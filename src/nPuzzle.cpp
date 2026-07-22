@@ -23,6 +23,31 @@
  * 
 \* ************************************************************************** */
 
+nPuzzle::nPuzzle(void):
+	width(0),
+	height(0),
+	size(0)
+{
+#if DEBUG >= DEBUG_TRACE
+	std::cout	<< C_DGREEN	<< "Default constructor "
+				<< C_GREEN	<< __func__
+				<< C_DGREEN	<< " called."
+				<< C_RESET	<< std::endl;
+#endif
+}
+
+nPuzzle::nPuzzle(std::istream& __is)
+{
+#if DEBUG >= DEBUG_TRACE
+	std::cout	<< C_DGREEN	<< "Parsing constructor "
+				<< C_GREEN	<< __func__
+				<< C_DGREEN	<< " called."
+				<< C_RESET	<< std::endl;
+#endif
+	this->parse(__is);
+}
+
+
 nPuzzle::nPuzzle(const int32_t size):
 	width(size),
 	height(size),
@@ -95,14 +120,94 @@ nPuzzle::~nPuzzle(void)
  * 
 \* ************************************************************************** */
 
+void	nPuzzle::parse(std::istream& __is)
+{
+	std::string	line;
+	std::vector<int32_t>	numbers;
+
+	// Clearing current Content
+#warning clearing before parsing needs to be implemented
+
+	// Reading upto puzzle size
+	while (std::getline(__is, line))
+	{
+		if (emptyLine(line))
+			continue;
+		if (!validLine(line))
+			throw std::runtime_error("Invalid puzzle size line: " + line);
+		break;
+	}
+	numbers = nPuzzle::convertLineToNumbers(line);
+	size_t	size = numbers.size();
+	if (size < 1 || size > 2)
+		throw std::runtime_error("Invalid puzzle size line: expected 1 or 2 positive integers");
+	if (numbers[0] <= 0)
+		throw std::runtime_error("Invalid puzzle size line: expected 1 or 2 positive integers");
+	this->width = numbers[0];
+	if (numbers[size - 1] <= 0)
+		throw std::runtime_error("Invalid puzzle size line: expected 1 or 2 positive integers");
+	this->height = numbers[size - 1];
+	this->size = this->width * this->height;
+	this->state = nPuzzleState(this->width, this->height);
+	this->target = nPuzzleTarget(this->width, this->height);
+
+	// Reading puzzle tiles
+	for (int32_t row = 0; std::getline(__is, line); ++row)
+	{
+
+		if (!validLine(line) || emptyLine(line))
+			throw std::runtime_error("Invalid puzzle row line: " + line);
+		numbers = nPuzzle::convertLineToNumbers(line);
+		this->setRow(row, numbers);
+	}
+	this->calculateHeuristic();
+	this->storeStartState();
+}
+
+bool	nPuzzle::emptyLine(const std::string &line) const
+{
+	size_t	i = 0;
+	size_t	size = line.size();
+
+	while (i < size && std::isspace(static_cast<unsigned char>(line[i])))
+		++i;
+	return (i == size || line[i] == '#');
+}
+
+bool	nPuzzle::validLine(const std::string &line) const
+{
+	size_t	i = 0;
+	size_t	size = line.size();
+
+	while (i < size
+		&& (std::isspace(static_cast<unsigned char>(line[i]))
+			|| std::isdigit(static_cast<unsigned char>(line[i]))))
+		++i;
+	return (i == size || line[i] == '#');
+}
+
+std::vector<int32_t>	nPuzzle::convertLineToNumbers(const std::string& line)
+{
+	std::istringstream	iss(line);
+	int32_t					x;
+	std::vector<int32_t>	numbers;
+
+	while (iss >> x)
+		numbers.push_back(x);
+	return (numbers);
+}
+
 void	nPuzzle::setRow(int32_t row, const std::vector<int>& numbers)
 {
 	if (row < 0 || row >= this->height)
 		throw std::runtime_error(std::string("Invalid puzzle row: "));
 	if (numbers.size() != static_cast<size_t>(this->width))
 		throw std::runtime_error(std::string("Invalid number of tiles in row "));
+
 	for (int32_t x = 0; x < this->width; ++x)
 	{
+		nPuzzleState::Tile tile = this->state.getTile(x, row);
+		tile.setVal(numbers[x]);
 		this->state.getTile(x, row).setVal(numbers[x]);
 		if (numbers[x] == 0)
 			this->state.setEmptyPos(x, row);
@@ -297,16 +402,6 @@ void	nPuzzle::printAllTiles(const nPuzzleState& state) const
 
 void	nPuzzle::printAllTilesFlex(nPuzzleState& state)
 {
-	// for (int32_t x = 0, width = state.getPuzzleWidth(); x < width; ++x)
-	// {
-	// 	for (int32_t y = 0, height = state.getPuzzleHeight(); y < height; ++y)
-	// 	{
-
-	// 		nPuzzleState::Tile tile = state.getTile(x, y);
-	// 		std::printf("[%2i][%2i] > %2i [%2i][%2i] ", x, y, tile.getVal(), tile.getxPos(), tile.getyPos());
-	// 		state.printTilePos(tile);
-	// 	}
-	// }
 	for (int32_t value = 1, size = state.getPuzzleSize(); value < size; ++value)
 	{
 		nPuzzleState::Tile tile = state.getTile(value);

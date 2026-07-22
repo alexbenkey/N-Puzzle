@@ -23,6 +23,7 @@ class nPuzzleTarget: public nPuzzleState
 	protected:
 
 	public:
+		nPuzzleTarget(void);
 		nPuzzleTarget(const int32_t width, const int32_t height);
 };
 

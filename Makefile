@@ -86,9 +86,6 @@ DEP_DIR :=	dep/
 
 SRC_MAIN :=	main.cpp
 
-DIR_PARSE :=	$(SRC_DIR)parse/
-SRC_PARSE :=	parse.cpp
-
 DIR_CLASS :=	$(SRC_DIR)
 SRC_CLASS :=	nPuzzleState.cpp nPuzzleTile.cpp nPuzzleTarget.cpp nPuzzle.cpp
 
@@ -99,7 +96,6 @@ DIR_GRAPHIC :=	$(SRC_DIR)graphics/
 SRC_GRAPHIC :=	displayNPuzzle.cpp	Display.cpp	Display.HUD.cpp
 
 SRC_$(NAME) :=	$(SRC_MAIN:%=$(SRC_DIR)%) \
-				$(SRC_PARSE:%.cpp=$(DIR_PARSE)%.cpp)\
 				$(SRC_CLASS:%.cpp=$(DIR_CLASS)%.cpp)\
 				$(SRC_NMSPC:%.cpp=$(DIR_NMSPC)%.cpp)\
 				$(SRC_GRAPHIC:%.cpp=$(DIR_GRAPHIC)%.cpp)
