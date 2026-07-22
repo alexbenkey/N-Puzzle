@@ -6,7 +6,7 @@
 /*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/09 13:44:29 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/17 18:17:08 by othello          ###   ########.fr       */
+/*   Updated: 2026/07/22 14:09:06 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -288,14 +288,14 @@ void	Display::HUD::configureMovementPosition(void)
 #endif
 }
 
-void	Display::HUD::render(nPuzzle* puzzle) const
+void	Display::HUD::render(nPuzzle* puzzle, nPuzzleState* state) const
 {
 #if DEBUG >= DEBUG_ALL
 	LOG_AS_TRACE();
 #endif
 	this->renderFrame();
-	this->renderData(puzzle);
-	this->renderHeuristics(puzzle);
+	this->renderData(puzzle, state);
+	this->renderHeuristics(state);
 	this->renderControls();
 	this->renderMovement();
 
@@ -313,7 +313,7 @@ void	Display::HUD::renderFrame(void) const
 #endif
 }
 
-void	Display::HUD::renderData(nPuzzle* puzzle) const
+void	Display::HUD::renderData(nPuzzle* puzzle, nPuzzleState* state) const
 {
 #if DEBUG >= DEBUG_ALL
 	LOG_AS_TRACE();
@@ -334,10 +334,13 @@ void	Display::HUD::renderData(nPuzzle* puzzle) const
 					buffer = TextFormat("Size: %ix%i", 0, 0);
 				break;
 			case 1:
-				buffer = TextFormat("Solvbility");
+				buffer = TextFormat("Solvbility: ???");
 				break;
 			case 2:
-				buffer = TextFormat("Moves: %i", 0);
+				if (state)
+					buffer = TextFormat("Moves: %i", state->getCost());
+				else
+					buffer = TextFormat("Moves: N/A");
 				break;
 			case 3:
 				if (puzzle->getQueueIndex() == -1)
@@ -358,7 +361,7 @@ void	Display::HUD::renderData(nPuzzle* puzzle) const
 #endif
 }
 
-void	Display::HUD::renderHeuristics(nPuzzle* puzzle) const
+void	Display::HUD::renderHeuristics(nPuzzleState* state) const
 {
 #if DEBUG >= DEBUG_ALL
 	LOG_AS_TRACE();
@@ -371,7 +374,7 @@ void	Display::HUD::renderHeuristics(nPuzzle* puzzle) const
 	DrawText("Heuristics", this->Heuristics.x, this->Heuristics.y, this->fontSize, RED);
 	for (int32_t line = 0; line < heuristic::size; ++line)
 	{
-		buffer = TextFormat("[%i] %s: %i", line, heuristic::function[line].name, puzzle->getCurrentState().getHeuristic(line));
+		buffer = TextFormat("[%i] %s: %i", line, heuristic::function[line].name, state->getHeuristic(line));
 		DrawText(buffer, this->Heuristics.x, this->Heuristics.y + (line + 1) * this->fontHeight, this->fontSize, WHITE);
 	}
 #if DEBUG >= DEBUG_ALL

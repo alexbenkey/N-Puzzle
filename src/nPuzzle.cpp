@@ -6,7 +6,7 @@
 /*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 16:13:50 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/22 13:14:46 by othello          ###   ########.fr       */
+/*   Updated: 2026/07/22 14:11:45 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -206,7 +206,10 @@ void	nPuzzle::processState(nPuzzleState* state, int32_t h)
 		return ;
 	if (this->stateIsAlreadyInQueue(state))
 		return ;
-	state->calculateHeuristic(h, &this->target);
+	if (h != -1)
+		state->calculateHeuristic(h, &this->target);
+	else
+		state->calculateHeuristic(&this->target);
 	this->queue.push_back(state);
 	std::sort(this->queue.begin(), this->queue.end());
 }

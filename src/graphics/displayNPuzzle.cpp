@@ -6,7 +6,7 @@
 /*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/02 16:48:19 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/17 17:06:55 by othello          ###   ########.fr       */
+/*   Updated: 2026/07/22 14:18:16 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,28 +69,29 @@ void	displayNPuzzle(nPuzzle* puzzle)
 						TraceLog(LOG_WARNING, "Press uppercase R to reset.");
 					break;
 				case KEY_SPACE:
-					puzzle->solveStep(0);
+					puzzle->solveStep();
 					break;
 				case KEY_ZERO ... KEY_NINE:
 					puzzle->solve(pressedKey - KEY_ZERO);
 					break ;
 				default:	break;
 			}
+			// Check for resize
 			if (IsWindowResized())
 				graphics.configureSizes();
-			// Render Puzzle
-			BeginDrawing();
-			graphics.renderScreen();
+			// Render frame
 			try
 			{
-				if (IsKeyDown(KEY_T))
-					graphics.renderTargetState();
+				BeginDrawing();
+				if (IsKeyDown(KEY_Q))
+					graphics.renderAsQueueState();
 				else if (IsKeyDown(KEY_S))
-					graphics.renderStartState();
-				else if (IsKeyDown(KEY_Q))
-					graphics.renderQueueState();
+					graphics.renderAsStartState();
+				else if (IsKeyDown(KEY_T))
+					graphics.renderAsTargetState();
 				else
-					graphics.renderCurrentState();
+					graphics.renderAsCurrentState();
+				EndDrawing();
 			}
 			catch(const std::exception& e)
 			{
@@ -98,7 +99,6 @@ void	displayNPuzzle(nPuzzle* puzzle)
 							<< C_RESET	<< e.what()
 							<< std::endl;
 			}
-			EndDrawing();
 		}
 	}
 	catch(const std::exception& e)
