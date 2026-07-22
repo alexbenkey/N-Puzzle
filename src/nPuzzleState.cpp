@@ -6,7 +6,7 @@
 /*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 16:13:50 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/22 13:01:19 by othello          ###   ########.fr       */
+/*   Updated: 2026/07/22 17:09:46 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,20 @@
  * 	Constructors
  * 
 \* ************************************************************************** */
+
+nPuzzleState::nPuzzleState(void):
+	width(0),
+	height(0),
+	size(0)
+{
+#if DEBUG >= DEBUG_TRACE
+	std::cout	<< C_DGREEN	<< "Default constructor "
+				<< C_GREEN	<< __func__
+				<< C_DGREEN	<< " called."
+				<< C_RESET	<< std::endl;
+#endif
+	this->generateTiles();
+}
 
 nPuzzleState::nPuzzleState(const int32_t size):
 	width(size),
@@ -351,8 +365,11 @@ nPuzzleState	&nPuzzleState::operator=(const nPuzzleState &src)
 {
 	if (this == &src)
 		return (*this);
-	if (this->width != src.width || this->height != src.height)
-		return (*this);
+	// if (this->width != src.width || this->height != src.height)
+	// 	return (*this);
+	this->width = src.width;
+	this->height = src.height;
+	this->size = this->width * this->height;
 	this->tiles = src.tiles;
 	this->emptyPos = src.emptyPos;
 	return (*this);

@@ -16,14 +16,16 @@
 # include "nPuzzleState.hpp"
 # include "nPuzzleTarget.hpp"
 
-# include <vector>
+# include <vector>	// std::vector
+# include <string>	// std::string std::getline() std::istream
+# include <sstream>	// std::istringstream
 
 class nPuzzle
 {
 	private:
-		const int32_t	width;
-		const int32_t	height;
-		const int32_t	size;
+		int32_t	width;
+		int32_t	height;
+		int32_t	size;
 		nPuzzleState	start;
 		nPuzzleTarget	target;
 		nPuzzleState	state;
@@ -32,18 +34,26 @@ class nPuzzle
 		int32_t						queueIndex = -1;
 		std::vector<nPuzzleState*>	visited;
 
+		// Parsing
+		bool	emptyLine(const std::string& line) const;
+		bool	validLine(const std::string& line) const;
+		static std::vector<int>	convertLineToNumbers(const std::string& line);
+		void	setRow(int32_t row, const std::vector<int>& numbers);
+
+		// Movement
 		bool	move(nPuzzleState::Direction direction, int32_t h);
 
 	protected:
 
 	public:
-		// nPuzzle(void); 
+		nPuzzle(void);
+		nPuzzle(std::istream& __is);
 		nPuzzle(const int32_t size);
 		nPuzzle(const int32_t width, const int32_t height);
 		nPuzzle(const nPuzzle &src);
 		~nPuzzle(void);
 
-		void	setRow(int32_t row, const std::vector<int>& numbers);
+		void	parse(std::istream& __is);
 
 		nPuzzleState&	getCurrentState()	{ return (this->state); }
 		nPuzzleState&	getTargetState()	{ return (this->target); }

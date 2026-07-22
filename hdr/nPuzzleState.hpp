@@ -56,9 +56,9 @@ class nPuzzleState
 			int32_t y;
 		}; 
 
-		const int32_t	width;
-		const int32_t	height;
-		const int32_t	size;
+		int32_t	width;
+		int32_t	height;
+		int32_t	size;
 		std::map<int32_t, int32_t>	heuristic;
 		const int32_t   usedHeuristic = 0;
 		int32_t	cost = 0;
@@ -76,6 +76,7 @@ class nPuzzleState
 			LEFT
 		};
 
+		nPuzzleState(void);
 		nPuzzleState(const int32_t size);
 		nPuzzleState(const int32_t width, const int32_t height);
 		nPuzzleState(const nPuzzleState &src);

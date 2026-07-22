@@ -6,7 +6,7 @@
 /*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 16:13:50 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/14 17:45:22 by othello          ###   ########.fr       */
+/*   Updated: 2026/07/22 16:55:55 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,17 @@
  * 	Constructors
  * 
 \* ************************************************************************** */
+
+nPuzzleTarget::nPuzzleTarget(void)
+{
+#if DEBUG >= DEBUG_TRACE
+	std::cout	<< C_DGREEN	<< "Default constructor "
+				<< C_GREEN	<< __func__
+				<< C_DGREEN	<< " called."
+				<< C_RESET	<< std::endl;
+#endif
+	this->setTargetTiles();
+}
 
 nPuzzleTarget::nPuzzleTarget(const int32_t width, const int32_t height):
 	nPuzzleState(width, height)
