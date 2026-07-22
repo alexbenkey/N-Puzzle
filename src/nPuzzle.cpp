@@ -6,7 +6,7 @@
 /*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 16:13:50 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/22 14:39:55 by avon-ben         ###   ########.fr       */
+/*   Updated: 2026/07/22 15:16:58 by avon-ben         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,13 +80,13 @@ nPuzzle::nPuzzle(const nPuzzle &src):
 
 nPuzzle::~nPuzzle(void)
 {
-	this->resetStates();
 #if DEBUG >= DEBUG_TRACE
 	std::cout	<< C_RED	<< "Deconstructor "
 				<< C_RED	<< __func__
 				<< C_DRED	<< " called"
 				<< C_RESET	<< std::endl;
 #endif
+	this->clearStates();
 }
 
 /** ************************************************************************ **\
