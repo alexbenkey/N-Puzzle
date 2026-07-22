@@ -3,8 +3,10 @@
 
 class Test
 {
+#pragma region "Nested Classes"
 public:
     class Child;
+#pragma endregion
 private:
 	class Child*	firstborn;
 

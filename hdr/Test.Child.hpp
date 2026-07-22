@@ -8,6 +8,8 @@ class Test::Child
 public:
     Child();
     ~Child();
+// private:
+	void	saysomething();
 };
 
 #endif
