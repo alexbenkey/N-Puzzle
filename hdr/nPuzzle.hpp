@@ -32,7 +32,7 @@ class nPuzzle
 		int32_t						queueIndex = -1;
 		std::vector<nPuzzleState*>	visited;
 
-		bool	move(int32_t direction, int32_t h);
+		bool	move(nPuzzleState::Direction direction, int32_t h);
 
 	protected:
 
@@ -68,10 +68,10 @@ class nPuzzle
 		int32_t getHeight(void) const { return this->height; }
 		int32_t getSize(void) const { return this->size; }
 
-		bool	moveUp(int32_t h = -1)	{ return(this->move(0, h)); }
-		bool	moveDown(int32_t h = -1)	{ return(this->move(1, h)); }
-		bool	moveLeft(int32_t h = -1)	{ return(this->move(2, h)); }
-		bool	moveRight(int32_t h = -1)	{ return(this->move(3, h)); }
+		bool	moveUp(int32_t h = -1)	{ return(this->move(nPuzzleState::Direction::UP, h)); }
+		bool	moveDown(int32_t h = -1)	{ return(this->move(nPuzzleState::Direction::DOWN, h)); }
+		bool	moveLeft(int32_t h = -1)	{ return(this->move(nPuzzleState::Direction::LEFT, h)); }
+		bool	moveRight(int32_t h = -1)	{ return(this->move(nPuzzleState::Direction::RIGHT, h)); }
 	
 		void	solve(int32_t h);
 		void	solveStep(int32_t h);

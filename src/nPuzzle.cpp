@@ -6,7 +6,7 @@
 /*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 16:13:50 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/17 18:19:08 by othello          ###   ########.fr       */
+/*   Updated: 2026/07/22 13:14:46 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,17 +137,11 @@ void	nPuzzle::maintainValidQueue(void)
 }
 
 #warning needs to be adjusted to use the enum with this->state.move(enum)
-bool	nPuzzle::move(int32_t direction, int32_t h)
+bool	nPuzzle::move(nPuzzleState::Direction direction, int32_t h)
 {
 	bool	validMove;
 
-	switch (direction)
-	{
-		case 0:	validMove = this->state.move(nPuzzleState::Direction::UP);		break;
-		case 1:	validMove = this->state.move(nPuzzleState::Direction::RIGHT);	break;
-		case 2:	validMove = this->state.move(nPuzzleState::Direction::DOWN);	break;
-		case 3:	validMove = this->state.move(nPuzzleState::Direction::LEFT);	break;
-	}
+	validMove = this->state.move(direction);
 	if (validMove)
 	{
 		if (h != -1)
