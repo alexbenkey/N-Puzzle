@@ -84,7 +84,7 @@ SRC_DIR :=	src/
 OBJ_DIR :=	obj/
 DEP_DIR :=	dep/
 
-SRC_MAIN :=	main.cpp
+SRC_MAIN :=	main.cpp	Test.cpp	Test.Child.cpp
 
 DIR_CLASS :=	$(SRC_DIR)
 SRC_CLASS :=	nPuzzleState.cpp nPuzzleTile.cpp nPuzzleTarget.cpp nPuzzle.cpp
