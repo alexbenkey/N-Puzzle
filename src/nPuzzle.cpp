@@ -6,7 +6,7 @@
 /*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 16:13:50 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/22 14:11:45 by othello          ###   ########.fr       */
+/*   Updated: 2026/07/22 19:54:47 by avon-ben         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -203,23 +203,48 @@ void	nPuzzle::solveStep(int32_t h)
 
 void	nPuzzle::processState(nPuzzleState* state, int32_t h)
 {
+	if (!state->setUsedHeuristic(h))
+	{
+		delete state;
+		return;
+	}
 	if (this->stateHasAlreadyBeenVisited(state))
 		return ;
 	if (this->stateIsAlreadyInQueue(state))
 		return ;
-	if (h != -1)
-		state->calculateHeuristic(h, &this->target);
-	else
-		state->calculateHeuristic(&this->target);
+	// if (h != -1)
+	state->calculateHeuristic(h, &this->target);
+	// else
+	// 	state->calculateHeuristic(&this->target);
 	this->queue.push_back(state);
-	std::sort(this->queue.begin(), this->queue.end());
-}
+	std::sort(
+		this->queue.begin(), 
+		this->queue.end(), 
+		[](const nPuzzleState* lhs, const nPuzzleState *rhs)
+		{
+			return *lhs < *rhs;
+		});
+	std::cout << "Sorted queue:\n";
+	for (const nPuzzleState* state : this->queue)
+	{
+		const int32_t h = state->getUsedHeuristic(); // Manhattan
+		std::cout
+		<< "used= " << h
+		<< "g=" << state->getCost()
+		<< ", h=" << state->getHeuristic(h)
+		<< ", f=" << state->getCost() + state->getHeuristic(h)
+		<< '\n';
+	}
+};
 
 bool	nPuzzle::stateHasAlreadyBeenVisited(nPuzzleState* state)
 {
 	std::vector<nPuzzleState*>::iterator	foundItem;
 
-	foundItem = std::find(this->visited.begin(), this->visited.end(), state);
+	foundItem = std::find_if(
+		this->visited.begin(), 
+		this->visited.end(), 
+		[state] (const nPuzzleState* candidate){return candidate->sameState(*state);});
 	if (foundItem == this->visited.end())
 		return (false);
 	if (state->getCost() < (*foundItem)->getCost())
@@ -234,7 +259,7 @@ bool	nPuzzle::stateIsAlreadyInQueue(nPuzzleState* state)
 {
 	std::vector<nPuzzleState*>::iterator	foundItem;
 
-	foundItem = std::find(this->queue.begin(), this->queue.end(), state);
+	foundItem = std::find_if(this->queue.begin(), this->queue.end(), [state] (const nPuzzleState *candidate){ return candidate->sameState(*state); });
 	if (foundItem == this->queue.end())
 		return (false);
 	if (state->getCost() < (*foundItem)->getCost())

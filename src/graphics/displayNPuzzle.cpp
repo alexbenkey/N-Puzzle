@@ -6,7 +6,7 @@
 /*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/02 16:48:19 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/22 14:18:16 by othello          ###   ########.fr       */
+/*   Updated: 2026/07/22 18:49:28 by avon-ben         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include "Display.hpp"
 #include "colors.hpp"
 #include "Errors.hpp"
+#include "heuristic.hpp"
 
 #include <iostream>	// std::stream
 
@@ -37,6 +38,7 @@ void	displayNPuzzle(nPuzzle* puzzle)
 	SetTraceLogLevel(TraceLogLevel::LOG_ALL);
 #endif
 	Display	graphics(puzzle);
+	int32_t hVal = 1; 
 
 	try
 	{
@@ -44,6 +46,7 @@ void	displayNPuzzle(nPuzzle* puzzle)
 		{
 			// Process user input
 			int	pressedKey = GetKeyPressed();
+			
 			switch (pressedKey)
 			{
 				case KEY_RIGHT:
@@ -69,11 +72,31 @@ void	displayNPuzzle(nPuzzle* puzzle)
 						TraceLog(LOG_WARNING, "Press uppercase R to reset.");
 					break;
 				case KEY_SPACE:
-					puzzle->solveStep();
+					puzzle->solveStep(hVal);
 					break;
 				case KEY_ZERO ... KEY_NINE:
-					puzzle->solve(pressedKey - KEY_ZERO);
+					{
+						const int32_t requested = pressedKey - KEY_ZERO;
+
+						if (requested >= 0 && requested < heuristic::size)
+						{
+							hVal = requested;
+							puzzle->clearStates();
+
+							TraceLog(
+								LOG_INFO,
+								"selected heuristid %i: %s",
+								hVal,
+								heuristic::function[hVal].name
+							);
+						}
+						else
+							TraceLog(LOG_WARNING, "invalid heuristic: %i", requested);
+					}
 					break ;
+				case KEY_ENTER:
+					puzzle->solve(hVal);
+					break;
 				default:	break;
 			}
 			// Check for resize
