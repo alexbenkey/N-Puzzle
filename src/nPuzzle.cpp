@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   nPuzzle.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
+/*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 16:13:50 by ohengelm          #+#    #+#             */
 /*   Updated: 2026/07/22 14:11:45 by othello          ###   ########.fr       */
@@ -86,6 +86,7 @@ nPuzzle::~nPuzzle(void)
 				<< C_DRED	<< " called"
 				<< C_RESET	<< std::endl;
 #endif
+	this->clearStates();
 }
 
 /** ************************************************************************ **\
@@ -288,6 +289,24 @@ void	nPuzzle::printAllTilesFlex(nPuzzleState& state)
 		state.printTilePos(tile);
 	}
 	std::cout	<< std::endl;
+}
+
+void	nPuzzle::resetStates(void)
+{
+	this->clearStates();
+	this->state = this->start; 
+}
+
+void	nPuzzle::clearStates(void)
+{
+	for (nPuzzleState *state : this->queue)
+		delete state;
+	this->queue.clear();
+	for (nPuzzleState *state : this->visited)
+		delete state;
+	this->visited.clear();
+
+	this->queueIndex = -1;
 }
 
 /** ************************************************************************ **\
