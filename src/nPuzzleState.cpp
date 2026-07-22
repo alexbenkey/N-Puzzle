@@ -6,7 +6,7 @@
 /*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 16:13:50 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/17 18:14:44 by othello          ###   ########.fr       */
+/*   Updated: 2026/07/22 13:01:19 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -354,5 +354,6 @@ nPuzzleState	&nPuzzleState::operator=(const nPuzzleState &src)
 	if (this->width != src.width || this->height != src.height)
 		return (*this);
 	this->tiles = src.tiles;
+	this->emptyPos = src.emptyPos;
 	return (*this);
 }
