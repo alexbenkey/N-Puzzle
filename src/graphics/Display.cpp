@@ -6,7 +6,7 @@
 /*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/02 17:58:28 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/17 16:45:49 by othello          ###   ########.fr       */
+/*   Updated: 2026/07/22 14:20:34 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -328,7 +328,7 @@ void	Display::logRectangle(const char* name, const Rectangle& rect)
 	TraceLog(TraceLogLevel::LOG_INFO, "%-12s x %4.0f y %4.0f w %4.0f h %4.0f", name, rect.x, rect.y, rect.width, rect.height);
 }
 
-void	Display::renderScreen()
+void	Display::renderState(nPuzzleState* state)
 {
 #if DEBUG >= DEBUG_ALL
 	LOG_AS_TRACE();
@@ -336,7 +336,8 @@ void	Display::renderScreen()
 	// Background
 	ClearBackground(Color{127, 63, 23, 255});
 	// HUD
-	this->HUD.render(this->puzzle);
+	this->HUD.render(this->puzzle, state);
+	this->renderTiles(*state);
 #if DEBUG >= DEBUG_ALL
 	LOG_AS_TRACE();
 #endif

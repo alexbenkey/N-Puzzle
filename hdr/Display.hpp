@@ -63,8 +63,8 @@ class Display
 				void	configureMovementPosition(void);
 				// Render
 				void	renderFrame(void) const;
-				void	renderData(nPuzzle* puzzle) const;
-				void	renderHeuristics(nPuzzle* puzzle) const;
+				void	renderData(nPuzzle* puzzle, nPuzzleState* state) const;
+				void	renderHeuristics(nPuzzleState* state) const;
 				void	renderControls(void) const;
 				void	renderMovement(void) const;
 			
@@ -89,7 +89,7 @@ class Display
 				// Positions
 				void	configurePositions(void);
 				// Render
-				void	render(nPuzzle* puzzle) const;
+				void	render(nPuzzle* puzzle, nPuzzleState* state) const;
 		};
 		struct HUD	HUD;
 		Rectangle	Frame;
@@ -118,6 +118,7 @@ class Display
 		static void	logRectangle(const char* name, const Rectangle& rect);
 
 		// Rendering
+		void	renderState(nPuzzleState* state);
 		void	renderTiles(nPuzzleState& state);
 
 	protected:
@@ -135,11 +136,11 @@ class Display
 		bool	setFontSize(const float size, bool updateSizes = true, bool includeHUD = true);
 		bool	setMargin(const int margin, bool updateSizes = true, bool includeHUD = true);
 		// Rendering
-		void	renderScreen(void);
-		void	renderCurrentState(void)	{ this->renderTiles(this->puzzle->getCurrentState()); }
-		void	renderTargetState(void)		{ this->renderTiles(this->puzzle->getTargetState()); }
-		void	renderStartState(void)		{ this->renderTiles(this->puzzle->getStartState()); }
-		void	renderQueueState(void)		{ this->renderTiles(this->puzzle->getQueueState()); }
+		void	render(void)				{ this->renderAsCurrentState(); }
+		void	renderAsStartState(void)	{ if (this->puzzle) this->renderState(&this->puzzle->getStartState()); }
+		void	renderAsCurrentState(void)	{ if (this->puzzle) this->renderState(&this->puzzle->getCurrentState()); }
+		void	renderAsQueueState(void)	{ if (this->puzzle) this->renderState(&this->puzzle->getQueueState()); }
+		void	renderAsTargetState(void)	{ if (this->puzzle) this->renderState(&this->puzzle->getTargetState()); }
 
 		// Display	&operator=(const Display &src);
 };
