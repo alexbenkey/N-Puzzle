@@ -6,7 +6,7 @@
 /*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/02 17:58:28 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/22 14:46:49 by othello          ###   ########.fr       */
+/*   Updated: 2026/07/22 15:41:15 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,7 @@ void	Display::configureMinimumSizes(void)
 {
 #if DEBUG >= DEBUG_TRACE
 	LOG_AS_TRACE("Configuring Minimum sizes");
-#else if DEBUG >= DEBUG_INFO
+#elif DEBUG >= DEBUG_INFO
 	TraceLog(LOG_INFO, "\tConfiguring Minimum sizes");
 #endif
 	int	width;
@@ -150,7 +150,7 @@ void	Display::configureMaximumSizes(void)
 {
 #if DEBUG >= DEBUG_TRACE
 	LOG_AS_TRACE("Configuring Maximum sizes");
-#else if DEBUG >= DEBUG_INFO
+#elif DEBUG >= DEBUG_INFO
 	TraceLog(LOG_INFO, "\tConfiguring Maximum sizes");
 #endif
 	int	monitor;
@@ -179,7 +179,7 @@ void	Display::configureScreen(void)
 {
 #if DEBUG >= DEBUG_TRACE
 	LOG_AS_TRACE("Configuring Screen Size");
-#else if DEBUG >= DEBUG_INFO
+#elif DEBUG >= DEBUG_INFO
 	TraceLog(LOG_INFO, "\tConfiguring Screen Size");
 #endif
 	int	width = (int)this->HUD.width() + (int)this->Frame.width + this->margin * 3;
@@ -197,7 +197,7 @@ void	Display::configureSizes(void)
 {
 #if DEBUG >= DEBUG_TRACE
 	LOG_AS_TRACE("Configuring Frame and Tile Sizes");
-#else if DEBUG >= DEBUG_INFO
+#elif DEBUG >= DEBUG_INFO
 	TraceLog(LOG_INFO, "\tConfiguring Frame and Tile sizes");
 #endif
 	this->configureFrameSize();
@@ -291,7 +291,7 @@ void	Display::configurePositions(void)
 {
 #if DEBUG >= DEBUG_TRACE
 	LOG_AS_TRACE("Configuring Positions");
-#else if DEBUG >= DEBUG_INFO
+#elif DEBUG >= DEBUG_INFO
 	TraceLog(LOG_INFO, "\tConfiguring Positions");
 #endif
 	this->HUD.configurePositions();
