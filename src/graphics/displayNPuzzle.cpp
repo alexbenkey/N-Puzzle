@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   displayNPuzzle.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
+/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/02 16:48:19 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/22 18:49:28 by avon-ben         ###   ########.fr       */
+/*   Updated: 2026/07/23 14:23:12 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../assets/raylib/src/raylib.h"
+#include "raylib.h"
 #include "nPuzzle.hpp"
 #include "displayNPuzzle.hpp"
 #include "Display.hpp"

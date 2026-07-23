@@ -7,7 +7,7 @@
 NAME :=	npuzzle
 
 # Preprocessor
-INCLUDES :=	-Ihdr
+INCLUDES :=	-Ihdr	-Iassets/raylib/src/
 DEFINES ?=	
 CPPFLAGS ?=	
 CPPFLAGS +=	$(INCLUDES) $(DEFINES) -DDEBUG=$(DEBUG)

@@ -29,7 +29,7 @@
 # define LOG_AS_WARN(format, ...)  LOG_LINE(LOG_WARNING, format, ##__VA_ARGS__)
 # define LOG_AS_ERROR(format, ...) LOG_LINE(LOG_ERROR, format, ##__VA_ARGS__)
 
-# include "../assets/raylib/src/raylib.h"
+# include "raylib.h"
 # include "nPuzzle.hpp"
 
 # include <unordered_map>
