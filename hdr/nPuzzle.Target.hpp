@@ -1,34 +1,39 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   heuristic.hpp                                      :+:      :+:    :+:   */
+/*   nPuzzle.Target.hpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/07/14 13:13:17 by othello           #+#    #+#             */
-/*   Updated: 2026/07/23 21:37:22 by ohengelm         ###   ########.fr       */
+/*   Created: 2026/07/23 14:45:10 by ohengelm          #+#    #+#             */
+/*   Updated: 2026/07/23 21:43:42 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef HEURISTIC_HPP
-# define HEURTISTIC_HPP
+#ifndef NPUZZLE_TARGET_HPP
+# define NPUZZLE_TARGET_HPP
 
-# include <aio.h>	// int32_t
-
+# include "nPuzzle.hpp"
 # include "nPuzzle.Board.hpp"
 
-namespace heuristic
+class nPuzzle::Target
 {
-	struct List
-	{
-		const char*	name;
-		int32_t	(*f)(const nPuzzle::Board&, const nPuzzle::Board&);
-	};
+	private:
+		Board	board;
+		void	setTargetTiles(void);
 
-	extern const List		function[];
-	extern const int32_t	size;
+	protected:
 
-	int32_t	getHeuristic(int32_t h, const nPuzzle::Board& current, const nPuzzle::Board& target);
-}
+	public:
+		Target(void);
+		// Target(const int32_t width, const int32_t height);
+
+		void	setSize(const int32_t w, const int32_t h);
+
+		const Board&	getBoard(void) const;
+		
+		friend std::ostream&	operator<<(std::ostream& os, const nPuzzle::Target& state);
+
+};
 
 #endif
