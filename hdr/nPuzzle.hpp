@@ -6,7 +6,7 @@
 /*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/23 14:41:42 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/24 14:43:56 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/07/24 16:49:27 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,7 @@ class nPuzzle
 		int32_t	getQueueIndex(void) const	{ return (this->queueIndex); }
 		int32_t getQueueSize(void) const { return (this->queue.size()); }
 
-		void	storeStartState(void) { this->start = this->state; }
+		void	storeStartState(void);
 
 		void	printPuzzle(void);
 		void	printTarget(void);
