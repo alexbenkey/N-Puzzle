@@ -6,7 +6,7 @@
 /*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/23 17:58:21 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/24 16:54:40 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/07/24 18:14:06 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -182,6 +182,16 @@ nPuzzle::Board&	nPuzzle::Board::operator=(const Board& src)
 	}
 
 	return *this;
+}
+
+bool	nPuzzle::Board::operator==(const Board& ref) const
+{
+	if (this->width != ref.width || this->height != ref.height)
+		return (false);
+	for (std::size_t pos = 0, size = this->TilesByPos.size(); pos < size; ++pos)
+		if (this->TilesByPos[pos]->getVal() != ref.TilesByPos[pos]->getVal())
+			return (false);
+	return (true);
 }
 
 std::ostream&	operator<<(std::ostream& os, const nPuzzle::Board& board)

@@ -6,7 +6,7 @@
 /*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/23 14:38:54 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/24 16:22:52 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/07/24 18:19:06 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -320,19 +320,11 @@ bool	nPuzzle::State::move(Direction direction){
 	return (true);
 }
 
-bool	nPuzzle::State::sameState(const State &rhs) const noexcept
+bool	nPuzzle::State::sameBoard(const State &rhs) const noexcept
 {
 	if (this == &rhs)
 		return (true);
-	// possibly an excessive check (?), but avoids potential bounds issues.
-	if (this->width != rhs.width || this->height != rhs.height)
-		return (false);
-	for (int32_t y = 0; y < this->height; ++y)
-		for (int32_t x = 0; x < this->width; ++x)
-			if (this->board.getTile(x, y).getVal() != rhs.board.getTile(y, x).getVal())
-			// if (this->tiles[y][x].getVal() != rhs.tiles[y][x].getVal())
-				return (false);
-	return (true);
+	return (this->board == rhs.board);
 }
 
 void	nPuzzle::State::calculateHeuristic(const nPuzzle::Board& target)
