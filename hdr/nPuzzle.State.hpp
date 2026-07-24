@@ -6,7 +6,7 @@
 /*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/23 14:32:56 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/23 21:38:27 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/07/24 13:18:39 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,10 @@
 
 class nPuzzle::State
 {
-// # pragma region "Nested Classes"
+// # pragma region "Nested Objects"
 // 	public:
 // 		class		Tile;
-// # pragma endregion "Nested Classes"
+// # pragma endregion "Nested Objects"
 	private:
 
 	protected: 

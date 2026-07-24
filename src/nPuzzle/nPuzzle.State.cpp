@@ -6,7 +6,7 @@
 /*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/23 14:38:54 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/23 21:47:04 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/07/24 14:57:52 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -185,7 +185,7 @@ bool	nPuzzle::State::validPuzzlePlacement(void) const
 // 	return (this->tiles[0][0]);
 // }
 
-bool nPuzzle::State::setUsedHeuristic(int32_t value)
+bool	nPuzzle::State::setUsedHeuristic(int32_t value)
 {
 	if (value < 0 || value >= this->heuristic.size())
 		return false;
@@ -235,7 +235,7 @@ int32_t	nPuzzle::State::getTileValue(const int32_t x, const int32_t y) const
 	// return tiles[y][x].getVal();
 }
 
-void 	nPuzzle::State::moveTile(const nPuzzle::Board::Tile& tile)
+void	nPuzzle::State::moveTile(const nPuzzle::Board::Tile& tile)
 {
 	// Check if the tile is adjacent to the empty square
 	int32_t emptyX = emptyPos.x;
@@ -256,7 +256,7 @@ void 	nPuzzle::State::moveTile(const nPuzzle::Board::Tile& tile)
 		throw std::runtime_error("Tile is not adjacent to the empty square");
 }
 
-bool nPuzzle::State::move(Direction direction){
+bool	nPuzzle::State::move(Direction direction){
 	const nPuzzle::Board::Tile *toMove = nullptr; 
 	emptyPos.y = getEmptyTile().getY();
 	emptyPos.x = getEmptyTile().getX();
@@ -360,7 +360,7 @@ int32_t	nPuzzle::State::getHeuristic(int32_t h) const
 bool	nPuzzle::State::operator<(const State &rhs) const noexcept
 {
 	#warning it is now required to set the particular used heuristic in the state class. 
- 	int32_t hKey = this->usedHeuristic;
+	int32_t hKey = this->usedHeuristic;
 	const int32_t lhsScore =
 		this->getCost() + this->getHeuristic(hKey);
 	const int32_t rhsScore =
@@ -377,12 +377,12 @@ bool	nPuzzle::State::operator<(const State &rhs) const noexcept
 	// 	return ;
 	return (this->getCost() < rhs.getCost());
 	// 	return true;
-	// return false; 
+	// return false;
 }
 
 bool	nPuzzle::State::operator<=(const State &rhs) const noexcept
 {
- 	int32_t hKey = this->usedHeuristic;
+	int32_t hKey = this->usedHeuristic;
 	std::cout << "called <= operator" << std::endl;
 	std::cout << "cost lhs: " << this->getCost() << "heuristic lhs: " << this->getHeuristic(hKey) << std::endl;
 	std::cout << "cost rhs: " << rhs.getCost() << "heuristic rhs: " << rhs.getHeuristic(hKey) << std::endl << std::endl << std::endl;
@@ -391,32 +391,32 @@ bool	nPuzzle::State::operator<=(const State &rhs) const noexcept
 	}	
 	else if (this->getCost() <= rhs.getCost())
 		return true;
-	return false; 
+	return false;
 }
 
 bool	nPuzzle::State::operator>(const State &rhs) const noexcept
 {
- 	int32_t hKey = this->usedHeuristic;
+	int32_t hKey = this->usedHeuristic;
 	std::cout << "called > operator" << std::endl;
 	std::cout << "cost lhs: " << this->getCost() << "heuristic lhs: " << this->getHeuristic(hKey) << std::endl;
 	std::cout << "cost rhs: " << rhs.getCost() << "heuristic rhs: " << rhs.getHeuristic(hKey) << std::endl << std::endl << std::endl;
 	if ((this->getCost() + this->getHeuristic(hKey)) > (rhs.getCost() + rhs.getHeuristic(hKey)))
-		return 1;
+		return true;
 	else if (this->getCost() > rhs.getCost())
-		return 1;
-	return 0; 
+		return true;
+	return false;
 }
 bool	nPuzzle::State::operator>=(const State &rhs) const noexcept
 {
- 	int32_t hKey = this->usedHeuristic;
+	int32_t hKey = this->usedHeuristic;
 	std::cout << "called >= operator" << std::endl;
 	std::cout << "cost lhs: " << this->getCost() << "heuristic lhs: " << this->getHeuristic(hKey) << std::endl;
 	std::cout << "cost rhs: " << rhs.getCost() << "heuristic rhs: " << rhs.getHeuristic(hKey) << std::endl << std::endl << std::endl;
 	if ((this->getCost() + this->getHeuristic(hKey)) > (rhs.getCost() + rhs.getHeuristic(hKey)))
-		return 1;
+		return true;
 	else if (this->getCost() > rhs.getCost())
-		return 1;
-	return 0; 
+		return true;
+	return false;
 }
 
 nPuzzle::State	&nPuzzle::State::operator=(const State &src)
@@ -429,7 +429,6 @@ nPuzzle::State	&nPuzzle::State::operator=(const State &src)
 	this->height = src.height;
 	this->size = this->width * this->height;
 	this->board = src.board;
-	// this->tiles = src.tiles;
 	this->emptyPos = src.emptyPos;
 	this->cost = src.cost;
 	this->heuristic = src.heuristic;

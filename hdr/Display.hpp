@@ -41,7 +41,7 @@
 class Display
 {
 # pragma region "Nested Objects"
-	public:
+	private:
 		struct	HUD;
 # pragma endregion "Nested Objects"
 

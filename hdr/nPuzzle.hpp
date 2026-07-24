@@ -6,7 +6,7 @@
 /*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/23 14:41:42 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/23 21:46:42 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/07/24 14:43:56 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,15 +19,16 @@
 
 class nPuzzle
 {
-# pragma region "Nested Classes"
+# pragma region "Nested Objects"
 	public:
 		class	Board;
 		class	State;
 		class	Target;
-# pragma endregion "Nested Classes"
+# pragma endregion "Nested Objects"
 
 # pragma region	"Enum Classes"
-		enum class Direction { 
+		enum class Direction
+		{ 
 			UP, 
 			RIGHT,
 			DOWN,
@@ -39,14 +40,16 @@ class nPuzzle
 		int32_t	width;
 		int32_t	height;
 		int32_t	size;
-		nPuzzle::State*	start;
+		nPuzzle::State*		start;
+		nPuzzle::State*		state;
 		nPuzzle::Target*	target;
-		nPuzzle::State*	state;
 
 		std::vector<nPuzzle::State*>	queue;
-		int32_t						queueIndex = -1;
+		int32_t							queueIndex = -1;
 		std::vector<nPuzzle::State*>	visited;
 
+		// Construction
+		void	setVariables(const int32_t width, const int32_t height);
 		// Parsing
 		bool	emptyLine(const std::string& line) const;
 		bool	validLine(const std::string& line) const;
@@ -56,19 +59,27 @@ class nPuzzle
 		// Movement
 		bool	move(nPuzzle::Direction direction, int32_t h);
 
+		// Deletion
+		void	clearAll(void);
+		void		clearProgress(void);
+		void			clearQueue(void);
+		void			clearVisited(void);
+		void		clearBoard(void);
+		void			clearState(nPuzzle::State** state);
+		void			clearTarget(void);
+
 	protected:
 
 	public:
 		nPuzzle(void);
 		nPuzzle(std::istream& __is);
-		nPuzzle(const int32_t size);
+		nPuzzle(const int32_t widthAndHeight);
 		nPuzzle(const int32_t width, const int32_t height);
 		nPuzzle(const nPuzzle &src);
 		~nPuzzle(void);
 
 		void	parse(std::istream& __is);
-		void	resetStates(void);
-		void	clearStates(void);
+		void	resetToStart(void);
 
 		nPuzzle::State&	getCurrentState()	{ return (*this->state); }
 		// nPuzzle::State&	getTargetState()	{ return (*(nPuzzle::State*)this->target); }
@@ -94,10 +105,10 @@ class nPuzzle
 		int32_t getHeight(void) const { return this->height; }
 		int32_t getSize(void) const { return this->size; }
 
-		bool	moveUp(int32_t h = -1)	{ return(this->move(nPuzzle::Direction::UP, h)); }
-		bool	moveDown(int32_t h = -1)	{ return(this->move(nPuzzle::Direction::DOWN, h)); }
-		bool	moveLeft(int32_t h = -1)	{ return(this->move(nPuzzle::Direction::LEFT, h)); }
-		bool	moveRight(int32_t h = -1)	{ return(this->move(nPuzzle::Direction::RIGHT, h)); }
+		bool	moveUp(int32_t h = -1);
+		bool	moveDown(int32_t h = -1);
+		bool	moveLeft(int32_t h = -1);
+		bool	moveRight(int32_t h = -1);
 	
 		void	solve(int32_t h);
 		void	solveStep(int32_t h = -1);

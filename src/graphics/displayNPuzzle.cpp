@@ -6,7 +6,7 @@
 /*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/02 16:48:19 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/23 21:47:12 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/07/24 14:34:15 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,22 +75,22 @@ static void	ProcessUserInput(int pressedKey, nPuzzle* puzzle, int32_t& hVal)
 			if (IsKeyDown(KEY_Q))
 				puzzle->incrementQueue();
 			else
-				puzzle->moveRight(), puzzle->clearStates();
+				puzzle->moveRight();
 			break;
 		case KEY_LEFT:
 			if (IsKeyDown(KEY_Q))
 				puzzle->decrementQueue();
 			else
-				puzzle->moveLeft(), puzzle->clearStates();
+				puzzle->moveLeft();
 			break;
-		case KEY_DOWN:	puzzle->moveDown(), puzzle->clearStates();	break;
-		case KEY_UP:	puzzle->moveUp(), puzzle->clearStates();	break;
+		case KEY_DOWN:	puzzle->moveDown();	break;
+		case KEY_UP:	puzzle->moveUp();	break;
 		case KEY_T:	puzzle->printTarget();	break;
 		case KEY_S:	puzzle->printPuzzle();	break;
 		case KEY_Q:	puzzle->printQueue();	break;
 		case KEY_R:
 			if (IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT))
-				puzzle->resetStates();
+				puzzle->resetToStart();
 			else
 				TraceLog(LOG_WARNING, "Press uppercase R to reset.");
 			break;
@@ -104,7 +104,6 @@ static void	ProcessUserInput(int pressedKey, nPuzzle* puzzle, int32_t& hVal)
 				if (requested >= 0 && requested < heuristic::size)
 				{
 					hVal = requested;
-					puzzle->clearStates();
 
 					TraceLog(
 						LOG_INFO,
