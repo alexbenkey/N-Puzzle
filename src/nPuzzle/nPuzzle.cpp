@@ -6,7 +6,7 @@
 /*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 16:13:50 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/24 19:59:04 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/07/24 20:03:02 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -354,8 +354,6 @@ void	nPuzzle::solve(int32_t h)
 	int32_t unsolved = 1;
 	if (h >= heuristic::size)
 		return ;
-#warning needs to validate puzzle solved state
-	// while puzzle is unsolved
 	while(!this->solveStep(h)) {}
 	std::cerr	<< C_DGRAY	<< __FILE__	<<"::"	<< C_RESET	<< __func__	<< __LINE__	<< " Solver is done" << std::endl;
 	this->printQueueStatus(*this->queue[0], this->queue[0]->getUsedHeuristic());
@@ -366,9 +364,6 @@ bool	nPuzzle::solveStep(int32_t h)
 #if DEBUG >= DEBUG_TRACE
 	std::printf("%s[%i]\n", __func__, __LINE__);
 #endif
-
-#warning needs to validate puzzle solved state
-	// if puzzle is solved
 	if (isSolved(h))
 	{
 		std::cerr	<< C_DGRAY	<< __FILE__	<<"::"	<< C_RESET	<< __func__	<< __LINE__	<< " Puzzle solved!" << std::endl;
