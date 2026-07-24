@@ -109,6 +109,4 @@ git push
 - solver functional
 - solver as thread
 - more heuristics
-- board operator==
 - comparison operators upgrade
-	- use board == board

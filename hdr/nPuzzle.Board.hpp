@@ -6,7 +6,7 @@
 /*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/23 16:27:40 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/24 13:18:39 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/07/24 18:14:15 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,7 @@ class nPuzzle::Board
 		void	clearTiles(void);
 
 		nPuzzle::Board&	operator=(const Board& src);
+		bool	operator==(const Board& ref) const;
 
 		friend std::ostream&	operator<<(std::ostream& os, const Board& board);
 };

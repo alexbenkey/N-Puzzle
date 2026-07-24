@@ -6,7 +6,7 @@
 /*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/23 14:32:56 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/24 13:18:39 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/07/24 18:18:13 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,7 @@ class nPuzzle::State
 		int32_t	getCost(void) const	{ return (this->cost); }
 		// int32_t getHeuristic(void) const {return (this->heuristic); }
 
-		bool			sameState(const State &rhs) const noexcept;
+		bool			sameBoard(const State &rhs) const noexcept;
 		
 		State	&operator=(const State &src);
 

@@ -6,7 +6,7 @@
 /*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 16:13:50 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/24 16:53:33 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/07/24 18:18:33 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -431,7 +431,7 @@ bool	nPuzzle::stateHasAlreadyBeenVisited(nPuzzle::State* state)
 	foundItem = std::find_if(
 		this->visited.begin(), 
 		this->visited.end(), 
-		[state] (const nPuzzle::State* candidate){return candidate->sameState(*state);});
+		[state] (const nPuzzle::State* candidate){return candidate->sameBoard(*state);});
 	if (foundItem == this->visited.end())
 		return (false);
 	if (state->getCost() < (*foundItem)->getCost())
@@ -446,7 +446,7 @@ bool	nPuzzle::stateIsAlreadyInQueue(nPuzzle::State* state)
 {
 	std::vector<nPuzzle::State*>::iterator	foundItem;
 
-	foundItem = std::find_if(this->queue.begin(), this->queue.end(), [state] (const nPuzzle::State *candidate){ return candidate->sameState(*state); });
+	foundItem = std::find_if(this->queue.begin(), this->queue.end(), [state] (const nPuzzle::State *candidate){ return candidate->sameBoard(*state); });
 	if (foundItem == this->queue.end())
 		return (false);
 	if (state->getCost() < (*foundItem)->getCost())
