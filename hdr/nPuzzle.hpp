@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   nPuzzle.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
+/*   By: avon-ben <avon-ben@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/23 14:41:42 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/24 16:49:27 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/07/24 19:32:29 by avon-ben         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,7 +111,8 @@ class nPuzzle
 		bool	moveRight(int32_t h = -1);
 	
 		void	solve(int32_t h);
-		void	solveStep(int32_t h = -1);
+		bool	solveStep(int32_t h = -1);
+		bool	isSolved(int32_t h);
 		void	processState(nPuzzle::State* state, int32_t h);
 		bool	stateHasAlreadyBeenVisited(nPuzzle::State* state);
 		bool	stateIsAlreadyInQueue(nPuzzle::State* state);

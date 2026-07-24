@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   nPuzzle.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
+/*   By: avon-ben <avon-ben@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 16:13:50 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/24 18:18:33 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/07/24 19:39:38 by avon-ben         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -338,19 +338,29 @@ bool	nPuzzle::moveRight(int32_t h)
 	return(this->move(nPuzzle::Direction::RIGHT, h));
 }
 
-
+bool nPuzzle::isSolved(int32_t h)
+{
+	if (this->getQueueSize())
+	{
+		if(this->queue[0]->getHeuristic(h) == 0)
+			return (true);
+	}
+	return(false);
+		
+}
 
 void	nPuzzle::solve(int32_t h)
 {
+	int32_t unsolved = 1;
 	if (h >= heuristic::size)
 		return ;
 #warning needs to validate puzzle solved state
 	// while puzzle is unsolved
-	while (true)
-		this->solveStep(h);
+	while(this->solveStep(h)) {std::cout << "specifiek daar" << std::endl;};
+	std::cout << "puzzle is solved" << std::endl;
 }
 
-void	nPuzzle::solveStep(int32_t h)
+bool	nPuzzle::solveStep(int32_t h)
 {
 #if DEBUG >= DEBUG_DEBUG
 	std::printf("%s[%i]\n", __func__, __LINE__);
@@ -358,8 +368,11 @@ void	nPuzzle::solveStep(int32_t h)
 
 #warning needs to validate puzzle solved state
 	// if puzzle is solved
-	if (false)
-		return ;
+	if (isSolved(h))
+	{
+		std::cout << "puzzle is solved" << std::endl;
+		return true;
+	}
 
 	if (this->queue.size() == 0)
 		this->processState(new nPuzzle::State(*this->state), h);
@@ -386,6 +399,7 @@ void	nPuzzle::solveStep(int32_t h)
 #if DEBUG >= DEBUG_DEBUG
 	std::printf("%s[%i] queue.size = %lu\n", __func__, __LINE__, this->queue.size());
 #endif
+	return false;
 }
 
 void	nPuzzle::processState(nPuzzle::State* state, int32_t h)

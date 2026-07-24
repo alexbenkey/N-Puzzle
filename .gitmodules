@@ -1,3 +1,1 @@
 [submodule "assets/raylib"]
-	path = assets/raylib
-	url = https://github.com/raysan5/raylib.git
