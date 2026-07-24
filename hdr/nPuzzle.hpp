@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   nPuzzle.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: avon-ben <avon-ben@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/23 14:41:42 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/24 19:32:29 by avon-ben         ###   ########.fr       */
+/*   Updated: 2026/07/24 19:45:38 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,6 +97,7 @@ class nPuzzle
 		void	printPuzzle(void);
 		void	printTarget(void);
 		void	printQueue(void);
+		void	printQueueStatus(const nPuzzle::State& queue, int32_t h);
 		// void	printEmptyTilePos(void);
 		// void	printAllTiles(const nPuzzle::State& state) const;
 		// void	printAllTilesFlex(nPuzzle::State& state);

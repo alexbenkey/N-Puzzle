@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   nPuzzle.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: avon-ben <avon-ben@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 16:13:50 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/24 19:39:38 by avon-ben         ###   ########.fr       */
+/*   Updated: 2026/07/24 19:59:04 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -356,13 +356,14 @@ void	nPuzzle::solve(int32_t h)
 		return ;
 #warning needs to validate puzzle solved state
 	// while puzzle is unsolved
-	while(this->solveStep(h)) {std::cout << "specifiek daar" << std::endl;};
-	std::cout << "puzzle is solved" << std::endl;
+	while(!this->solveStep(h)) {}
+	std::cerr	<< C_DGRAY	<< __FILE__	<<"::"	<< C_RESET	<< __func__	<< __LINE__	<< " Solver is done" << std::endl;
+	this->printQueueStatus(*this->queue[0], this->queue[0]->getUsedHeuristic());
 }
 
 bool	nPuzzle::solveStep(int32_t h)
 {
-#if DEBUG >= DEBUG_DEBUG
+#if DEBUG >= DEBUG_TRACE
 	std::printf("%s[%i]\n", __func__, __LINE__);
 #endif
 
@@ -370,8 +371,8 @@ bool	nPuzzle::solveStep(int32_t h)
 	// if puzzle is solved
 	if (isSolved(h))
 	{
-		std::cout << "puzzle is solved" << std::endl;
-		return true;
+		std::cerr	<< C_DGRAY	<< __FILE__	<<"::"	<< C_RESET	<< __func__	<< __LINE__	<< " Puzzle solved!" << std::endl;
+		return (true);
 	}
 
 	if (this->queue.size() == 0)
@@ -387,19 +388,23 @@ bool	nPuzzle::solveStep(int32_t h)
 			nPuzzle::Direction::RIGHT,
 			nPuzzle::Direction::DOWN,
 			nPuzzle::Direction::LEFT
-		}) {
-			nPuzzle::State*	next = new nPuzzle::State(*current);
-			if (next->move(direction))
-				this->processState(next, h);
-			else
-				delete next;
-		}
+		})
+	{
+		nPuzzle::State*	next = new nPuzzle::State(*current);
+		if (next->move(direction))
+			this->processState(next, h);
+		else
+			delete next;
+	}
 
 	this->maintainValidQueue();
-#if DEBUG >= DEBUG_DEBUG
+	std::cout << "Sorted queue:\n";
+	for (const nPuzzle::State* state : this->queue)
+		this->printQueueStatus(*state, h);
+#if DEBUG >= DEBUG_TRACE
 	std::printf("%s[%i] queue.size = %lu\n", __func__, __LINE__, this->queue.size());
 #endif
-	return false;
+	return (false);
 }
 
 void	nPuzzle::processState(nPuzzle::State* state, int32_t h)
@@ -425,17 +430,6 @@ void	nPuzzle::processState(nPuzzle::State* state, int32_t h)
 		{
 			return *lhs < *rhs;
 		});
-	std::cout << "Sorted queue:\n";
-	for (const nPuzzle::State* state : this->queue)
-	{
-		const int32_t h = state->getUsedHeuristic(); // Manhattan
-		std::cout
-		<< "used= " << h
-		<< "g=" << state->getCost()
-		<< ", h=" << state->getHeuristic(h)
-		<< ", f=" << state->getCost() + state->getHeuristic(h)
-		<< '\n';
-	}
 };
 
 bool	nPuzzle::stateHasAlreadyBeenVisited(nPuzzle::State* state)
@@ -500,6 +494,19 @@ void	nPuzzle::printQueue(void)
 		std::cerr	<< "# Queue["	<< this->queueIndex	<< "]\n"
 					<< *this->queue[this->queueIndex]	<< std::flush;
 }
+
+void	nPuzzle::printQueueStatus(const nPuzzle::State& queue, int32_t h)
+{
+	int32_t	cost = queue.getCost();
+	int32_t	heuristic = queue.getHeuristic(h);
+	std::cerr	<< &queue
+				<< "\tg: "	<< cost
+				<< "\th: "	<< heuristic
+				<< "\tf: "	<< cost + heuristic
+				// << "\n"	<< queue
+				<< std::endl;
+}
+
 
 // void	nPuzzle::printEmptyTilePos(void)
 // {
