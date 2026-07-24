@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   nPuzzleTile.cpp                                    :+:      :+:    :+:   */
+/*   nPuzzle.Board.Tile.cpp                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/12 16:13:55 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/14 16:49:33 by othello          ###   ########.fr       */
+/*   Created: 2026/07/23 17:58:21 by ohengelm          #+#    #+#             */
+/*   Updated: 2026/07/23 21:47:08 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "nPuzzleState.hpp"
+#include "nPuzzle.Board.Tile.hpp"
 #include "colors.hpp"
 
 #include <iostream>	// std::stream
@@ -21,7 +21,10 @@
  * 
 \* ************************************************************************** */
 
-nPuzzleState::Tile::Tile(void)
+nPuzzle::Board::Tile::Tile(const int32_t value, const int32_t x, const int32_t y):
+	value(value),
+	x(x),
+	y(y)
 {
 #if DEBUG >= DEBUG_TRACE
 	std::cout	<< C_DGREEN	<< "Default constructor "
@@ -29,18 +32,6 @@ nPuzzleState::Tile::Tile(void)
 				<< C_DGREEN	<< " called."
 				<< C_RESET	<< std::endl;
 #endif
-	this->value = 0;
-}
-
-nPuzzleState::Tile::Tile(const Tile &src)
-{
-#if DEBUG >= DEBUG_TRACE
-	std::cout	<< C_DGREEN	<< "Copy constructor "
-				<< C_GREEN	<< __func__
-				<< C_DGREEN	<< " called."
-				<< C_RESET	<< std::endl;
-#endif
-	*this = src;
 }
 
 /** ************************************************************************ **\
@@ -49,10 +40,10 @@ nPuzzleState::Tile::Tile(const Tile &src)
  * 
 \* ************************************************************************** */
 
-nPuzzleState::Tile::~Tile(void)
+nPuzzle::Board::Tile::~Tile(void)
 {
 #if DEBUG >= DEBUG_TRACE
-	std::cout	<< C_RED	<< "Deconstructor "
+	std::cout	<< C_DRED	<< "Deconstructor "
 				<< C_RED	<< __func__
 				<< C_DRED	<< " called"
 				<< C_RESET	<< std::endl;
@@ -65,19 +56,49 @@ nPuzzleState::Tile::~Tile(void)
  * 
 \* ************************************************************************** */
 
+void			nPuzzle::Board::Tile::setVal(const int32_t val)
+{
+	this->value = val;
+}
 
+const int32_t	nPuzzle::Board::Tile::getVal(void) const
+{
+	return (this->value);
+}
+
+void			nPuzzle::Board::Tile::setX(const int32_t x)
+{
+	this->x = x;
+}
+
+const int32_t	nPuzzle::Board::Tile::getX(void) const
+{
+	return (this->x);
+}
+
+void			nPuzzle::Board::Tile::setY(const int32_t y)
+{
+	this->y = y;
+}
+
+const int32_t	nPuzzle::Board::Tile::getY(void) const
+{
+	return (this->y);
+}
+
+void	nPuzzle::Board::Tile::swapCoords(Tile& other)
+{
+	std::swap(this->x, other.x);
+	std::swap(this->y, other.y);
+}
 /** ************************************************************************ **\
  * 
  * 	Operators
  * 
 \* ************************************************************************** */
 
-nPuzzleState::Tile	&nPuzzleState::Tile::operator=(const Tile &src)
+std::ostream&	operator<<(std::ostream& os, const nPuzzle::Board::Tile& tile)
 {
-	if (this == &src)
-		return (*this);
-	this->value = src.value;
-	this->xPos = src.xPos;
-	this->yPos = src.yPos;
-	return (*this);
+	os << tile.value;
+	return os;
 }

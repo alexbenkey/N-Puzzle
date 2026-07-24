@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heuristic.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/14 13:13:17 by othello           #+#    #+#             */
-/*   Updated: 2026/07/17 14:36:39 by othello          ###   ########.fr       */
+/*   Updated: 2026/07/23 21:37:22 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,20 +15,20 @@
 
 # include <aio.h>	// int32_t
 
-# include "nPuzzleState.hpp"
+# include "nPuzzle.Board.hpp"
 
 namespace heuristic
 {
 	struct List
 	{
 		const char*	name;
-		int32_t	(*f)(const nPuzzleState*, const nPuzzleState*);
+		int32_t	(*f)(const nPuzzle::Board&, const nPuzzle::Board&);
 	};
 
 	extern const List		function[];
 	extern const int32_t	size;
 
-	int32_t	getHeuristic(int32_t h, const nPuzzleState* current, const nPuzzleState* target);
+	int32_t	getHeuristic(int32_t h, const nPuzzle::Board& current, const nPuzzle::Board& target);
 }
 
 #endif

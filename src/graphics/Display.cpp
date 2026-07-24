@@ -3,15 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   Display.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/02 17:58:28 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/22 15:41:15 by othello          ###   ########.fr       */
+/*   Updated: 2026/07/23 21:47:24 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Display.hpp"
+#include "Display.HUD.hpp"
 #include "colors.hpp"
+#include "nPuzzle.State.hpp"
+#include "nPuzzle.Target.hpp"
+#include "nPuzzle.Board.Tile.hpp"
+
 
 #include <iostream>	// std::stream
 
@@ -36,6 +41,7 @@ Display::Display(nPuzzle* puzzle): puzzle(puzzle)
 				<< C_DGREEN	<< " called."
 				<< C_RESET	<< std::endl;
 #endif
+	this->HUD = new struct Display::HUD();
 
 	//Configuration and initialitation of raylib
 	SetConfigFlags(FLAG_WINDOW_RESIZABLE);
@@ -73,6 +79,7 @@ Display::~Display(void)
 				<< C_DRED	<< " called"
 				<< C_RESET	<< std::endl;
 #endif
+	delete this->HUD;
 }
 
 /** ************************************************************************ **\
@@ -109,10 +116,10 @@ void	Display::configureMinimumSizes(void)
 	int	width;
 	int	height;
 
-	this->HUD.configureSizes();
+	this->HUD->configureSizes();
 	this->configureMinimumFrameSizes();
-	width = this->HUD.width() + this->Frame.width + this->margin * 3;
-	height = std::max(this->HUD.height(), this->Frame.height) + this->margin * 2;
+	width = this->HUD->width() + this->Frame.width + this->margin * 3;
+	height = std::max(this->HUD->height(), this->Frame.height) + this->margin * 2;
 	TraceLog(LOG_INFO, "Setting MinWindow: %4ix%-4i", width, height);
 	SetWindowMinSize(width, height);
 }
@@ -137,7 +144,7 @@ void	Display::configureMinimumFrameSizes()
 		this->Frame.height = 1;
 	}
 	this->Frame.width = std::min(this->Frame.width * this->tile.width, 
-								(float)GetMonitorWidth(GetCurrentMonitor()) - this->HUD.width());
+								(float)GetMonitorWidth(GetCurrentMonitor()) - this->HUD->width());
 	this->Frame.height = std::min(this->Frame.height * this->tile.height, 
 								(float)GetMonitorHeight(GetCurrentMonitor()) - 2 * this->margin);
 	Display::logRectangle("Frame", this->Frame);
@@ -182,8 +189,8 @@ void	Display::configureScreen(void)
 #elif DEBUG >= DEBUG_INFO
 	TraceLog(LOG_INFO, "\tConfiguring Screen Size");
 #endif
-	int	width = (int)this->HUD.width() + (int)this->Frame.width + this->margin * 3;
-	int	height =(int)std::max(this->HUD.height(), this->Frame.height) + this->margin * 2;
+	int	width = (int)this->HUD->width() + (int)this->Frame.width + this->margin * 3;
+	int	height =(int)std::max(this->HUD->height(), this->Frame.height) + this->margin * 2;
 	
 	TraceLog(LOG_INFO, "Setting Window: %4ix%-4i", width, height);
 	SetWindowSize(width, height);
@@ -212,7 +219,7 @@ void	Display::configureFrameSize(void)
 #if DEBUG >= DEBUG_TRACE
 	LOG_AS_TRACE();
 #endif
-	this->Frame.width = (float)GetScreenWidth() - this->HUD.width() - 3 * (float)this->margin;
+	this->Frame.width = (float)GetScreenWidth() - this->HUD->width() - 3 * (float)this->margin;
 	this->Frame.height = GetScreenHeight() - 2 * (float)this->margin;
 	Display::logRectangle("Frame", this->Frame);
 #if DEBUG >= DEBUG_TRACE
@@ -259,7 +266,7 @@ bool	Display::setFontSize(const float size, bool updateSizes, bool includeHUD)
 	if (updateSizes)
 		this->reconfigure();
 	if (includeHUD)
-		this->HUD.setFontsize(size, updateSizes);
+		this->HUD->setFontsize(size, updateSizes);
 	return (true);
 #if DEBUG >= DEBUG_TRACE
 	LOG_AS_TRACE();
@@ -280,7 +287,7 @@ bool	Display::setMargin(const int margin, bool updateSizes, bool includeHUD)
 	if (updateSizes)
 		this->reconfigure();
 	if (includeHUD)
-		this->HUD.setMargin(margin, updateSizes);
+		this->HUD->setMargin(margin, updateSizes);
 	return (true);
 #if DEBUG >= DEBUG_TRACE
 	LOG_AS_TRACE();
@@ -294,7 +301,7 @@ void	Display::configurePositions(void)
 #elif DEBUG >= DEBUG_INFO
 	TraceLog(LOG_INFO, "\tConfiguring Positions");
 #endif
-	this->HUD.configurePositions();
+	this->HUD->configurePositions();
 	this->configureFramePosition();
 #if DEBUG >= DEBUG_TRACE
 	LOG_AS_TRACE();
@@ -306,7 +313,7 @@ void	Display::configureFramePosition(void)
 #if DEBUG >= DEBUG_TRACE
 	LOG_AS_TRACE();
 #endif
-	this->Frame.x = this->HUD.x() + this->HUD.width() + this->margin;
+	this->Frame.x = this->HUD->x() + this->HUD->width() + this->margin;
 	this->Frame.y = this->margin;
 	Display::logRectangle("Frame", this->Frame);
 	this->tile.x = this->Frame.x;
@@ -336,7 +343,45 @@ void	Display::logRectangle(const char* name, const Rectangle& rect)
 	TraceLog(TraceLogLevel::LOG_INFO, "%-12s x %4.0f y %4.0f w %4.0f h %4.0f", name, rect.x, rect.y, rect.width, rect.height);
 }
 
-void	Display::renderState(nPuzzleState* state)
+
+void	Display::render(void)
+{
+	this->renderAsCurrentState();
+}
+
+void	Display::renderAsStartState(void)
+{
+	if (!this->puzzle)
+		return ;
+	this->HUD->render(this->puzzle, &this->puzzle->getCurrentState());
+	this->renderBoard(this->puzzle->getStartState().getBoard());
+}
+
+void	Display::renderAsCurrentState(void)
+{
+	if (!this->puzzle)
+		return ;
+	this->HUD->render(this->puzzle, &this->puzzle->getCurrentState());
+	this->renderBoard(this->puzzle->getCurrentState().getBoard());
+}
+
+void	Display::renderAsQueueState(void)
+{
+	if (!this->puzzle)
+		return ;
+	this->HUD->render(this->puzzle, &this->puzzle->getCurrentState());
+	this->renderBoard(this->puzzle->getQueueState().getBoard());
+}
+
+void	Display::renderAsTargetState(void)
+{
+	if (!this->puzzle)
+		return ;
+	this->HUD->render(this->puzzle, &this->puzzle->getCurrentState());
+	this->renderBoard(this->puzzle->getTarget().getBoard());
+}
+
+void	Display::renderBoard(const nPuzzle::Board& board)
 {
 #if DEBUG >= DEBUG_ALL
 	LOG_AS_TRACE();
@@ -344,14 +389,13 @@ void	Display::renderState(nPuzzleState* state)
 	// Background
 	ClearBackground(Color{127, 63, 23, 255});
 	// HUD
-	this->HUD.render(this->puzzle, state);
-	this->renderTiles(*state);
+	this->renderTiles(board);
 #if DEBUG >= DEBUG_ALL
 	LOG_AS_TRACE();
 #endif
 }
 
-void	Display::renderTiles(nPuzzleState& state)
+void	Display::renderTiles(const nPuzzle::Board& board)
 {
 #if DEBUG >= DEBUG_ALL
 	LOG_AS_TRACE();
@@ -359,6 +403,7 @@ void	Display::renderTiles(nPuzzleState& state)
 	Color	tileColor = {192, 192, 192, 255};
 	int	xOffset = (this->tile.width - 20) / 2;
 	int	yOffset = (this->tile.height - 20) / 2;
+	const nPuzzle::Board&	target = this->puzzle->getTarget().getBoard();
 
 	DrawRectangleRec(this->Frame, Color{23, 23, 23, 255});
 	if (this->puzzle)
@@ -368,10 +413,10 @@ void	Display::renderTiles(nPuzzleState& state)
 			for (int y = 0; y < this->puzzle->getHeight(); ++y)
 			{
 				this->tile.y = this->Frame.y + y * this->tile.height;
-				int	val = state.getTileValue(x, y);
+				int	val = board.getTile(x, y).getVal();
 				if (val == 0)
 					continue;
-				if (val == this->puzzle->getTargetState().getTileValue(x, y))
+				if (val == target.getTile(x, y).getVal())
 					tileColor = {69, 69, 69, 255};
 				else
 					tileColor = {123, 123, 123, 255};

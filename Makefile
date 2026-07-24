@@ -7,7 +7,7 @@
 NAME :=	npuzzle
 
 # Preprocessor
-INCLUDES :=	-Ihdr
+INCLUDES :=	-Ihdr	-Iassets/raylib/src/
 DEFINES ?=	
 CPPFLAGS ?=	
 CPPFLAGS +=	$(INCLUDES) $(DEFINES) -DDEBUG=$(DEBUG)
@@ -86,8 +86,12 @@ DEP_DIR :=	dep/
 
 SRC_MAIN :=	main.cpp
 
-DIR_CLASS :=	$(SRC_DIR)
-SRC_CLASS :=	nPuzzleState.cpp nPuzzleTile.cpp nPuzzleTarget.cpp nPuzzle.cpp
+DIR_CLASS :=	$(SRC_DIR)nPuzzle/
+SRC_CLASS :=	nPuzzle.cpp\
+				nPuzzle.Board.cpp\
+				nPuzzle.Board.Tile.cpp\
+				nPuzzle.State.cpp\
+				nPuzzle.Target.cpp
 
 DIR_NMSPC :=	$(SRC_DIR)
 SRC_NMSPC :=	heuristic.cpp

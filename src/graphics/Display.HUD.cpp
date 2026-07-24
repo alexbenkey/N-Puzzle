@@ -3,16 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   Display.HUD.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
+/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/09 13:44:29 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/22 14:09:06 by othello          ###   ########.fr       */
+/*   Updated: 2026/07/23 21:47:19 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Display.hpp"
+#include "Display.HUD.hpp"
 #include "colors.hpp"
 #include "heuristic.hpp"
+#include "nPuzzle.State.hpp"
 
 #include <iostream>	// std::stream
 
@@ -288,7 +289,7 @@ void	Display::HUD::configureMovementPosition(void)
 #endif
 }
 
-void	Display::HUD::render(nPuzzle* puzzle, nPuzzleState* state) const
+void	Display::HUD::render(nPuzzle* puzzle, nPuzzle::State* state) const
 {
 #if DEBUG >= DEBUG_ALL
 	LOG_AS_TRACE();
@@ -313,7 +314,7 @@ void	Display::HUD::renderFrame(void) const
 #endif
 }
 
-void	Display::HUD::renderData(nPuzzle* puzzle, nPuzzleState* state) const
+void	Display::HUD::renderData(nPuzzle* puzzle, nPuzzle::State* state) const
 {
 #if DEBUG >= DEBUG_ALL
 	LOG_AS_TRACE();
@@ -361,7 +362,7 @@ void	Display::HUD::renderData(nPuzzle* puzzle, nPuzzleState* state) const
 #endif
 }
 
-void	Display::HUD::renderHeuristics(nPuzzleState* state) const
+void	Display::HUD::renderHeuristics(nPuzzle::State* state) const
 {
 #if DEBUG >= DEBUG_ALL
 	LOG_AS_TRACE();

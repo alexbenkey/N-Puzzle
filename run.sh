@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    run.sh                                             :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: othello <othello@student.42.fr>            +#+  +:+       +#+         #
+#    By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/06/10 18:24:25 by ohengelm          #+#    #+#              #
-#    Updated: 2026/07/14 17:00:10 by othello          ###   ########.fr        #
+#    Updated: 2026/07/24 14:38:02 by ohengelm         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -36,12 +36,53 @@ options:
 EOF
 }
 
-while [[ $# -gt 0 ]]; do
+# while [ $# -gt 0 ]; do
+# 	case "$1" in
+# 		-h|--help)
+# 			printSyntax
+# 			printHelp
+# 			exit 0;
+# 			;;
+# 		-s|--solvable)
+# 			solvable="$1 "
+# 			;;
+# 		-u|--unsolvable)
+# 			unsolvable="$1 "
+# 			;;
+# 		-i*|--iterations*)
+# 			if [[ "$1" == "-i" || "$1" == "--iterations" ]]; then
+# 				[[ -n "$2" ]] || { echo "Error: missing argument." >&2; exit 1; }
+# 				value="$2"
+# 				shift
+# 			else
+# 				value="${1#-i}"
+# 				value="${value#--iterations=}"
+# 			fi
+
+# 			[[ "$value" =~ ^[0-9]+$ ]] || {
+# 				echo "Error: iterations must be a number." >&2
+# 				exit 1
+# 			}
+# 			iterations="-i $value "
+# 			;;
+# 		*)
+# 			if [[ "$1" =~ ^[0-9]+$ ]]; then
+# 				size="$1"
+# 			else
+# 				printSyntax
+# 				echo "error: unrecognized arguments: $1" >&2;
+# 				exit 1
+# 			fi
+# 			;;
+# 	esac
+# 	shift
+# done
+while [ $# -gt 0 ]; do
 	case "$1" in
 		-h|--help)
 			printSyntax
 			printHelp
-			exit 0;
+			exit 0
 			;;
 		-s|--solvable)
 			solvable="$1 "
@@ -49,30 +90,49 @@ while [[ $# -gt 0 ]]; do
 		-u|--unsolvable)
 			unsolvable="$1 "
 			;;
-		-i*|--iterations*)
-			if [[ "$1" == "-i" || "$1" == "--iterations" ]]; then
-				[[ -n "$2" ]] || { echo "Error: missing argument." >&2; exit 1; }
-				value="$2"
-				shift
-			else
-				value="${1#-i}"
-				value="${value#--iterations=}"
-			fi
-
-			[[ "$value" =~ ^[0-9]+$ ]] || {
-				echo "Error: iterations must be a number." >&2
+		-i|--iterations)
+			if [ -z "$2" ]; then
+				echo "Error: missing argument." >&2
 				exit 1
-			}
+			fi
+			value="$2"
+			shift
+			case "$value" in
+				''|*[!0-9]*)
+					echo "Error: iterations must be a number." >&2
+					exit 1
+					;;
+			esac
+			iterations="-i $value "
+			;;
+		-i*|--iterations=*)
+			case "$1" in
+				-i*)
+					value="${1#-i}"
+					;;
+				--iterations=*)
+					value="${1#--iterations=}"
+					;;
+			esac
+			case "$value" in
+				''|*[!0-9]*)
+					echo "Error: iterations must be a number." >&2
+					exit 1
+					;;
+			esac
 			iterations="-i $value "
 			;;
 		*)
-			if [[ "$1" =~ ^[0-9]+$ ]]; then
-				size="$1"
-			else
-				printSyntax
-				echo "error: unrecognized arguments: $1" >&2;
-				exit 1
-			fi
+			case "$1" in
+				''|*[!0-9]*)
+					printSyntax
+					echo "Error: unrecognized argument: $1" >&2
+					exit 1
+					;;
+				*)
+					size="$1"
+					;;
+			esac
 			;;
 	esac
 	shift

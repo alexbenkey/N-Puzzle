@@ -3,14 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   nPuzzle.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
+/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 16:13:50 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/22 19:54:47 by avon-ben         ###   ########.fr       */
+/*   Updated: 2026/07/24 14:41:46 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "nPuzzle.hpp"
+#include "nPuzzle.State.hpp"
+#include "nPuzzle.Target.hpp"
+
 #include "colors.hpp"
 #include "heuristic.hpp"
 
@@ -23,10 +26,7 @@
  * 
 \* ************************************************************************** */
 
-nPuzzle::nPuzzle(void):
-	width(0),
-	height(0),
-	size(0)
+nPuzzle::nPuzzle(void)
 {
 #if DEBUG >= DEBUG_TRACE
 	std::cout	<< C_DGREEN	<< "Default constructor "
@@ -34,6 +34,7 @@ nPuzzle::nPuzzle(void):
 				<< C_DGREEN	<< " called."
 				<< C_RESET	<< std::endl;
 #endif
+	this->setVariables(0, 0);
 }
 
 nPuzzle::nPuzzle(std::istream& __is)
@@ -44,17 +45,12 @@ nPuzzle::nPuzzle(std::istream& __is)
 				<< C_DGREEN	<< " called."
 				<< C_RESET	<< std::endl;
 #endif
+	this->setVariables(0, 0);
 	this->parse(__is);
 }
 
 
-nPuzzle::nPuzzle(const int32_t size):
-	width(size),
-	height(size),
-	size(size * size),
-	start(nPuzzleState(this->width, this->height)),
-	target(nPuzzleTarget(this->width, this->height)),
-	state(this->start)
+nPuzzle::nPuzzle(const int32_t widthAndHeight)
 {
 #if DEBUG >= DEBUG_TRACE
 	std::cout	<< C_DGREEN	<< "Default constructor "
@@ -62,15 +58,10 @@ nPuzzle::nPuzzle(const int32_t size):
 				<< C_DGREEN	<< " called."
 				<< C_RESET	<< std::endl;
 #endif
+	this->setVariables(widthAndHeight, widthAndHeight);
 }
 
-nPuzzle::nPuzzle(const int32_t width, const int32_t height):
-	width(width),
-	height(height),
-	size(width * height),
-	start(nPuzzleState(this->width, this->height)),
-	target(nPuzzleTarget(this->width, this->height)),
-	state(this->start)
+nPuzzle::nPuzzle(const int32_t width, const int32_t height)
 {
 #if DEBUG >= DEBUG_TRACE
 	std::cout	<< C_DGREEN	<< "Default constructor "
@@ -78,15 +69,10 @@ nPuzzle::nPuzzle(const int32_t width, const int32_t height):
 				<< C_DGREEN	<< " called."
 				<< C_RESET	<< std::endl;
 #endif
+	this->setVariables(width, height);
 }
 
-nPuzzle::nPuzzle(const nPuzzle &src):
-	width(src.width),
-	height(src.height),
-	size(src.size),
-	start(src.start),
-	target(src.target),
-	state(src.state)
+nPuzzle::nPuzzle(const nPuzzle &src)
 {
 #if DEBUG >= DEBUG_TRACE
 	std::cout	<< C_DGREEN	<< "Copy constructor "
@@ -95,6 +81,16 @@ nPuzzle::nPuzzle(const nPuzzle &src):
 				<< C_RESET	<< std::endl;
 #endif
 	*this = src;
+}
+
+void	nPuzzle::setVariables(const int32_t width, const int32_t height)
+{
+	this->width = (height == 0) ? width : 0;
+	this->height = (width == 0) ? height : 0;
+	this->size = this->width * this->height;
+	this->start = nullptr;
+	this->state = nullptr;
+	this->target = nullptr;
 }
 
 /** ************************************************************************ **\
@@ -111,8 +107,65 @@ nPuzzle::~nPuzzle(void)
 				<< C_DRED	<< " called"
 				<< C_RESET	<< std::endl;
 #endif
-	this->clearStates();
+std::cerr	<< __func__	<< __LINE__	<< std::endl;
+	this->clearAll();
+std::cerr	<< __func__	<< __LINE__	<< std::endl;
 }
+
+void	nPuzzle::clearAll(void)
+{
+	this->clearProgress();
+std::cerr	<< __func__	<< __LINE__	<< std::endl;
+	this->clearBoard();
+std::cerr	<< __func__	<< __LINE__	<< std::endl;
+}
+
+void	nPuzzle::clearProgress(void)
+{
+	this->clearQueue();
+	this->clearVisited();
+}
+
+void	nPuzzle::clearBoard(void)
+{
+	this->clearState(&this->state);
+	this->clearState(&this->start);
+	this->clearTarget();
+}
+
+void	nPuzzle::clearQueue(void)
+{
+	for (nPuzzle::State *state : this->queue)
+		delete state;
+	this->queue.clear();
+	this->queueIndex = -1;
+}
+
+void	nPuzzle::clearVisited(void)
+{
+	for (nPuzzle::State *state : this->visited)
+		delete state;
+	this->visited.clear();
+}
+
+void	nPuzzle::clearState(nPuzzle::State** state)
+{
+	if (*state != nullptr)
+	{
+		delete *state;
+		*state = nullptr;
+	}
+}
+
+void	nPuzzle::clearTarget(void)
+{
+	if (this->target != nullptr)
+	{
+		delete this->target;
+		this->target = nullptr;
+	}
+}
+
 
 /** ************************************************************************ **\
  * 
@@ -148,8 +201,9 @@ void	nPuzzle::parse(std::istream& __is)
 		throw std::runtime_error("Invalid puzzle size line: expected 1 or 2 positive integers");
 	this->height = numbers[size - 1];
 	this->size = this->width * this->height;
-	this->state = nPuzzleState(this->width, this->height);
-	this->target = nPuzzleTarget(this->width, this->height);
+	this->state = new nPuzzle::State(this->width, this->height);
+	this->target = new nPuzzle::Target();
+	this->target->setSize(this->width, this->height);
 
 	// Reading puzzle tiles
 	for (int32_t row = 0; std::getline(__is, line); ++row)
@@ -206,20 +260,21 @@ void	nPuzzle::setRow(int32_t row, const std::vector<int>& numbers)
 
 	for (int32_t x = 0; x < this->width; ++x)
 	{
-		nPuzzleState::Tile tile = this->state.getTile(x, row);
-		tile.setVal(numbers[x]);
-		this->state.getTile(x, row).setVal(numbers[x]);
-		if (numbers[x] == 0)
-			this->state.setEmptyPos(x, row);
-		this->state.getTile(x, row).setxPos(x);
-		this->state.getTile(x, row).setyPos(row);
+		this->state->addTile(numbers[x], x, row);
+		// nPuzzle::Board::Tile tile = this->state->getTile(x, row);
+		// tile.setVal(numbers[x]);
+		// this->state->getTile(x, row).setVal(numbers[x]);
+		// if (numbers[x] == 0)
+		// 	this->state->setEmptyPos(x, row);
+		// this->state->getTile(x, row).setxPos(x);
+		// this->state->getTile(x, row).setyPos(row);
 	}
 }
 
-nPuzzleState&	nPuzzle::getQueueState(void)
+nPuzzle::State&	nPuzzle::getQueueState(void)
 {
 	if (this->queueIndex == -1)
-		return (this->state);
+		return (*this->state);
 	else
 		return (*this->queue.at(this->queueIndex));
 }
@@ -242,14 +297,14 @@ void	nPuzzle::maintainValidQueue(void)
 #endif
 }
 
-#warning needs to be adjusted to use the enum with this->state.move(enum)
-bool	nPuzzle::move(nPuzzleState::Direction direction, int32_t h)
+bool	nPuzzle::move(nPuzzle::Direction direction, int32_t h)
 {
 	bool	validMove;
 
-	validMove = this->state.move(direction);
+	validMove = this->state->move(direction);
 	if (validMove)
 	{
+		this->clearProgress();
 		if (h != -1)
 			this->calculateHeuristic(h);
 		else
@@ -257,6 +312,29 @@ bool	nPuzzle::move(nPuzzleState::Direction direction, int32_t h)
 	}
 	return (validMove);
 }
+
+
+bool	nPuzzle::moveUp(int32_t h)
+{
+	return(this->move(nPuzzle::Direction::UP, h));
+}
+
+bool	nPuzzle::moveDown(int32_t h)
+{
+	return(this->move(nPuzzle::Direction::DOWN, h));
+}
+
+bool	nPuzzle::moveLeft(int32_t h)
+{
+	return(this->move(nPuzzle::Direction::LEFT, h));
+}
+
+bool	nPuzzle::moveRight(int32_t h)
+{
+	return(this->move(nPuzzle::Direction::RIGHT, h));
+}
+
+
 
 void	nPuzzle::solve(int32_t h)
 {
@@ -280,20 +358,20 @@ void	nPuzzle::solveStep(int32_t h)
 		return ;
 
 	if (this->queue.size() == 0)
-		this->processState(new nPuzzleState(this->state), h);
+		this->processState(new nPuzzle::State(*this->state), h);
 
-	nPuzzleState*	current = this->queue.front();
+	nPuzzle::State*	current = this->queue.front();
 	this->queue.erase(this->queue.begin());
-	if (current->sameState(this->target))
-		return ;
+	// if (current->sameState(*this->target))
+	// 	return ;
 	this->visited.push_back(current);
-	for (nPuzzleState::Direction direction : {
-			nPuzzleState::Direction::UP,
-			nPuzzleState::Direction::RIGHT,
-			nPuzzleState::Direction::DOWN,
-			nPuzzleState::Direction::LEFT
+	for (nPuzzle::Direction direction : {
+			nPuzzle::Direction::UP,
+			nPuzzle::Direction::RIGHT,
+			nPuzzle::Direction::DOWN,
+			nPuzzle::Direction::LEFT
 		}) {
-			nPuzzleState*	next = new nPuzzleState(*current);
+			nPuzzle::State*	next = new nPuzzle::State(*current);
 			if (next->move(direction))
 				this->processState(next, h);
 			else
@@ -306,7 +384,7 @@ void	nPuzzle::solveStep(int32_t h)
 #endif
 }
 
-void	nPuzzle::processState(nPuzzleState* state, int32_t h)
+void	nPuzzle::processState(nPuzzle::State* state, int32_t h)
 {
 	if (!state->setUsedHeuristic(h))
 	{
@@ -317,20 +395,20 @@ void	nPuzzle::processState(nPuzzleState* state, int32_t h)
 		return ;
 	if (this->stateIsAlreadyInQueue(state))
 		return ;
-	// if (h != -1)
-	state->calculateHeuristic(h, &this->target);
-	// else
-	// 	state->calculateHeuristic(&this->target);
+	if (h != -1)
+		state->calculateHeuristic(h, this->target->getBoard());
+	else
+		state->calculateHeuristic(this->target->getBoard());
 	this->queue.push_back(state);
 	std::sort(
 		this->queue.begin(), 
 		this->queue.end(), 
-		[](const nPuzzleState* lhs, const nPuzzleState *rhs)
+		[](const nPuzzle::State* lhs, const nPuzzle::State *rhs)
 		{
 			return *lhs < *rhs;
 		});
 	std::cout << "Sorted queue:\n";
-	for (const nPuzzleState* state : this->queue)
+	for (const nPuzzle::State* state : this->queue)
 	{
 		const int32_t h = state->getUsedHeuristic(); // Manhattan
 		std::cout
@@ -342,14 +420,14 @@ void	nPuzzle::processState(nPuzzleState* state, int32_t h)
 	}
 };
 
-bool	nPuzzle::stateHasAlreadyBeenVisited(nPuzzleState* state)
+bool	nPuzzle::stateHasAlreadyBeenVisited(nPuzzle::State* state)
 {
-	std::vector<nPuzzleState*>::iterator	foundItem;
+	std::vector<nPuzzle::State*>::iterator	foundItem;
 
 	foundItem = std::find_if(
 		this->visited.begin(), 
 		this->visited.end(), 
-		[state] (const nPuzzleState* candidate){return candidate->sameState(*state);});
+		[state] (const nPuzzle::State* candidate){return candidate->sameState(*state);});
 	if (foundItem == this->visited.end())
 		return (false);
 	if (state->getCost() < (*foundItem)->getCost())
@@ -360,11 +438,11 @@ bool	nPuzzle::stateHasAlreadyBeenVisited(nPuzzleState* state)
 	return (true);
 }
 
-bool	nPuzzle::stateIsAlreadyInQueue(nPuzzleState* state)
+bool	nPuzzle::stateIsAlreadyInQueue(nPuzzle::State* state)
 {
-	std::vector<nPuzzleState*>::iterator	foundItem;
+	std::vector<nPuzzle::State*>::iterator	foundItem;
 
-	foundItem = std::find_if(this->queue.begin(), this->queue.end(), [state] (const nPuzzleState *candidate){ return candidate->sameState(*state); });
+	foundItem = std::find_if(this->queue.begin(), this->queue.end(), [state] (const nPuzzle::State *candidate){ return candidate->sameState(*state); });
 	if (foundItem == this->queue.end())
 		return (false);
 	if (state->getCost() < (*foundItem)->getCost())
@@ -378,56 +456,89 @@ bool	nPuzzle::stateIsAlreadyInQueue(nPuzzleState* state)
 void	nPuzzle::calculateHeuristic(void)
 {
 	for (int32_t h = 0; h < heuristic::size; ++h)
-		this->state.calculateHeuristic(h, &this->target);
+		this->state->calculateHeuristic(h, this->target->getBoard());
 }
 
 void	nPuzzle::calculateHeuristic(int32_t h)
 {
-	this->state.calculateHeuristic(h, &this->target);
+	this->state->calculateHeuristic(h, this->target->getBoard());
 }
 
-void	nPuzzle::printAllTiles(const nPuzzleState& state) const
+
+void	nPuzzle::printPuzzle(void)
 {
-	for (int32_t x = 0, width = state.getPuzzleWidth(); x < width; ++x)
-	{
-		for (int32_t y = 0, height = state.getPuzzleHeight(); y < height; ++y)
-		{
-			nPuzzleState::Tile tile = state.getTile(x, y);
-			std::printf("%2i [%2i][%2i] ", tile.getVal(), tile.getxPos(), tile.getyPos());
-			state.printTilePos(tile);
-		}
-	}
-	std::cout	<< std::endl;
+	std::cerr	<< *this->state	<< std::flush;
 }
 
-void	nPuzzle::printAllTilesFlex(nPuzzleState& state)
+void	nPuzzle::printTarget(void)
 {
-	for (int32_t value = 1, size = state.getPuzzleSize(); value < size; ++value)
-	{
-		nPuzzleState::Tile tile = state.getTile(value);
-		std::printf("%2i [%2i][%2i] ", tile.getVal(), tile.getxPos(), tile.getyPos());
-		state.printTilePos(tile);
-	}
-	std::cout	<< std::endl;
+	std::cerr	<< "# Target\n"
+				<< *this->target	<< std::flush;
 }
 
-void	nPuzzle::resetStates(void)
+void	nPuzzle::printQueue(void)
 {
-	this->clearStates();
-	this->state = this->start; 
+	if (this->queue.size())
+		std::cerr	<< "# Queue["	<< this->queueIndex	<< "]\n"
+					<< *this->queue[this->queueIndex]	<< std::flush;
 }
 
-void	nPuzzle::clearStates(void)
+// void	nPuzzle::printEmptyTilePos(void)
+// {
+// 	this->state->printTilePos( this->state->getTile(0));
+// }
+
+
+// void	nPuzzle::printAllTiles(const nPuzzle::State& state) const
+// {
+// 	for (int32_t x = 0, width = state.getPuzzleWidth(); x < width; ++x)
+// 	{
+// 		for (int32_t y = 0, height = state.getPuzzleHeight(); y < height; ++y)
+// 		{
+// 			nPuzzle::Board::Tile tile = state.getTile(x, y);
+// 			std::printf("%2i [%2i][%2i] ", tile.getVal(), tile.getxPos(), tile.getyPos());
+// 			state.printTilePos(tile);
+// 		}
+// 	}
+// 	std::cout	<< std::endl;
+// }
+
+// void	nPuzzle::printAllTilesFlex(nPuzzle::State& state)
+// {
+// 	for (int32_t value = 1, size = state.getPuzzleSize(); value < size; ++value)
+// 	{
+// 		nPuzzle::Board::Tile tile = state.getTile(value);
+// 		std::printf("%2i [%2i][%2i] ", tile.getVal(), tile.getxPos(), tile.getyPos());
+// 		state.printTilePos(tile);
+// 	}
+// 	std::cout	<< std::endl;
+// }
+
+void	nPuzzle::resetToStart(void)
 {
-	for (nPuzzleState *state : this->queue)
-		delete state;
-	this->queue.clear();
-	for (nPuzzleState *state : this->visited)
-		delete state;
-	this->visited.clear();
-
-	this->queueIndex = -1;
+	this->clearQueue();
+	this->clearVisited();
+	this->clearState(&this->state);
+	// this->start = new nPuzzle::State(this->start);
 }
+
+// void	nPuzzle::resetStates(void)
+// {
+// 	this->clearStates();
+// 	this->state = this->start; 
+// }
+
+// void	nPuzzle::clearStates(void)
+// {
+// 	for (nPuzzle::State *state : this->queue)
+// 		delete state;
+// 	this->queue.clear();
+// 	for (nPuzzle::State *state : this->visited)
+// 		delete state;
+// 	this->visited.clear();
+
+// 	this->queueIndex = -1;
+// }
 
 /** ************************************************************************ **\
  * 
@@ -439,6 +550,20 @@ nPuzzle	&nPuzzle::operator=(const nPuzzle &src)
 {
 	if (this == &src)
 		return (*this);
-
+	// set width height and size
+	this->setVariables(src.width, src.height);
+	// set state
+	if (src.state)
+		this->state = new nPuzzle::State(*src.state);
+	// set start
+	if (src.start != nullptr)
+		this->start = new nPuzzle::State(*src.start);
+	else if (this->state != nullptr)
+		this->start = new nPuzzle::State(*src.state);
+	// set target
+	if (src.target != nullptr)
+		this->target = new nPuzzle::Target(*src.target);
+	else if (this->size != 0)
+		this->target = new nPuzzle::Target(this->width, this->height);
 	return (*this);
 }

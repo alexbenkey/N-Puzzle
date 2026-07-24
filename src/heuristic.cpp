@@ -3,48 +3,78 @@
 /*                                                        :::      ::::::::   */
 /*   heuristic.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/14 12:51:34 by othello           #+#    #+#             */
-/*   Updated: 2026/07/17 14:36:23 by othello          ###   ########.fr       */
+/*   Updated: 2026/07/23 21:39:22 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <cmath>	// std::abs()
 
 #include "heuristic.hpp"
+#include "nPuzzle.Board.hpp"
+#include "nPuzzle.Board.Tile.hpp"
+
 #include <iostream>
 
 namespace
 {
-	int32_t	manhattan(const nPuzzleState* current, const nPuzzleState* target)
+	int32_t	manhattan(const nPuzzle::Board& current, const nPuzzle::Board& target)
 	{
 		int32_t	heuristic = 0;
 
-		for (int32_t value = 1, size = target->getPuzzleSize(); value < size; ++value)
+		for (int32_t value = 1, size = target.getSize(); value < size; ++value)
 		{
-			nPuzzleState::Tile	currentTile = current->getTile(value);
-			nPuzzleState::Tile	targetTile = target->getTile(value);
-			heuristic += std::abs(currentTile.getxPos() - targetTile.getxPos());
-			heuristic += std::abs(currentTile.getyPos() - targetTile.getyPos());
+			nPuzzle::Board::Tile	currentTile = current.getTile(value);
+			nPuzzle::Board::Tile	targetTile = target.getTile(value);
+			heuristic += std::abs(currentTile.getX() - targetTile.getX());
+			heuristic += std::abs(currentTile.getY() - targetTile.getY());
 		}
 		return (heuristic);
 	}
+	// int32_t	manhattan(const nPuzzle::State* current, const nPuzzle::State* target)
+	// {
+	// 	int32_t	heuristic = 0;
 
-	int32_t	displaced(const nPuzzleState* current, const nPuzzleState* target)
+	// 	for (int32_t value = 1, size = target->getPuzzleSize(); value < size; ++value)
+	// 	{
+	// 		nPuzzle::Board::Tile	currentTile = current->getTile(value);
+	// 		nPuzzle::Board::Tile	targetTile = target->getTile(value);
+	// 		heuristic += std::abs(currentTile.getX() - targetTile.getX());
+	// 		heuristic += std::abs(currentTile.getY() - targetTile.getY());
+	// 	}
+	// 	return (heuristic);
+	// }
+
+	int32_t	displaced(const nPuzzle::Board& current, const nPuzzle::Board& target)
 	{
 		int32_t	heuristic = 0;
 
-		for (int32_t value = 1, size = target->getPuzzleSize(); value < size; ++value)
+		for (int32_t value = 1, size = target.getSize(); value < size; ++value)
 		{
-			nPuzzleState::Tile	currentTile = current->getTile(value);
-			nPuzzleState::Tile	targetTile = target->getTile(value);
-			if (currentTile.getxPos() != targetTile.getxPos() || \
-				currentTile.getyPos() != targetTile.getyPos())
+			nPuzzle::Board::Tile	currentTile = current.getTile(value);
+			nPuzzle::Board::Tile	targetTile = target.getTile(value);
+			if (currentTile.getX() != targetTile.getX() || \
+				currentTile.getY() != targetTile.getY())
 				++heuristic;
 		}
 		return (heuristic);
 	}
+	// int32_t	displaced(const nPuzzle::State* current, const nPuzzle::State* target)
+	// {
+	// 	int32_t	heuristic = 0;
+
+	// 	for (int32_t value = 1, size = target->getPuzzleSize(); value < size; ++value)
+	// 	{
+	// 		nPuzzle::Board::Tile	currentTile = current->getTile(value);
+	// 		nPuzzle::Board::Tile	targetTile = target->getTile(value);
+	// 		if (currentTile.getX() != targetTile.getX() || \
+	// 			currentTile.getY() != targetTile.getY())
+	// 			++heuristic;
+	// 	}
+	// 	return (heuristic);
+	// }
 }
 
 namespace heuristic
@@ -57,7 +87,7 @@ namespace heuristic
 
 	const int32_t	size = sizeof(function) / sizeof(List);
 
-	int32_t	getHeuristic(int32_t h, const nPuzzleState* current, const nPuzzleState* target)
+	int32_t	getHeuristic(int32_t h, const nPuzzle::Board& current, const nPuzzle::Board& target)
 	{
 		if (h < 0 || h >= heuristic::size)
 			return (-1);
