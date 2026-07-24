@@ -6,7 +6,7 @@
 /*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/23 14:38:54 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/24 14:57:52 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/07/24 16:22:52 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,7 @@ nPuzzle::State::State(const State &src):
 nPuzzle::State::~State(void)
 {
 #if DEBUG >= DEBUG_TRACE
-	std::cout	<< C_RED	<< "Deconstructor "
+	std::cout	<< C_DRED	<< "Deconstructor "
 				<< C_RED	<< __func__
 				<< C_DRED	<< " called"
 				<< C_RESET	<< std::endl;

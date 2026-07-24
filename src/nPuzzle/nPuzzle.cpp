@@ -6,7 +6,7 @@
 /*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 16:13:50 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/24 14:41:46 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/07/24 16:53:33 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,22 +102,18 @@ void	nPuzzle::setVariables(const int32_t width, const int32_t height)
 nPuzzle::~nPuzzle(void)
 {
 #if DEBUG >= DEBUG_TRACE
-	std::cout	<< C_RED	<< "Deconstructor "
+	std::cout	<< C_DRED	<< "Deconstructor "
 				<< C_RED	<< __func__
 				<< C_DRED	<< " called"
 				<< C_RESET	<< std::endl;
 #endif
-std::cerr	<< __func__	<< __LINE__	<< std::endl;
 	this->clearAll();
-std::cerr	<< __func__	<< __LINE__	<< std::endl;
 }
 
 void	nPuzzle::clearAll(void)
 {
 	this->clearProgress();
-std::cerr	<< __func__	<< __LINE__	<< std::endl;
 	this->clearBoard();
-std::cerr	<< __func__	<< __LINE__	<< std::endl;
 }
 
 void	nPuzzle::clearProgress(void)
@@ -295,6 +291,14 @@ void	nPuzzle::maintainValidQueue(void)
 				<< "queueIndex: "	<< this->queueIndex
 				<< std::endl;
 #endif
+}
+
+void	nPuzzle::storeStartState(void)
+{
+	if (this->state == nullptr)
+		throw std::runtime_error("Failed to set Start state. No State present");
+	this->clearState(&this->start);
+	this->start = new nPuzzle::State(*this->state);
 }
 
 bool	nPuzzle::move(nPuzzle::Direction direction, int32_t h)

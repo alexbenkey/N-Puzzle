@@ -6,7 +6,7 @@
 /*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/23 17:58:21 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/23 21:45:27 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/07/24 16:54:40 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,10 +69,7 @@ void	nPuzzle::Board::setSize(const int32_t w, const int32_t h)
 	this->height = h;
 	this->size = w * h;
 	this->TilesByPos.resize(this->size, nullptr);
-	std::cerr	<< "TilesByPos"<< this->TilesByPos.size()	<< '/'<< this->TilesByPos.capacity()<<std::endl;
 	this->TilesByVal.resize(this->size);
-	std::cerr	<< "TilesByVal"<< this->TilesByVal.size()	<< '/'<< this->TilesByVal.capacity()<<std::endl;
-
 }
 
 const int32_t	nPuzzle::Board::getWidth(void) const
