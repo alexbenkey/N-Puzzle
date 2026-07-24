@@ -104,3 +104,11 @@ git add path/to/file
 git commit -m "Restore path/to/file to main"
 git push
 ```
+
+# TODO
+- solver functional
+- solver as thread
+- more heuristics
+- board operator==
+- comparison operators upgrade
+	- use board == board
