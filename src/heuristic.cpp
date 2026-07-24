@@ -6,7 +6,7 @@
 /*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/14 12:51:34 by othello           #+#    #+#             */
-/*   Updated: 2026/07/23 21:39:22 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/07/24 16:19:03 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,8 @@ namespace
 
 		for (int32_t value = 1, size = target.getSize(); value < size; ++value)
 		{
-			nPuzzle::Board::Tile	currentTile = current.getTile(value);
-			nPuzzle::Board::Tile	targetTile = target.getTile(value);
+			const nPuzzle::Board::Tile&	currentTile = current.getTile(value);
+			const nPuzzle::Board::Tile&	targetTile = target.getTile(value);
 			heuristic += std::abs(currentTile.getX() - targetTile.getX());
 			heuristic += std::abs(currentTile.getY() - targetTile.getY());
 		}
@@ -53,8 +53,8 @@ namespace
 
 		for (int32_t value = 1, size = target.getSize(); value < size; ++value)
 		{
-			nPuzzle::Board::Tile	currentTile = current.getTile(value);
-			nPuzzle::Board::Tile	targetTile = target.getTile(value);
+			const nPuzzle::Board::Tile&	currentTile = current.getTile(value);
+			const nPuzzle::Board::Tile&	targetTile = target.getTile(value);
 			if (currentTile.getX() != targetTile.getX() || \
 				currentTile.getY() != targetTile.getY())
 				++heuristic;
