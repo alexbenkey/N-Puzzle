@@ -6,7 +6,7 @@
 /*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/23 14:41:42 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/24 19:45:38 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/07/29 17:12:18 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ class nPuzzle
 		nPuzzle::State*		state;
 		nPuzzle::Target*	target;
 
+		int32_t							heuristicIndex = 1;
 		std::vector<nPuzzle::State*>	queue;
 		int32_t							queueIndex = -1;
 		std::vector<nPuzzle::State*>	visited;
@@ -86,6 +87,10 @@ class nPuzzle
 		nPuzzle::Target&	getTarget() const { return (*this->target); }
 		nPuzzle::State&	getStartState()		{ return (*this->start); }
 		nPuzzle::State&	getQueueState(void);
+		void	incrementHeuristic(void);
+		void	decrementHeuristic(void);
+		void	maintainValidHeuristic(void);
+		int32_t	getHeuristicIndex(void) const;
 		void	incrementQueue(void)	{ ++this->queueIndex; this->maintainValidQueue(); }
 		void	decrementQueue(void)	{ --this->queueIndex; this->maintainValidQueue(); }
 		void	maintainValidQueue(void);
@@ -111,10 +116,10 @@ class nPuzzle
 		bool	moveLeft(int32_t h = -1);
 		bool	moveRight(int32_t h = -1);
 	
-		void	solve(int32_t h);
-		bool	solveStep(int32_t h = -1);
-		bool	isSolved(int32_t h);
-		void	processState(nPuzzle::State* state, int32_t h);
+		void	solve(void);
+		bool	solveStep(bool allHeuristics = false);
+		bool	isSolved(void) const;
+		void	processState(nPuzzle::State* state, bool allHeuristics = false);
 		bool	stateHasAlreadyBeenVisited(nPuzzle::State* state);
 		bool	stateIsAlreadyInQueue(nPuzzle::State* state);
 		void	calculateHeuristic(void);

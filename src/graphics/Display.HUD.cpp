@@ -6,7 +6,7 @@
 /*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/09 13:44:29 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/23 21:47:19 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/07/29 16:39:13 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,7 +128,7 @@ void	Display::HUD::configureHeuristicsSize(bool updateFrame)
 #if DEBUG >= DEBUG_TRACE
 	LOG_AS_TRACE();
 #endif
-	this->Heuristics.height = (heuristic::size + 1) * this->fontHeight;
+	this->Heuristics.height = (heuristic::size + 2) * this->fontHeight;
 	for (int32_t line = 0; line < heuristic::size; ++line)
 	{
 		float	width = (float)MeasureText(TextFormat("[0] %s: 000", heuristic::function[line].name), this->fontSize);
@@ -296,7 +296,7 @@ void	Display::HUD::render(nPuzzle* puzzle, nPuzzle::State* state) const
 #endif
 	this->renderFrame();
 	this->renderData(puzzle, state);
-	this->renderHeuristics(state);
+	this->renderHeuristics(state, puzzle->getHeuristicIndex());
 	this->renderControls();
 	this->renderMovement();
 
@@ -362,7 +362,7 @@ void	Display::HUD::renderData(nPuzzle* puzzle, nPuzzle::State* state) const
 #endif
 }
 
-void	Display::HUD::renderHeuristics(nPuzzle::State* state) const
+void	Display::HUD::renderHeuristics(nPuzzle::State* state, int32_t h) const
 {
 #if DEBUG >= DEBUG_ALL
 	LOG_AS_TRACE();
@@ -371,13 +371,16 @@ void	Display::HUD::renderHeuristics(nPuzzle::State* state) const
 	DrawRectangleLinesEx(this->Heuristics, 1, Color{255,23,23,255});
 #endif
 	const char* buffer;
+	Color	selected{255, 127, 0, 255};
+	Color	unselected = WHITE;
 
 	DrawText("Heuristics", this->Heuristics.x, this->Heuristics.y, this->fontSize, RED);
 	for (int32_t line = 0; line < heuristic::size; ++line)
 	{
-		buffer = TextFormat("[%i] %s: %i", line, heuristic::function[line].name, state->getHeuristic(line));
-		DrawText(buffer, this->Heuristics.x, this->Heuristics.y + (line + 1) * this->fontHeight, this->fontSize, WHITE);
+		buffer = TextFormat("%s: %i", heuristic::function[line].name, state->getHeuristic(line));
+		DrawText(buffer, this->Heuristics.x, this->Heuristics.y + (line + 1) * this->fontHeight, this->fontSize, (line == h) ? selected : unselected);
 	}
+	DrawText("[SHIFT] + [^]/[v]", this->Heuristics.x, this->Heuristics.y + (heuristic::size + 1) * this->fontHeight, this->fontSize, WHITE);
 #if DEBUG >= DEBUG_ALL
 	LOG_AS_TRACE();
 #endif

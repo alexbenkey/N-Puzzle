@@ -103,6 +103,10 @@ git restore --source=origin/main path/to/file
 git add path/to/file
 git commit -m "Restore path/to/file to main"
 git push
+
+# Add to previous commit without new log entry
+git add <files>
+git commit --amend --no-edit
 ```
 
 # TODO
