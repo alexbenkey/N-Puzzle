@@ -13,6 +13,7 @@
 #include "nPuzzle.Target.hpp"
 
 #include "colors.hpp"
+#include "Errors.hpp"
 
 #include <iostream>	// std::stream
 

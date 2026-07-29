@@ -6,7 +6,7 @@
 /*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/23 14:38:54 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/24 19:51:11 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/07/29 21:27:01 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 #include "colors.hpp"
 #include "heuristic.hpp"
+#include "Errors.hpp"
 
 #include <iostream>	// std::stream
 
@@ -266,7 +267,7 @@ bool	nPuzzle::State::move(Direction direction){
 		case Direction::UP:
 			if (emptyPos.y == 0)
 			{
-				#if DEBUG >= DEBUG_TRACE
+				#if DEBUG >= DEBUG_DEBUG
 				std::cout	<< C_RED	<< "cannot move up, empty square is at the top"
 							<< C_RESET	<< std::endl;
 				#endif
@@ -277,7 +278,7 @@ bool	nPuzzle::State::move(Direction direction){
 		case Direction::RIGHT:
 			if (emptyPos.x == this->width - 1)
 			{
-				#if DEBUG >= DEBUG_TRACE
+				#if DEBUG >= DEBUG_DEBUG
 				std::cout	<< C_RED	<< "cannot move right, empty square is at the right edge"
 							<< C_RESET	<< std::endl;
 				#endif
@@ -289,7 +290,7 @@ bool	nPuzzle::State::move(Direction direction){
 		case(Direction::DOWN):
 			if (emptyPos.y == this->height - 1)
 			{
-				#if DEBUG >= DEBUG_TRACE
+				#if DEBUG >= DEBUG_DEBUG
 				std::cout	<< C_RED	<< "cannot move down, empty square is at the bottom"
 							<< C_RESET	<< std::endl;
 				#endif
@@ -301,7 +302,7 @@ bool	nPuzzle::State::move(Direction direction){
 		case(Direction::LEFT):
 			if (emptyPos.x == 0)
 			{
-				#if DEBUG >= DEBUG_TRACE
+				#if DEBUG >= DEBUG_DEBUG
 				std::cout	<< C_RED	<< "cannot move left, empty square is at the left edge"
 							<< C_RESET	<< std::endl;
 				#endif
@@ -313,7 +314,7 @@ bool	nPuzzle::State::move(Direction direction){
 		
 	this->moveTile(*toMove);
 	this->increaseCost();
-	#if DEBUG >= DEBUG_TRACE
+	#if DEBUG >= DEBUG_DEBUG
 	std::cout	<< C_GREEN	<< "Tile moved successfully"
 				<< C_RESET	<< std::endl;
 	#endif

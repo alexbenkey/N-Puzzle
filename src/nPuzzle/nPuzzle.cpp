@@ -6,16 +6,18 @@
 /*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 16:13:50 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/29 17:09:46 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/07/29 21:24:49 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "nPuzzle.hpp"
 #include "nPuzzle.State.hpp"
 #include "nPuzzle.Target.hpp"
+#include "nPuzzle.Solver.hpp"
 
 #include "colors.hpp"
 #include "heuristic.hpp"
+#include "Errors.hpp"
 
 #include <iostream>	// std::stream
 #include <algorithm>	// std::sort
@@ -80,6 +82,7 @@ nPuzzle::nPuzzle(const nPuzzle &src)
 				<< C_RESET	<< std::endl;
 #endif
 	*this = src;
+	this->solver = new nPuzzle::Solver(*this);
 }
 
 void	nPuzzle::setVariables(const int32_t width, const int32_t height)
@@ -90,6 +93,7 @@ void	nPuzzle::setVariables(const int32_t width, const int32_t height)
 	this->start = nullptr;
 	this->state = nullptr;
 	this->target = nullptr;
+	this->solver = new nPuzzle::Solver(*this);
 }
 
 /** ************************************************************************ **\
@@ -107,6 +111,7 @@ nPuzzle::~nPuzzle(void)
 				<< C_RESET	<< std::endl;
 #endif
 	this->clearAll();
+	delete this->solver;
 }
 
 void	nPuzzle::clearAll(void)
@@ -130,17 +135,12 @@ void	nPuzzle::clearBoard(void)
 
 void	nPuzzle::clearQueue(void)
 {
-	for (nPuzzle::State *state : this->queue)
-		delete state;
-	this->queue.clear();
-	this->queueIndex = -1;
+	this->solver->clearQueue();
 }
 
 void	nPuzzle::clearVisited(void)
 {
-	for (nPuzzle::State *state : this->visited)
-		delete state;
-	this->visited.clear();
+	this->solver->clearVisited();
 }
 
 void	nPuzzle::clearState(nPuzzle::State** state)
@@ -255,12 +255,9 @@ void	nPuzzle::setRow(int32_t row, const std::vector<int>& numbers)
 		this->state->addTile(numbers[x], x, row);
 }
 
-nPuzzle::State&	nPuzzle::getQueueState(void)
+const nPuzzle::State&	nPuzzle::getQueueState(void)
 {
-	if (this->queueIndex == -1)
-		return (*this->state);
-	else
-		return (*this->queue.at(this->queueIndex));
+	return (this->solver->getQueueMember());
 }
 
 void	nPuzzle::incrementHeuristic(void)
@@ -289,22 +286,24 @@ int32_t	nPuzzle::getHeuristicIndex(void) const
 	return (this->heuristicIndex);
 }
 
-void	nPuzzle::maintainValidQueue(void)
+void	nPuzzle::incrementQueue(void)
 {
-	size_t	size = this->queue.size();
+	this->solver->incrementQueueIndex();
+}
 
-	if (size == 0)
-		this->queueIndex = -1;
-	else if (this->queueIndex < 0)
-		this->queueIndex = 0;
-	else if (this->queueIndex >= (int32_t)size)
-		this->queueIndex = size - 1;
+void	nPuzzle::decrementQueue(void)
+{
+	this->solver->decrementQueueIndex();
+}
 
-#if DEBUG >= DEBUG_DEBUG
-	std::cerr	<< __func__	<< '['	<< __LINE__	<< ']'
-				<< "queueIndex: "	<< this->queueIndex
-				<< std::endl;
-#endif
+int32_t	nPuzzle::getQueueIndex(void) const
+{
+	return (this->solver->getQueueIndex());
+}
+
+int32_t	nPuzzle::getQueueSize(void) const
+{
+	return (this->solver->getQueueSize());
 }
 
 void	nPuzzle::storeStartState(void)
@@ -353,118 +352,24 @@ bool	nPuzzle::moveRight(int32_t h)
 
 bool	nPuzzle::isSolved(void) const
 {
-	if (this->getQueueSize())
-		if (this->queue[0]->getHeuristic(this->heuristicIndex) == 0)
-			return (true);
-	return (false);
+	return (this->solver->isSolved());
 }
 
 void	nPuzzle::solve()
 {
-	this->maintainValidHeuristic();
-	while(!this->solveStep(this->heuristicIndex))
-	{}
-	this->printQueueStatus(*this->queue[0], this->queue[0]->getUsedHeuristic());
+TRACE_POSITION();
+	this->solver->solve();
 }
 
 bool	nPuzzle::solveStep(bool allHeuristics)
 {
-#if DEBUG >= DEBUG_TRACE
-	std::printf("%s[%i]\n", __func__, __LINE__);
-#endif
-	if (this->isSolved())
-	{
-		std::cerr	<< C_DGRAY	<< __FILE__	<<"::"	<< C_RESET	<< __func__	<< __LINE__	<< " Puzzle solved!" << std::endl;
-		return (true);
-	}
-	if (this->queue.size() == 0)
-		this->processState(new nPuzzle::State(*this->state), allHeuristics);
-
-	nPuzzle::State*	current = this->queue.front();
-	this->queue.erase(this->queue.begin());
-	// if (current->sameState(*this->target))
-	// 	return ; 
-	this->visited.push_back(current);
-	for (nPuzzle::Direction direction : {
-			nPuzzle::Direction::UP,
-			nPuzzle::Direction::RIGHT,
-			nPuzzle::Direction::DOWN,
-			nPuzzle::Direction::LEFT
-		})
-	{
-		nPuzzle::State*	next = new nPuzzle::State(*current);
-		if (next->move(direction))
-			this->processState(next, allHeuristics);
-		else
-			delete next;
-	}
-
-	this->maintainValidQueue();
-	std::cout << "Sorted queue:\n";
-	for (const nPuzzle::State* state : this->queue)
-		this->printQueueStatus(*state, this->heuristicIndex);
-#if DEBUG >= DEBUG_TRACE
-	std::printf("%s[%i] queue.size = %lu\n", __func__, __LINE__, this->queue.size());
-#endif
-	return (false);
+TRACE_POSITION();
+	return (this->solver->solveStep(allHeuristics));
 }
 
-void	nPuzzle::processState(nPuzzle::State* state, bool allHeuristics)
+int32_t	nPuzzle::getBestSolverHeuristic(void) const
 {
-	if (!state->setUsedHeuristic(this->heuristicIndex))
-	{
-		delete state;
-		return;
-	}
-	if (this->stateHasAlreadyBeenVisited(state))
-		return ;
-	if (this->stateIsAlreadyInQueue(state))
-		return ;
-	if (allHeuristics)
-		state->calculateHeuristic(this->heuristicIndex, this->target->getBoard());
-	else
-		state->calculateHeuristic(this->target->getBoard());
-	this->queue.push_back(state);
-	std::sort(
-		this->queue.begin(), 
-		this->queue.end(), 
-		[](const nPuzzle::State* lhs, const nPuzzle::State *rhs)
-		{
-			return *lhs < *rhs;
-		});
-}
-
-bool	nPuzzle::stateHasAlreadyBeenVisited(nPuzzle::State* state)
-{
-	std::vector<nPuzzle::State*>::iterator	foundItem;
-
-	foundItem = std::find_if(
-		this->visited.begin(), 
-		this->visited.end(), 
-		[state] (const nPuzzle::State* candidate){return candidate->sameBoard(*state);});
-	if (foundItem == this->visited.end())
-		return (false);
-	if (state->getCost() < (*foundItem)->getCost())
-	{
-		this->visited.erase(foundItem);
-		return (false);
-	}
-	return (true);
-}
-
-bool	nPuzzle::stateIsAlreadyInQueue(nPuzzle::State* state)
-{
-	std::vector<nPuzzle::State*>::iterator	foundItem;
-
-	foundItem = std::find_if(this->queue.begin(), this->queue.end(), [state] (const nPuzzle::State *candidate){ return candidate->sameBoard(*state); });
-	if (foundItem == this->queue.end())
-		return (false);
-	if (state->getCost() < (*foundItem)->getCost())
-	{
-		this->queue.erase(foundItem);
-		return (false);
-	}
-	return (true);
+	return (this->solver->getBestHeuristic());
 }
 
 void	nPuzzle::calculateHeuristic(void)
@@ -491,9 +396,11 @@ void	nPuzzle::printTarget(void)
 
 void	nPuzzle::printQueue(void)
 {
-	if (this->queue.size())
-		std::cerr	<< "# Queue["	<< this->queueIndex	<< "]\n"
-					<< *this->queue[this->queueIndex]	<< std::flush;
+	for (size_t i = 0; i < this->solver->getQueueSize(); ++i)
+	{
+		std::cerr	<< "# Queue["	<< i	<< "]\n"
+					<< this->solver->getQueueMember(i)	<< std::flush;
+	}
 }
 
 void	nPuzzle::printQueueStatus(const nPuzzle::State& queue, int32_t h)

@@ -6,7 +6,7 @@
 /*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/09 13:44:29 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/29 16:39:13 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/07/29 21:40:42 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include "colors.hpp"
 #include "heuristic.hpp"
 #include "nPuzzle.State.hpp"
+#include "Errors.hpp"
 
 #include <iostream>	// std::stream
 
@@ -113,7 +114,7 @@ void	Display::HUD::configureDataSize(bool updateFrame)
 	LOG_AS_TRACE();
 #endif
 	this->Data.width = MeasureText("  [M]anhattan: 00", this->fontSize);
-	this->Data.height = 4 * this->fontHeight;
+	this->Data.height = 6 * this->fontHeight;
 	Display::logRectangle("HUD.Data", this->Data);
 	if (updateFrame)
 		this->configureFrameSize();
@@ -348,6 +349,19 @@ void	Display::HUD::renderData(nPuzzle* puzzle, nPuzzle::State* state) const
 					buffer = TextFormat("Queue: %i", puzzle->getQueueSize());
 				else
 					buffer = TextFormat("Queue: %i/%i", puzzle->getQueueIndex() + 1, puzzle->getQueueSize());
+				break;
+			case 4:
+			{
+				float	startH = (float)puzzle->getCurrentState().getHeuristic(puzzle->getHeuristicIndex());
+				float	solveH = (float)puzzle->getBestSolverHeuristic();
+				buffer = TextFormat("Progress: %0.f%%", (startH - solveH) / startH * 100);
+			}
+				break;
+			case 5:
+			{
+				const nPuzzle::State& queue = puzzle->getQueueState();
+				buffer = TextFormat(" g: %2i h: %2i", queue.getCost(), queue.getHeuristic(queue.getUsedHeuristic()));
+			}
 				break;
 			default:
 				goto endLoop;

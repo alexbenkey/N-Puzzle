@@ -6,13 +6,14 @@
 /*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/23 17:58:21 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/24 18:14:06 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/07/29 21:11:13 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "nPuzzle.Board.hpp"
 #include "nPuzzle.Board.Tile.hpp"
 #include "colors.hpp"
+#include "Errors.hpp"
 
 #include <iostream>	// std::stream
 

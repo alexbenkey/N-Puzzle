@@ -6,7 +6,7 @@
 /*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/02 16:48:19 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/29 16:43:46 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/07/29 17:25:36 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 #include "heuristic.hpp"
 
 #include <iostream>	// std::stream
+#include <thread>	// std::thread
 
 static void	ConfigureTrace(void);
 static void	ProcessUserInput(int pressedKey, nPuzzle* puzzle);
@@ -109,7 +110,10 @@ std::cerr	<< C_DGRAY	<< __FILE__	<<"::"	<< C_RESET	<< __func__	<< __LINE__	<< st
 std::cerr	<< C_DGRAY	<< __FILE__	<<"::"	<< C_RESET	<< __func__	<< __LINE__	<< std::endl;
 			break;
 		case KEY_ENTER:
-			puzzle->solve();
+		{
+			std::thread	solveThread(&nPuzzle::solve, puzzle);
+			solveThread.detach();
+		}
 			break;
 		default:	break;
 	}
