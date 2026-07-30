@@ -111,6 +111,7 @@ class Display
 		void 	resetSolutionAnimation(void);
 		void 	renderSolutionAnimation(void); 
 
+		bool	isPuzzleSolved(void) const{return this->puzzle != nullptr && this->puzzle->isSolved();}
 		// Display	&operator=(const Display &src);
 };
 
