@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Display.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
+/*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/02 17:58:28 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/29 21:10:49 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/07/30 15:04:59 by avon-ben         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,12 @@ std::unordered_map<char, std::string> Display::hotkeyList = {
  * 
 \* ************************************************************************** */
 
-Display::Display(nPuzzle* puzzle): puzzle(puzzle)
+Display::Display(nPuzzle* puzzle): 
+	puzzle(puzzle), 
+	solutionIndex(0), 
+	lastSolutionStep(0.0), 
+	solutionStepDelay(0.30), 
+	solutionPlaying(false)
 {
 #if DEBUG >= DEBUG_TRACE
 	std::cout	<< C_DGREEN	<< "Default constructor "
@@ -54,6 +59,7 @@ Display::Display(nPuzzle* puzzle): puzzle(puzzle)
 
 	// Configure to actual puzzle
 	this->setPuzzle(this->puzzle);
+
 }
 
 // Display::Display(const Display &src)
@@ -429,6 +435,61 @@ void	Display::renderTiles(const nPuzzle::Board& board)
 #if DEBUG >= DEBUG_ALL
 	LOG_AS_TRACE();
 #endif
+}
+
+void Display::startSolutionAnimation(void)
+{
+	this->solutionPath = this->puzzle->getSolution();
+	this->solutionIndex = 0;
+	this->lastSolutionStep = GetTime();
+	this->solutionPlaying = !this->solutionPath.empty();
+}
+
+void Display::renderSolutionAnimation(void)
+{
+	if (!this->puzzle)
+		return;
+	
+	if (this->solutionPath.empty())
+		this->startSolutionAnimation();
+
+	if (this->solutionPath.empty())
+	{
+		this->renderAsCurrentState();
+		return;
+	}
+
+	double currentTime = GetTime();
+
+	if (this->solutionPlaying && (currentTime - this->lastSolutionStep >= this->solutionStepDelay))
+	{
+		if (this->solutionIndex + 1 < this->solutionPath.size())
+		{
+			++this->solutionIndex;
+			this->lastSolutionStep = currentTime;
+		}
+		else
+			this->solutionPlaying = false;
+	}
+
+	const nPuzzle::State* state = 
+		this->solutionPath[this->solutionIndex];
+
+	this->HUD->render(
+		this->puzzle,
+		const_cast<nPuzzle::State*>(state)
+	);
+
+	this->renderBoard(state->getBoard());
+
+}
+
+void Display::resetSolutionAnimation(void)
+{
+	this->solutionPath.clear();
+	this->solutionIndex = 0;
+	this->lastSolutionStep = 0.0;
+	this->solutionPlaying = false;
 }
 
 /** ************************************************************************ **\

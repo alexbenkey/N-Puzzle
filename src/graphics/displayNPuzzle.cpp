@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   displayNPuzzle.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
+/*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/02 16:48:19 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/29 17:25:36 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/07/30 15:03:54 by avon-ben         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 
 static void	ConfigureTrace(void);
 static void	ProcessUserInput(int pressedKey, nPuzzle* puzzle);
-static void	RenderFrame(Display& graphics);
+static void	RenderFrame(Display& graphics, nPuzzle *puzzle);
 
 void	displayNPuzzle(nPuzzle* puzzle)
 {
@@ -36,7 +36,7 @@ void	displayNPuzzle(nPuzzle* puzzle)
 			ProcessUserInput(GetKeyPressed(), puzzle);
 			if (IsWindowResized())
 				graphics.configureSizes();
-			RenderFrame(graphics);
+			RenderFrame(graphics, puzzle);
 		}
 	}
 	catch(const std::exception& e)
@@ -119,7 +119,7 @@ std::cerr	<< C_DGRAY	<< __FILE__	<<"::"	<< C_RESET	<< __func__	<< __LINE__	<< st
 	}
 }
 
-static void	RenderFrame(Display& graphics)
+static void	RenderFrame(Display& graphics, nPuzzle* puzzle)
 {
 	try
 	{
@@ -130,6 +130,8 @@ static void	RenderFrame(Display& graphics)
 			graphics.renderAsStartState();
 		else if (IsKeyDown(KEY_T))
 			graphics.renderAsTargetState();
+		else if (puzzle->isSolved())
+			graphics.renderSolutionAnimation();
 		else
 			graphics.renderAsCurrentState();
 		EndDrawing();

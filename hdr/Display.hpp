@@ -78,6 +78,14 @@ class Display
 		void	renderBoard(const nPuzzle::Board& board);
 		void	renderTiles(const nPuzzle::Board& board);
 
+		// Solution
+		std::vector<const nPuzzle::State*> solutionPath;
+		int32_t solutionIndex;
+		double 	lastSolutionStep;
+		double 	solutionStepDelay;
+		bool	solutionPlaying;
+
+
 	protected:
 
 	public:
@@ -98,6 +106,10 @@ class Display
 		void	renderAsCurrentState(void);
 		void	renderAsQueueState(void);
 		void	renderAsTargetState(void);
+
+		void 	startSolutionAnimation(void);
+		void 	resetSolutionAnimation(void);
+		void 	renderSolutionAnimation(void); 
 
 		// Display	&operator=(const Display &src);
 };
