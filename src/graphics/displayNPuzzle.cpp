@@ -6,7 +6,7 @@
 /*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/02 16:48:19 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/24 14:34:15 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/07/29 17:25:36 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,22 +18,22 @@
 #include "heuristic.hpp"
 
 #include <iostream>	// std::stream
+#include <thread>	// std::thread
 
 static void	ConfigureTrace(void);
-static void	ProcessUserInput(int pressedKey, nPuzzle* puzzle, int32_t& hVal);
+static void	ProcessUserInput(int pressedKey, nPuzzle* puzzle);
 static void	RenderFrame(Display& graphics);
 
 void	displayNPuzzle(nPuzzle* puzzle)
 {
 	ConfigureTrace();
 	Display	graphics(puzzle);
-	int32_t hVal = 1; 
 
 	try
 	{
 		while (!WindowShouldClose())
 		{
-			ProcessUserInput(GetKeyPressed(), puzzle, hVal);
+			ProcessUserInput(GetKeyPressed(), puzzle);
 			if (IsWindowResized())
 				graphics.configureSizes();
 			RenderFrame(graphics);
@@ -67,7 +67,7 @@ static void	ConfigureTrace(void)
 #endif
 }
 
-static void	ProcessUserInput(int pressedKey, nPuzzle* puzzle, int32_t& hVal)
+static void	ProcessUserInput(int pressedKey, nPuzzle* puzzle)
 {
 	switch (pressedKey)
 	{
@@ -83,8 +83,18 @@ static void	ProcessUserInput(int pressedKey, nPuzzle* puzzle, int32_t& hVal)
 			else
 				puzzle->moveLeft();
 			break;
-		case KEY_DOWN:	puzzle->moveDown();	break;
-		case KEY_UP:	puzzle->moveUp();	break;
+		case KEY_DOWN:
+			if (IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT))
+				puzzle->incrementHeuristic();
+			else
+				puzzle->moveDown();
+			break;
+		case KEY_UP:
+			if (IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT))
+				puzzle->decrementHeuristic();
+			else
+				puzzle->moveUp();
+			break;
 		case KEY_T:	puzzle->printTarget();	break;
 		case KEY_S:	puzzle->printPuzzle();	break;
 		case KEY_Q:	puzzle->printQueue();	break;
@@ -95,29 +105,15 @@ static void	ProcessUserInput(int pressedKey, nPuzzle* puzzle, int32_t& hVal)
 				TraceLog(LOG_WARNING, "Press uppercase R to reset.");
 			break;
 		case KEY_SPACE:
-			puzzle->solveStep(hVal);
+std::cerr	<< C_DGRAY	<< __FILE__	<<"::"	<< C_RESET	<< __func__	<< __LINE__	<< std::endl;
+			puzzle->solveStep();
+std::cerr	<< C_DGRAY	<< __FILE__	<<"::"	<< C_RESET	<< __func__	<< __LINE__	<< std::endl;
 			break;
-		case KEY_ZERO ... KEY_NINE:
-			{
-				const int32_t requested = pressedKey - KEY_ZERO;
-
-				if (requested >= 0 && requested < heuristic::size)
-				{
-					hVal = requested;
-
-					TraceLog(
-						LOG_INFO,
-						"selected heuristid %i: %s",
-						hVal,
-						heuristic::function[hVal].name
-					);
-				}
-				else
-					TraceLog(LOG_WARNING, "invalid heuristic: %i", requested);
-			}
-			break ;
 		case KEY_ENTER:
-			puzzle->solve(hVal);
+		{
+			std::thread	solveThread(&nPuzzle::solve, puzzle);
+			solveThread.detach();
+		}
 			break;
 		default:	break;
 	}

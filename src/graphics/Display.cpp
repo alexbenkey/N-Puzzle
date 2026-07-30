@@ -6,7 +6,7 @@
 /*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/02 17:58:28 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/23 21:47:24 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/07/29 21:10:49 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,15 +16,15 @@
 #include "nPuzzle.State.hpp"
 #include "nPuzzle.Target.hpp"
 #include "nPuzzle.Board.Tile.hpp"
-
+#include "Errors.hpp"
 
 #include <iostream>	// std::stream
 
 std::unordered_map<char, std::string> Display::hotkeyList = {
 	{ 'R', "Reset to Start" },
-	{ 'Q', "Display Queue" },
-	{ 'T', "Display Target" },
-	{ 'S', "Display Start" },
+	{ 'q', "Display Queue" },
+	{ 't', "Display Target" },
+	{ 's', "Display Start" },
 };
 
 /** ************************************************************************ **\

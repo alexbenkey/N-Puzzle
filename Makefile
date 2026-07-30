@@ -91,7 +91,8 @@ SRC_CLASS :=	nPuzzle.cpp\
 				nPuzzle.Board.cpp\
 				nPuzzle.Board.Tile.cpp\
 				nPuzzle.State.cpp\
-				nPuzzle.Target.cpp
+				nPuzzle.Target.cpp\
+				nPuzzle.Solver.cpp
 
 DIR_NMSPC :=	$(SRC_DIR)
 SRC_NMSPC :=	heuristic.cpp

@@ -6,7 +6,7 @@
 /*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/23 14:41:42 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/24 16:49:27 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/07/29 20:57:40 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ class nPuzzle
 		class	Board;
 		class	State;
 		class	Target;
+		class	Solver;
 # pragma endregion "Nested Objects"
 
 # pragma region	"Enum Classes"
@@ -43,10 +44,9 @@ class nPuzzle
 		nPuzzle::State*		start;
 		nPuzzle::State*		state;
 		nPuzzle::Target*	target;
+		nPuzzle::Solver*	solver;
 
-		std::vector<nPuzzle::State*>	queue;
-		int32_t							queueIndex = -1;
-		std::vector<nPuzzle::State*>	visited;
+		int32_t							heuristicIndex = 1;
 
 		// Construction
 		void	setVariables(const int32_t width, const int32_t height);
@@ -85,18 +85,22 @@ class nPuzzle
 		// nPuzzle::State&	getTargetState()	{ return (*(nPuzzle::State*)this->target); }
 		nPuzzle::Target&	getTarget() const { return (*this->target); }
 		nPuzzle::State&	getStartState()		{ return (*this->start); }
-		nPuzzle::State&	getQueueState(void);
-		void	incrementQueue(void)	{ ++this->queueIndex; this->maintainValidQueue(); }
-		void	decrementQueue(void)	{ --this->queueIndex; this->maintainValidQueue(); }
-		void	maintainValidQueue(void);
-		int32_t	getQueueIndex(void) const	{ return (this->queueIndex); }
-		int32_t getQueueSize(void) const { return (this->queue.size()); }
+		const nPuzzle::State&	getQueueState(void);
+		void	incrementHeuristic(void);
+		void	decrementHeuristic(void);
+		void	maintainValidHeuristic(void);
+		int32_t	getHeuristicIndex(void) const;
+		void	incrementQueue(void);
+		void	decrementQueue(void);
+		int32_t	getQueueIndex(void) const;
+		int32_t	getQueueSize(void) const;
 
 		void	storeStartState(void);
 
 		void	printPuzzle(void);
 		void	printTarget(void);
 		void	printQueue(void);
+		void	printQueueStatus(const nPuzzle::State& queue, int32_t h);
 		// void	printEmptyTilePos(void);
 		// void	printAllTiles(const nPuzzle::State& state) const;
 		// void	printAllTilesFlex(nPuzzle::State& state);
@@ -110,11 +114,10 @@ class nPuzzle
 		bool	moveLeft(int32_t h = -1);
 		bool	moveRight(int32_t h = -1);
 	
-		void	solve(int32_t h);
-		void	solveStep(int32_t h = -1);
-		void	processState(nPuzzle::State* state, int32_t h);
-		bool	stateHasAlreadyBeenVisited(nPuzzle::State* state);
-		bool	stateIsAlreadyInQueue(nPuzzle::State* state);
+		void	solve(void);
+		bool	solveStep(bool allHeuristics = false);
+		int32_t	getBestSolverHeuristic(void) const;
+		bool	isSolved(void) const;
 		void	calculateHeuristic(void);
 		void	calculateHeuristic(int32_t h);
 

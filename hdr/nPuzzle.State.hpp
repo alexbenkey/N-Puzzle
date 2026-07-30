@@ -6,7 +6,7 @@
 /*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/23 14:32:56 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/24 18:18:13 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/07/29 17:31:36 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ class nPuzzle::State
 // # pragma endregion "Nested Objects"
 	private:
 
-	protected: 
+	protected:
 		// std::vector<std::vector<Tile> >	tiles;
 		Board	board;
 

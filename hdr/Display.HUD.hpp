@@ -6,7 +6,7 @@
 /*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/23 21:26:59 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/23 21:29:31 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/07/29 16:11:45 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ struct Display::HUD
 		// Render
 		void	renderFrame(void) const;
 		void	renderData(nPuzzle* puzzle, nPuzzle::State* state) const;
-		void	renderHeuristics(nPuzzle::State* state) const;
+		void	renderHeuristics(nPuzzle::State* state, int32_t h) const;
 		void	renderControls(void) const;
 		void	renderMovement(void) const;
 	
