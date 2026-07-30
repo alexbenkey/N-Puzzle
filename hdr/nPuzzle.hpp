@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   nPuzzle.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
+/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/23 14:41:42 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/29 20:57:40 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/07/30 17:21:32 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,9 +61,7 @@ class nPuzzle
 
 		// Deletion
 		void	clearAll(void);
-		void		clearProgress(void);
-		void			clearQueue(void);
-		void			clearVisited(void);
+		void		clearSolver(void);
 		void		clearBoard(void);
 		void			clearState(nPuzzle::State** state);
 		void			clearTarget(void);
@@ -82,7 +80,6 @@ class nPuzzle
 		void	resetToStart(void);
 
 		nPuzzle::State&	getCurrentState()	{ return (*this->state); }
-		// nPuzzle::State&	getTargetState()	{ return (*(nPuzzle::State*)this->target); }
 		nPuzzle::Target&	getTarget() const { return (*this->target); }
 		nPuzzle::State&	getStartState()		{ return (*this->start); }
 		const nPuzzle::State&	getQueueState(void);
@@ -90,9 +87,6 @@ class nPuzzle
 		void	decrementHeuristic(void);
 		void	maintainValidHeuristic(void);
 		int32_t	getHeuristicIndex(void) const;
-		void	incrementQueue(void);
-		void	decrementQueue(void);
-		int32_t	getQueueIndex(void) const;
 		int32_t	getQueueSize(void) const;
 
 		void	storeStartState(void);
@@ -100,7 +94,6 @@ class nPuzzle
 		void	printPuzzle(void);
 		void	printTarget(void);
 		void	printQueue(void);
-		void	printQueueStatus(const nPuzzle::State& queue, int32_t h);
 		// void	printEmptyTilePos(void);
 		// void	printAllTiles(const nPuzzle::State& state) const;
 		// void	printAllTilesFlex(nPuzzle::State& state);

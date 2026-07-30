@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   displayNPuzzle.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
+/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/02 16:48:19 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/29 17:25:36 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/07/30 17:22:52 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,15 +72,9 @@ static void	ProcessUserInput(int pressedKey, nPuzzle* puzzle)
 	switch (pressedKey)
 	{
 		case KEY_RIGHT:
-			if (IsKeyDown(KEY_Q))
-				puzzle->incrementQueue();
-			else
 				puzzle->moveRight();
 			break;
 		case KEY_LEFT:
-			if (IsKeyDown(KEY_Q))
-				puzzle->decrementQueue();
-			else
 				puzzle->moveLeft();
 			break;
 		case KEY_DOWN:

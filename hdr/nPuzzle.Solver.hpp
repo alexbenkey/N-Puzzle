@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   nPuzzle.Solver.hpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
+/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/29 17:35:11 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/29 20:58:53 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/07/30 17:11:46 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,23 +15,39 @@
 
 # include "nPuzzle.hpp"
 
+# include <queue>	// std::priority_queue
+# include <unordered_map>	// std::unordered_map
 # include <vector>	// std::vector
 # include <mutex>	// std::mutex
+
+#pragma region "Comparator functions for contain sorting"
+struct BoardPtrHash
+{
+	std::size_t	operator()(const nPuzzle::Board* board) const noexcept;
+};
+
+struct BoardPtrEqual
+{
+	bool	operator()(const nPuzzle::Board* lhs, const nPuzzle::Board* rhs) const noexcept;
+};
+
+struct StateCompare
+{
+	bool	operator()(const nPuzzle::State* a, const nPuzzle::State* b) const;
+};
+#pragma endregion
 
 class nPuzzle::Solver
 {
 	private:
 		nPuzzle&	puzzle;
 		int32_t		heuristic;
-		std::vector<nPuzzle::State*>	queue;
-		int32_t							queueIndex;
+		std::priority_queue<nPuzzle::State*, std::vector<nPuzzle::State*>, StateCompare>	queue;
+		std::unordered_map<const nPuzzle::Board*, nPuzzle::State*, BoardPtrHash, BoardPtrEqual>	visited;
+		std::vector<nPuzzle::State*>	owner;
 		mutable std::mutex				queueMutex;
-		std::vector<nPuzzle::State*>	visited;
 
-		// bool	solveStep_mtx(bool calculateAllHeuristics = true);
 		void	processState(nPuzzle::State* state, bool calculateAllHeuristics);
-		bool	stateHasAlreadyBeenVisited(nPuzzle::State* state);
-		bool	stateIsAlreadyInQueue(nPuzzle::State* state);
 
 		void	addToQueue(nPuzzle::State* state);
 		nPuzzle::State*	popQueue(void);
@@ -47,19 +63,15 @@ class nPuzzle::Solver
 		bool	solveStep(bool calculateAllHeuristics = true);
 
 		size_t	getQueueSize(void) const;
-		void	incrementQueueIndex(void);
-		void	decrementQueueIndex(void);
-		int32_t	getQueueIndex(void) const;
-		const nPuzzle::State&	getQueueMember(int32_t i = 0) const;
-		int32_t	getBestHeuristic(void) const;
+		const nPuzzle::State&	getTopState(void) const;
+		int32_t	getTopCost(void) const;
+		int32_t getTopHeuristic(void) const;
 		bool	isSolved(void) const;
 		void	getSolution(void) const;
 
 		void	printQueueStatus(void) const;
-		void	printQueueNodeStatus(const nPuzzle::State* state) const;
 
 		void	clearQueue(void);
-		void	clearVisited(void);
 };
 
 #endif

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   nPuzzle.Board.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
+/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/23 17:58:21 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/29 21:11:13 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/07/30 15:57:32 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -193,6 +193,18 @@ bool	nPuzzle::Board::operator==(const Board& ref) const
 		if (this->TilesByPos[pos]->getVal() != ref.TilesByPos[pos]->getVal())
 			return (false);
 	return (true);
+}
+
+std::size_t	nPuzzle::Board::hash() const
+{
+	std::size_t result = 17;
+
+	for (const Tile* tile : this->TilesByPos)
+	{
+		result = result * 31 + tile->getVal();
+	}
+
+	return result;
 }
 
 std::ostream&	operator<<(std::ostream& os, const nPuzzle::Board& board)

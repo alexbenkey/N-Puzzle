@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   nPuzzle.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
+/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 16:13:50 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/29 21:24:49 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/07/30 17:21:47 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,14 +116,13 @@ nPuzzle::~nPuzzle(void)
 
 void	nPuzzle::clearAll(void)
 {
-	this->clearProgress();
+	this->clearSolver();
 	this->clearBoard();
 }
 
-void	nPuzzle::clearProgress(void)
+void	nPuzzle::clearSolver(void)
 {
-	this->clearQueue();
-	this->clearVisited();
+	this->solver->clearQueue();
 }
 
 void	nPuzzle::clearBoard(void)
@@ -131,16 +130,6 @@ void	nPuzzle::clearBoard(void)
 	this->clearState(&this->state);
 	this->clearState(&this->start);
 	this->clearTarget();
-}
-
-void	nPuzzle::clearQueue(void)
-{
-	this->solver->clearQueue();
-}
-
-void	nPuzzle::clearVisited(void)
-{
-	this->solver->clearVisited();
 }
 
 void	nPuzzle::clearState(nPuzzle::State** state)
@@ -257,7 +246,7 @@ void	nPuzzle::setRow(int32_t row, const std::vector<int>& numbers)
 
 const nPuzzle::State&	nPuzzle::getQueueState(void)
 {
-	return (this->solver->getQueueMember());
+	return (this->solver->getTopState());
 }
 
 void	nPuzzle::incrementHeuristic(void)
@@ -286,21 +275,6 @@ int32_t	nPuzzle::getHeuristicIndex(void) const
 	return (this->heuristicIndex);
 }
 
-void	nPuzzle::incrementQueue(void)
-{
-	this->solver->incrementQueueIndex();
-}
-
-void	nPuzzle::decrementQueue(void)
-{
-	this->solver->decrementQueueIndex();
-}
-
-int32_t	nPuzzle::getQueueIndex(void) const
-{
-	return (this->solver->getQueueIndex());
-}
-
 int32_t	nPuzzle::getQueueSize(void) const
 {
 	return (this->solver->getQueueSize());
@@ -321,7 +295,7 @@ bool	nPuzzle::move(nPuzzle::Direction direction, int32_t h)
 	validMove = this->state->move(direction);
 	if (validMove)
 	{
-		this->clearProgress();
+		this->clearSolver();
 		if (h != -1)
 			this->calculateHeuristic(h);
 		else
@@ -369,7 +343,7 @@ TRACE_POSITION();
 
 int32_t	nPuzzle::getBestSolverHeuristic(void) const
 {
-	return (this->solver->getBestHeuristic());
+	return (this->solver->getTopHeuristic());
 }
 
 void	nPuzzle::calculateHeuristic(void)
@@ -396,23 +370,7 @@ void	nPuzzle::printTarget(void)
 
 void	nPuzzle::printQueue(void)
 {
-	for (size_t i = 0; i < this->solver->getQueueSize(); ++i)
-	{
-		std::cerr	<< "# Queue["	<< i	<< "]\n"
-					<< this->solver->getQueueMember(i)	<< std::flush;
-	}
-}
-
-void	nPuzzle::printQueueStatus(const nPuzzle::State& queue, int32_t h)
-{
-	int32_t	cost = queue.getCost();
-	int32_t	heuristic = queue.getHeuristic(h);
-	std::cerr	<< &queue
-				<< "\tg: "	<< cost
-				<< "\th: "	<< heuristic
-				<< "\tf: "	<< cost + heuristic
-				// << "\n"	<< queue
-				<< std::endl;
+	this->solver->printQueueStatus();
 }
 
 // void	nPuzzle::printEmptyTilePos(void)
@@ -447,30 +405,9 @@ void	nPuzzle::printQueueStatus(const nPuzzle::State& queue, int32_t h)
 
 void	nPuzzle::resetToStart(void)
 {
-	this->clearQueue();
-	this->clearVisited();
+	this->clearSolver();
 	*this->state = *this->start;
-	// this->clearState(&this->state);
-	// this->state = new nPuzzle::State(*this->start);
 }
-
-// void	nPuzzle::resetStates(void)
-// {
-// 	this->clearStates();
-// 	this->state = this->start; 
-// }
-
-// void	nPuzzle::clearStates(void)
-// {
-// 	for (nPuzzle::State *state : this->queue)
-// 		delete state;
-// 	this->queue.clear();
-// 	for (nPuzzle::State *state : this->visited)
-// 		delete state;
-// 	this->visited.clear();
-
-// 	this->queueIndex = -1;
-// }
 
 /** ************************************************************************ **\
  * 
