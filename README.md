@@ -111,6 +111,5 @@ git commit --amend --no-edit
 
 # TODO
 - solver functional
-- solver as thread
 - more heuristics
 - comparison operators upgrade
