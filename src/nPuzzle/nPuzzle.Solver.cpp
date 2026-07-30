@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   nPuzzle.Solver.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
+/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/29 17:52:09 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/29 21:39:17 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/07/30 11:13:41 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,10 +113,10 @@ TRACE_POSITION();
 	}
 	// maintain valid queueIndex
 	this->maintainValidQueueIndex();
-#if DEBUG >= DEBUG_DEBUG
-	// print queue
-	this->printQueueStatus();
-#endif
+// #if DEBUG >= DEBUG_DEBUG
+// 	// print queue
+// 	this->printQueueStatus();
+// #endif
 	return (isSolved());
 }
 

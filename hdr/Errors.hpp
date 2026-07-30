@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Errors.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
+/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/10 12:38:06 by othello           #+#    #+#             */
-/*   Updated: 2026/07/29 21:23:11 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/07/30 11:14:22 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 # define	DEBUG_TRACE	5
 # define	DEBUG_ALL	6
 
-# if DEBUG >= DEBUG_ERROR
+# if DEBUG >= DEBUG_TRACE
 #  define TRACE_POSITION(fmt, ...) \
 do { \
 	std::fprintf(stderr, \
