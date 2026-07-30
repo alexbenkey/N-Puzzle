@@ -21,14 +21,42 @@ Using the A* algorithm to solve n N-Puzzle
 
 # Setup
 
+This project uses [raylib](https://github.com/raysan5/raylib) as a Git
+submodule, when cloning include the command to include submodules:
+
+```sh
+git clone --recurse-submodules https://github.com/alexbenkey/N-Puzzle.git
+cd N-Puzzle
+```
+
+## Raylib submodule
+
+If the repository was cloned without `--recurse-submodules`, initialize
+raylib from the project root:
+
+```sh
+git submodule sync --recursive
+git submodule update --init --recursive
+```
+
+To update raylib later to the commit recorded by this repository, run:
+
+```sh
+git submodule update --init --recursive
+```
 
 ---
 
 ## Build
 
+Build raylib and N-Puzzle with:
+
 ```sh
 make
 ```
+
+The Makefile builds `assets/raylib/src/libraylib.a` automatically before
+linking the `npuzzle` executable.
 
 ---
 
