@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   nPuzzle.Solver.hpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
+/*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/29 17:35:11 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/29 20:58:53 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/07/30 14:05:22 by avon-ben         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ class nPuzzle::Solver
 		const nPuzzle::State&	getQueueMember(int32_t i = 0) const;
 		int32_t	getBestHeuristic(void) const;
 		bool	isSolved(void) const;
-		void	getSolution(void) const;
+		std::vector<const nPuzzle::State*>	getSolution(void) const;
 
 		void	printQueueStatus(void) const;
 		void	printQueueNodeStatus(const nPuzzle::State* state) const;

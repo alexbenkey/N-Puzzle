@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   nPuzzle.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
+/*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 16:13:50 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/29 21:24:49 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/07/30 14:21:23 by avon-ben         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -413,6 +413,11 @@ void	nPuzzle::printQueueStatus(const nPuzzle::State& queue, int32_t h)
 				<< "\tf: "	<< cost + heuristic
 				// << "\n"	<< queue
 				<< std::endl;
+}
+
+std::vector<const nPuzzle::State*> nPuzzle::getSolution(void) const
+{
+	return this->solver->getSolution();
 }
 
 // void	nPuzzle::printEmptyTilePos(void)
