@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Display.HUD.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
+/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/09 13:44:29 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/29 21:40:42 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/07/30 11:09:17 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -352,17 +352,18 @@ void	Display::HUD::renderData(nPuzzle* puzzle, nPuzzle::State* state) const
 				break;
 			case 4:
 			{
-				float	startH = (float)puzzle->getCurrentState().getHeuristic(puzzle->getHeuristicIndex());
-				float	solveH = (float)puzzle->getBestSolverHeuristic();
-				buffer = TextFormat("Progress: %0.f%%", (startH - solveH) / startH * 100);
+				const nPuzzle::State&	queue = puzzle->getQueueState();
+				int32_t	g = queue.getCost();
+				int32_t h = queue.getHeuristic(puzzle->getHeuristicIndex());
+				buffer = TextFormat("Progress: %i%%\n g %2i h: %2i", (g * 100) / (g + h), g, h);
 			}
 				break;
-			case 5:
-			{
-				const nPuzzle::State& queue = puzzle->getQueueState();
-				buffer = TextFormat(" g: %2i h: %2i", queue.getCost(), queue.getHeuristic(queue.getUsedHeuristic()));
-			}
-				break;
+			// case 5:
+			// {
+			// 	const nPuzzle::State& queue = puzzle->getQueueState();
+			// 	buffer = TextFormat(" g: %2i h: %2i", queue.getCost(), queue.getHeuristic(queue.getUsedHeuristic()));
+			// }
+			// 	break;
 			default:
 				goto endLoop;
 		}
