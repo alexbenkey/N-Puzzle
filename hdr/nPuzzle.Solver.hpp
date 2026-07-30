@@ -6,7 +6,7 @@
 /*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/29 17:35:11 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/30 17:11:46 by othello          ###   ########.fr       */
+/*   Updated: 2026/07/30 19:49:09 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,9 +52,6 @@ class nPuzzle::Solver
 		void	addToQueue(nPuzzle::State* state);
 		nPuzzle::State*	popQueue(void);
 
-
-		void	maintainValidQueueIndex(void);
-
 	public:
 		Solver(nPuzzle&	puzzle);
 		~Solver(void);
@@ -72,6 +69,8 @@ class nPuzzle::Solver
 		void	printQueueStatus(void) const;
 
 		void	clearQueue(void);
+
+		void	debugValidateQueueVisited(void);
 };
 
 #endif

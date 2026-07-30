@@ -6,7 +6,7 @@
 /*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/29 17:52:09 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/30 17:10:28 by othello          ###   ########.fr       */
+/*   Updated: 2026/07/30 21:01:54 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,7 +112,7 @@ TRACE_POSITION();
 	}
 #if DEBUG >= DEBUG_DEBUG
 	// print queue
-	this->printQueueStatus();
+	// this->printQueueStatus();
 #endif
 	return (isSolved());
 }
@@ -169,16 +169,148 @@ nPuzzle::State*	nPuzzle::Solver::popQueue(void)
 		auto found = this->visited.find(&top->getBoard());
 		if (found == this->visited.end())
 		{
-			delete top;
 			std::fprintf(stderr, "Took a board configuration from queue which did not exist in visited\n");
-			continue;
-			// throw std::runtime_error("Took a board configuration from queue which did not exist in visited");
+			this->visited.emplace(&top->getBoard(), top);
+			this->debugValidateQueueVisited();
+			throw std::runtime_error("Took a board configuration from queue which did not exist in visited");
 		}
 		if (found->second == top)
 			return (top);
-		delete top;
 	}
 	return (nullptr);
+}
+
+void nPuzzle::Solver::debugValidateQueueVisited()
+{
+	while (!this->queue.empty())
+	{
+		nPuzzle::State* top = this->queue.top();
+		this->queue.pop();
+
+		const nPuzzle::Board* board = &top->getBoard();
+
+		std::size_t lookupHash = BoardPtrHash{}(board);
+		std::size_t lookupBucket = this->visited.bucket(board);
+
+		auto found = this->visited.find(board);
+		if (found != this->visited.end())
+		{
+			continue;
+		}
+
+		std::cerr	<< "################################\n"
+					<< "Queue node not found\n"
+					<< "Board ptr: "		<< board		<< '\n'
+					<< "Hash:      "		<< lookupHash	<< '\n'
+					<< "Board:\n"
+					<< *board
+					<< std::endl;
+
+		std::cerr	<< "Bucket contents:\n"
+					<< "Bucket:    "		<< lookupBucket	<< '\n'
+					<< "Buckets:   "		<< this->visited.bucket_count() << '\n'
+					<< "Visited:   "		<< this->visited.size() << '\n'
+					<< std::flush;
+
+		for (auto it = this->visited.begin(lookupBucket);
+			 it != this->visited.end(lookupBucket);
+			 ++it)
+		{
+			const nPuzzle::Board* storedBoard = it->first;
+
+			std::cerr	<< "Bucket\n"
+						<< "  Stored ptr: "	<< storedBoard << '\n'
+						<< "  Stored hash: "	<< BoardPtrHash{}(storedBoard) << '\n'
+						<< "  Equal:       "	<< BoardPtrEqual{}(storedBoard, board) << '\n'
+						<< "  Same ptr:    "	<< (storedBoard == board) << '\n'
+						<< *storedBoard	<< '\n'
+						<< std::flush;
+		}
+
+		std::cerr << "Manual scan:\n";
+
+		bool manualFound = false;
+		for (const auto& [storedBoard, state] : this->visited)
+		{
+			bool equal = (*storedBoard == *board);
+			bool samePtr = (storedBoard == board);
+			bool sameHash = (storedBoard->hash() == board->hash());
+
+			if (equal)
+			{
+				manualFound = true;
+
+				std::size_t storedBucket = visited.bucket(storedBoard);
+
+				std::cerr	<< "MANUAL MATCH FOUND\n"
+							<< "Stored ptr:   "	<< storedBoard	<< '\n'
+							<< "Lookup ptr:   "	<< board		<< '\n'
+							<< "Stored hash:  "	<< storedBoard->hash() << '\n'
+							<< "Lookup hash:  "	<< board->hash() << '\n'
+							<< "Same ptr:     "	<< samePtr << '\n'
+							<< "Same hash:    "	<< sameHash << '\n'
+							<< "Equal:        "	<< equal << '\n'
+							<< "Stored state: "	<< state << '\n'
+							<< "Lookup state: "	<< top << '\n'
+							<< "Stored bucket:"	<< storedBucket	<< '\n'
+							<< "Lookup bucket:"	<< lookupBucket	<< '\n'
+							<< "Bucket match: "	<< (storedBucket == lookupBucket) << '\n'
+							<< "Board:\n"
+							<< *storedBoard
+							<< std::endl;
+
+				std::cerr << "Walking stored bucket:\n";
+
+				bool foundSelf = false;
+				for (auto it = this->visited.begin(storedBucket);
+					 it != this->visited.end(storedBucket);
+					 ++it)
+				{
+					std::cerr	<< "  Node\n"
+								<< "    ptr:       " << it->first << '\n'
+								<< "    hash:      " << BoardPtrHash{}(it->first) << '\n'
+								<< "    same ptr:  " << (it->first == storedBoard) << '\n'
+								<< "    equal:     " << BoardPtrEqual{}(it->first, storedBoard) << '\n'
+								<< std::flush;
+
+					if (it->first == storedBoard)
+						foundSelf = true;
+				}
+
+				std::cerr	<< "Stored node reachable from bucket: "
+							<< foundSelf
+							<< std::endl;
+
+				auto refind = this->visited.find(storedBoard);
+
+				std::cerr	<< "find(storedPtr): "
+							<< (refind != this->visited.end())
+							<< '\n';
+
+				if (refind != this->visited.end())
+				{
+					std::cerr	<< "Returned ptr: "
+								<< refind->first
+								<< '\n'
+								<< "Returned state: "
+								<< refind->second
+								<< std::endl;
+				}
+			}
+		}
+
+		if (!manualFound)
+		{
+			std::cerr << "NO MANUAL MATCH FOUND" << std::endl;
+		}
+
+		std::cerr << "Queue state:\n"
+				  << "State ptr: " << top << '\n'
+				  << "Cost:      " << top->getCost() << '\n'
+				  << std::endl;
+
+		delete top;
+	}
 }
 
 size_t	nPuzzle::Solver::getQueueSize(void) const
