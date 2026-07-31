@@ -94,6 +94,8 @@ class nPuzzle
 		void	printPuzzle(void);
 		void	printTarget(void);
 		void	printQueue(void);
+		void	printQueueStatus(const nPuzzle::State& queue, int32_t h);
+		std::vector<const nPuzzle::State*> getSolution(void) const;
 		// void	printEmptyTilePos(void);
 		// void	printAllTiles(const nPuzzle::State& state) const;
 		// void	printAllTilesFlex(nPuzzle::State& state);

@@ -373,6 +373,11 @@ void	nPuzzle::printQueue(void)
 	this->solver->printQueueStatus();
 }
 
+std::vector<const nPuzzle::State*> nPuzzle::getSolution(void) const
+{
+	return this->solver->getSolution();
+}
+
 // void	nPuzzle::printEmptyTilePos(void)
 // {
 // 	this->state->printTilePos( this->state->getTile(0));

@@ -353,11 +353,10 @@ int32_t	nPuzzle::State::getHeuristic(int32_t h) const
 bool	nPuzzle::State::operator<(const State &rhs) const noexcept
 {
 	#warning it is now required to set the particular used heuristic in the state class. 
-	int32_t hKey = this->usedHeuristic;
-	const int32_t lhsScore =
-		this->getCost() + this->getHeuristic(hKey);
-	const int32_t rhsScore =
-		rhs.getCost() + rhs.getHeuristic(hKey);
+	const int32_t lhsHeurisic = this->getHeuristic(this->usedHeuristic);
+	const int32_t rhsHeurisic = rhs.getHeuristic(rhs.usedHeuristic);
+	const int32_t lhsScore = this->cost + lhsHeurisic;
+	const int32_t rhsScore = rhs.cost + rhsHeurisic;
 
 	// std::cout << "called " <<__func__ << std::endl;
 	// std::cout << "cost lhs: " << this->getCost() << "heuristic lhs: " << this->getHeuristic(hKey) << " Score lhs: " << lhsScore << std::endl;
@@ -365,51 +364,25 @@ bool	nPuzzle::State::operator<(const State &rhs) const noexcept
 
 	if (lhsScore != rhsScore)
 		return lhsScore < rhsScore;
+
+	if (lhsHeurisic != rhsHeurisic)
+		return lhsHeurisic < rhsHeurisic;
 	
-	// if ((this->getCost() + this->getHeuristic(hKey)) != (rhs.getCost() + rhs.getHeuristic(hKey)))
-	// 	return ;
-	return (this->getCost() < rhs.getCost());
-	// 	return true;
-	// return false;
+	return false;
 }
 
 bool	nPuzzle::State::operator<=(const State &rhs) const noexcept
 {
-	int32_t hKey = this->usedHeuristic;
-	// std::cout << "called " <<__func__ << std::endl;
-	// std::cout << "cost lhs: " << this->getCost() << "heuristic lhs: " << this->getHeuristic(hKey) << std::endl;
-	// std::cout << "cost rhs: " << rhs.getCost() << "heuristic rhs: " << rhs.getHeuristic(hKey) << std::endl << std::endl << std::endl;
-	if ((this->getCost() + this->getHeuristic(hKey)) <= (rhs.getCost() + rhs.getHeuristic(hKey))){
-		return true;
-	}	
-	else if (this->getCost() <= rhs.getCost())
-		return true;
-	return false;
+	return !(rhs < *this);
 }
 
 bool	nPuzzle::State::operator>(const State &rhs) const noexcept
 {
-	int32_t hKey = this->usedHeuristic;
-	// std::cout << "called " <<__func__ << std::endl;
-	// std::cout << "cost lhs: " << this->getCost() << "heuristic lhs: " << this->getHeuristic(hKey) << std::endl;
-	// std::cout << "cost rhs: " << rhs.getCost() << "heuristic rhs: " << rhs.getHeuristic(hKey) << std::endl << std::endl << std::endl;
-	if ((this->getCost() + this->getHeuristic(hKey)) > (rhs.getCost() + rhs.getHeuristic(hKey)))
-		return true;
-	else if (this->getCost() > rhs.getCost())
-		return true;
-	return false;
+	return (rhs < *this);
 }
 bool	nPuzzle::State::operator>=(const State &rhs) const noexcept
 {
-	int32_t hKey = this->usedHeuristic;
-	// std::cout << "called " <<__func__ << std::endl;
-	// std::cout << "cost lhs: " << this->getCost() << "heuristic lhs: " << this->getHeuristic(hKey) << std::endl;
-	// std::cout << "cost rhs: " << rhs.getCost() << "heuristic rhs: " << rhs.getHeuristic(hKey) << std::endl << std::endl << std::endl;
-	if ((this->getCost() + this->getHeuristic(hKey)) > (rhs.getCost() + rhs.getHeuristic(hKey)))
-		return true;
-	else if (this->getCost() > rhs.getCost())
-		return true;
-	return false;
+	return !(*this < rhs);
 }
 
 nPuzzle::State	&nPuzzle::State::operator=(const State &src)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   nPuzzle.State.hpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
+/*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/23 14:32:56 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/29 17:31:36 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/07/30 17:24:11 by avon-ben         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,8 @@ class nPuzzle::State
 		std::map<int32_t, int32_t>	heuristic;
 		int32_t   usedHeuristic = 1;
 		int32_t	cost = 0;
+		int32_t score = 0;
+		nPuzzle::State *previous = nullptr;
 
 		Position emptyPos = {0, 0};
 
@@ -74,6 +76,9 @@ class nPuzzle::State
 		const nPuzzle::Board::Tile&	getEmptyTile() const { return this->board.getEmptyTile(); }
 		const nPuzzle::Board&	getBoard() const { return this->board; }
 
+
+		void setPrevious(nPuzzle::State *state) {this->previous = state;}
+		const nPuzzle::State *getPrevious(void) const { return this->previous;}
 
 		// void	printPuzzle(void) const;
 		bool	validPuzzle(void) const;

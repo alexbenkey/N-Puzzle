@@ -64,7 +64,7 @@ class nPuzzle::Solver
 		int32_t	getTopCost(void) const;
 		int32_t getTopHeuristic(void) const;
 		bool	isSolved(void) const;
-		void	getSolution(void) const;
+		std::vector<const nPuzzle::State*>	getSolution(void) const;
 
 		void	printQueueStatus(void) const;
 

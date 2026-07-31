@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   nPuzzle.Solver.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
+/*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/29 17:52:09 by ohengelm          #+#    #+#             */
 /*   Updated: 2026/07/31 11:55:09 by othello          ###   ########.fr       */
@@ -105,7 +105,10 @@ TRACE_POSITION();
 	{
 		nPuzzle::State*	next = new nPuzzle::State(*current);
 		if (next->move(direction))
+		{
+			next->setPrevious(current);
 			this->processState(next, calculateAllHeuristics);
+		}
 		else
 			delete next;
 	}
@@ -352,9 +355,27 @@ bool	nPuzzle::Solver::isSolved(void) const
 	return (!this->queue.empty() && this->queue.top()->getHeuristic(this->heuristic) == 0);
 }
 
-void	nPuzzle::Solver::getSolution(void) const
+std::vector<const nPuzzle::State*>	nPuzzle::Solver::getSolution(void) const
 {
-	// std::lock_guard<std::mutex>	lock(this->queueMutex);
+	std::vector<const nPuzzle::State*> path;
+	std::lock_guard<std::mutex>	lock(this->queueMutex);
+
+	if (this->queue.empty())
+		return path;
+	
+	const nPuzzle::State * current = this->queue.front(); 
+
+	if (current->getHeuristic(this->heuristic) != 0)
+		return path;
+
+	while (current != nullptr)
+	{
+		path.push_back(current);
+		current = current->getPrevious(); 
+	}
+
+	std::reverse(path.begin(), path.end());
+	return path;
 }
 
 void	nPuzzle::Solver::printQueueStatus(void) const

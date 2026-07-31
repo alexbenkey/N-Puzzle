@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   displayNPuzzle.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
+/*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/02 16:48:19 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/30 17:22:52 by othello          ###   ########.fr       */
+/*   Updated: 2026/07/30 18:18:54 by avon-ben         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,6 +124,8 @@ static void	RenderFrame(Display& graphics)
 			graphics.renderAsStartState();
 		else if (IsKeyDown(KEY_T))
 			graphics.renderAsTargetState();
+		else if (graphics.isPuzzleSolved())
+			graphics.renderSolutionAnimation();
 		else
 			graphics.renderAsCurrentState();
 		EndDrawing();
