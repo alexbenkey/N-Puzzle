@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   nPuzzle.State.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
+/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/23 14:38:54 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/30 17:26:41 by avon-ben         ###   ########.fr       */
+/*   Updated: 2026/07/30 18:04:43 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -267,10 +267,10 @@ bool	nPuzzle::State::move(Direction direction){
 		case Direction::UP:
 			if (emptyPos.y == 0)
 			{
-				#if DEBUG >= DEBUG_DEBUG
-				std::cout	<< C_RED	<< "cannot move up, empty square is at the top"
-							<< C_RESET	<< std::endl;
-				#endif
+				// #if DEBUG >= DEBUG_DEBUG
+				// std::cout	<< C_RED	<< "cannot move up, empty square is at the top"
+				// 			<< C_RESET	<< std::endl;
+				// #endif
 				return false;
 			}
 			toMove = &getTile(emptyPos.x, emptyPos.y - 1);
@@ -278,10 +278,10 @@ bool	nPuzzle::State::move(Direction direction){
 		case Direction::RIGHT:
 			if (emptyPos.x == this->width - 1)
 			{
-				#if DEBUG >= DEBUG_DEBUG
-				std::cout	<< C_RED	<< "cannot move right, empty square is at the right edge"
-							<< C_RESET	<< std::endl;
-				#endif
+				// #if DEBUG >= DEBUG_DEBUG
+				// std::cout	<< C_RED	<< "cannot move right, empty square is at the right edge"
+				// 			<< C_RESET	<< std::endl;
+				// #endif
 				return false;
 			}
 			toMove = &getTile(emptyPos.x + 1, emptyPos.y);
@@ -290,10 +290,10 @@ bool	nPuzzle::State::move(Direction direction){
 		case(Direction::DOWN):
 			if (emptyPos.y == this->height - 1)
 			{
-				#if DEBUG >= DEBUG_DEBUG
-				std::cout	<< C_RED	<< "cannot move down, empty square is at the bottom"
-							<< C_RESET	<< std::endl;
-				#endif
+				// #if DEBUG >= DEBUG_DEBUG
+				// std::cout	<< C_RED	<< "cannot move down, empty square is at the bottom"
+				// 			<< C_RESET	<< std::endl;
+				// #endif
 				return false;
 			}
 			toMove =  &getTile(emptyPos.x, emptyPos.y + 1);
@@ -302,10 +302,10 @@ bool	nPuzzle::State::move(Direction direction){
 		case(Direction::LEFT):
 			if (emptyPos.x == 0)
 			{
-				#if DEBUG >= DEBUG_DEBUG
-				std::cout	<< C_RED	<< "cannot move left, empty square is at the left edge"
-							<< C_RESET	<< std::endl;
-				#endif
+				// #if DEBUG >= DEBUG_DEBUG
+				// std::cout	<< C_RED	<< "cannot move left, empty square is at the left edge"
+				// 			<< C_RESET	<< std::endl;
+				// #endif
 				return false;
 			}
 			toMove =  &getTile(emptyPos.x - 1, emptyPos.y);
@@ -314,10 +314,10 @@ bool	nPuzzle::State::move(Direction direction){
 		
 	this->moveTile(*toMove);
 	this->increaseCost();
-	#if DEBUG >= DEBUG_DEBUG
-	std::cout	<< C_GREEN	<< "Tile moved successfully"
-				<< C_RESET	<< std::endl;
-	#endif
+	// #if DEBUG >= DEBUG_DEBUG
+	// std::cout	<< C_GREEN	<< "Tile moved successfully"
+	// 			<< C_RESET	<< std::endl;
+	// #endif
 	return (true);
 }
 
@@ -358,7 +358,7 @@ bool	nPuzzle::State::operator<(const State &rhs) const noexcept
 	const int32_t lhsScore = this->cost + lhsHeurisic;
 	const int32_t rhsScore = rhs.cost + rhsHeurisic;
 
-	// std::cout << "called < operator" << std::endl;
+	// std::cout << "called " <<__func__ << std::endl;
 	// std::cout << "cost lhs: " << this->getCost() << "heuristic lhs: " << this->getHeuristic(hKey) << " Score lhs: " << lhsScore << std::endl;
 	// std::cout << "cost rhs: " << rhs.getCost() << "heuristic rhs: " << rhs.getHeuristic(hKey) << " Score rhs: " << rhsScore << std::endl << std::endl << std::endl;
 

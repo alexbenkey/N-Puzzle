@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   nPuzzle.Board.hpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
+/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/23 16:27:40 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/24 18:14:15 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/07/30 17:12:56 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,7 @@ class nPuzzle::Board
 
 		nPuzzle::Board&	operator=(const Board& src);
 		bool	operator==(const Board& ref) const;
+		std::size_t	hash() const;
 
 		friend std::ostream&	operator<<(std::ostream& os, const Board& board);
 };

@@ -72,15 +72,9 @@ static void	ProcessUserInput(int pressedKey, nPuzzle* puzzle)
 	switch (pressedKey)
 	{
 		case KEY_RIGHT:
-			if (IsKeyDown(KEY_Q))
-				puzzle->incrementQueue();
-			else
 				puzzle->moveRight();
 			break;
 		case KEY_LEFT:
-			if (IsKeyDown(KEY_Q))
-				puzzle->decrementQueue();
-			else
 				puzzle->moveLeft();
 			break;
 		case KEY_DOWN:

@@ -6,7 +6,7 @@
 /*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/09 13:44:29 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/30 11:09:17 by othello          ###   ########.fr       */
+/*   Updated: 2026/07/31 11:55:34 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -345,17 +345,15 @@ void	Display::HUD::renderData(nPuzzle* puzzle, nPuzzle::State* state) const
 					buffer = TextFormat("Moves: N/A");
 				break;
 			case 3:
-				if (puzzle->getQueueIndex() == -1)
 					buffer = TextFormat("Queue: %i", puzzle->getQueueSize());
-				else
-					buffer = TextFormat("Queue: %i/%i", puzzle->getQueueIndex() + 1, puzzle->getQueueSize());
 				break;
 			case 4:
 			{
 				const nPuzzle::State&	queue = puzzle->getQueueState();
 				int32_t	g = queue.getCost();
+				// int32_t	h = puzzle->getBestSolverHeuristic();
 				int32_t h = queue.getHeuristic(puzzle->getHeuristicIndex());
-				buffer = TextFormat("Progress: %i%%\n g %2i h: %2i", (g * 100) / (g + h), g, h);
+				buffer = TextFormat("Progress: %3i%%\n g %3i h: %3i", (g * 100) / (g + h), g, h);
 			}
 				break;
 			// case 5:
