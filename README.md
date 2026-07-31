@@ -138,6 +138,10 @@ git commit --amend --no-edit
 ```
 
 # TODO
-- solver functional
 - more heuristics
+   - Misplaced Tiles: Counts the number of tiles not in their goal position. It is simple and admissible but often inefficient as it ignores tile distance. 
+   - Manhattan Distance (MD): Sums the horizontal and vertical distances each tile must move to reach its goal. It is more accurate than misplaced tiles and is sufficient to solve the 8-puzzle efficiently. 
+   - Linear Conflict: Adds to the Manhattan distance when two tiles are in the same row or column but in the wrong order, requiring additional moves to resolve. 
+   - Walking Distance (WD): Calculates the minimum moves required for tiles to reach their goals in separate 1D projections (rows and columns), accounting for tile conflicts. 
+   - Inversion Distance: Uses the number of inversions in the tile sequence to estimate the minimum vertical and horizontal moves required. 
 - comparison operators upgrade

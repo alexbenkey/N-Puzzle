@@ -6,7 +6,7 @@
 /*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/02 16:48:19 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/30 18:18:54 by avon-ben         ###   ########.fr       */
+/*   Updated: 2026/07/31 13:20:35 by avon-ben         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 #include <thread>	// std::thread
 
 static void	ConfigureTrace(void);
-static void	ProcessUserInput(int pressedKey, nPuzzle* puzzle);
+static void	ProcessUserInput(int pressedKey, nPuzzle* puzzle, Display* display);
 static void	RenderFrame(Display& graphics);
 
 void	displayNPuzzle(nPuzzle* puzzle)
@@ -33,7 +33,7 @@ void	displayNPuzzle(nPuzzle* puzzle)
 	{
 		while (!WindowShouldClose())
 		{
-			ProcessUserInput(GetKeyPressed(), puzzle);
+			ProcessUserInput(GetKeyPressed(), puzzle, &graphics);
 			if (IsWindowResized())
 				graphics.configureSizes();
 			RenderFrame(graphics);
@@ -67,7 +67,7 @@ static void	ConfigureTrace(void)
 #endif
 }
 
-static void	ProcessUserInput(int pressedKey, nPuzzle* puzzle)
+static void	ProcessUserInput(int pressedKey, nPuzzle* puzzle, Display* display)
 {
 	switch (pressedKey)
 	{
@@ -94,7 +94,10 @@ static void	ProcessUserInput(int pressedKey, nPuzzle* puzzle)
 		case KEY_Q:	puzzle->printQueue();	break;
 		case KEY_R:
 			if (IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT))
+			{
+				display->resetSolutionAnimation();
 				puzzle->resetToStart();
+			}
 			else
 				TraceLog(LOG_WARNING, "Press uppercase R to reset.");
 			break;
@@ -105,6 +108,7 @@ std::cerr	<< C_DGRAY	<< __FILE__	<<"::"	<< C_RESET	<< __func__	<< __LINE__	<< st
 			break;
 		case KEY_ENTER:
 		{
+			display->resetSolutionAnimation();
 			std::thread	solveThread(&nPuzzle::solve, puzzle);
 			solveThread.detach();
 		}
@@ -127,7 +131,10 @@ static void	RenderFrame(Display& graphics)
 		else if (graphics.isPuzzleSolved())
 			graphics.renderSolutionAnimation();
 		else
+		{
+			graphics.resetSolutionAnimation();
 			graphics.renderAsCurrentState();
+		}
 		EndDrawing();
 	}
 	catch(const std::exception& e)
