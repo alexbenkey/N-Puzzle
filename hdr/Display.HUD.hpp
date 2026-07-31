@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Display.HUD.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
+/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/23 21:26:59 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/29 16:11:45 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/07/31 13:19:36 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,18 +24,21 @@ struct Display::HUD
 
 		Rectangle	Frame;
 		Rectangle	Data;
+		Rectangle	Solver;
 		Rectangle	Heuristics;
 		Rectangle	Controls;
 		Rectangle	Movement;
 		// Positions
 		void	configureFramePosition(void);
 		void	configureDataPosition(void);
+		void	configureSolverPosition(void);
 		void	configureHeuristicsPosition(void);
 		void	configureControlsPosition(void);
 		void	configureMovementPosition(void);
 		// Render
 		void	renderFrame(void) const;
 		void	renderData(nPuzzle* puzzle, nPuzzle::State* state) const;
+		void	renderSolver(nPuzzle* puzzle) const;
 		void	renderHeuristics(nPuzzle::State* state, int32_t h) const;
 		void	renderControls(void) const;
 		void	renderMovement(void) const;
@@ -54,6 +57,7 @@ struct Display::HUD
 		// Sizes
 		void	configureSizes(bool updatePositions = false);
 		void	configureDataSize(bool updateFrame = true);
+		void	configureSolverSize(bool updateFrame = true);
 		void	configureHeuristicsSize(bool updateFrame = true);
 		void	configureControlSize(bool updateFrame = true);
 		void	configureMovementSize(bool updateFrame = true);
