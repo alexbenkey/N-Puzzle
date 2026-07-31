@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   nPuzzle.Solver.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
+/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/29 17:52:09 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/31 11:55:09 by othello          ###   ########.fr       */
+/*   Updated: 2026/07/31 12:07:37 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -363,7 +363,7 @@ std::vector<const nPuzzle::State*>	nPuzzle::Solver::getSolution(void) const
 	if (this->queue.empty())
 		return path;
 	
-	const nPuzzle::State * current = this->queue.front(); 
+	const nPuzzle::State * current = this->queue.top(); 
 
 	if (current->getHeuristic(this->heuristic) != 0)
 		return path;
