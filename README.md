@@ -16,6 +16,38 @@ Using the A* algorithm to solve n N-Puzzle
 
 # Implementation
 
+## Heuristics
+
+### Misplaced Tiles
+[implemented]()
+_"Counts the number of tiles not in their goal position. It is simple and admissible but often inefficient as it ignores tile distance."_
+
+Counts the number of tiles (excluding the empty tile) which are in the wrong position.
+
+An extremely cheap heuristic allowing for fast calculations. However, its heuristic value is of little value and its computational gain is negligible compared to the Manhattan Distance, which should be preferred in practically all cases.
+
+
+### Manhattan Distance
+[implemented]()
+_"Sums the horizontal and vertical distances each tile must move to reach its goal. It is more accurate than misplaced tiles and is sufficient to solve the 8-puzzle efficiently."_
+
+Also known as the Taxicab distance, this heuristic is created as a sum of the horizontal and vertical distance between each tile and their target positions.
+
+An extremely cheap heuristic, which has almost the same computational requirements as Misplaced Tiles. However it provides a significantly more valueable heuristic.
+
+### Linear Conflict
+[not implemented]()
+_"Adds to the Manhattan distance when two tiles are in the same row or column but in the wrong order, requiring additional moves to resolve."_
+
+Expansion to the Manhattan Distance.
+
+### Walking Distance
+[not implemented]()
+_"Calculates the minimum moves required for tiles to reach their goals in separate 1D projections (rows and columns), accounting for tile conflicts."_
+
+### Inversion Distance
+[not implemented]()
+_"Uses the number of inversions in the tile sequence to estimate the minimum vertical and horizontal moves required. "_
 
 ---
 
