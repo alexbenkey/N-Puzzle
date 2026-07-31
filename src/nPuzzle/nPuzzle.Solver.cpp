@@ -6,7 +6,7 @@
 /*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/29 17:52:09 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/31 12:07:37 by othello          ###   ########.fr       */
+/*   Updated: 2026/07/31 12:18:51 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -232,8 +232,11 @@ void nPuzzle::Solver::debugValidateQueueVisited()
 		std::cerr << "Manual scan:\n";
 
 		bool manualFound = false;
-		for (const auto& [storedBoard, state] : this->visited)
+		for (const auto i : this->visited)
 		{
+			const nPuzzle::Board*	storedBoard = i.first;
+			const nPuzzle::State*	state = i.second;
+
 			bool equal = (*storedBoard == *board);
 			bool samePtr = (storedBoard == board);
 			bool sameHash = (storedBoard->hash() == board->hash());
