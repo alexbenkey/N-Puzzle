@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heuristic.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
+/*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/14 12:51:34 by othello           #+#    #+#             */
-/*   Updated: 2026/07/24 16:19:03 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/07/31 14:37:18 by avon-ben         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,13 @@ namespace
 	// 	}
 	// 	return (heuristic);
 	// }
+	// int32_t walkingDistance(const nPuzzle::Board& current, const nPuzzle::Board& target)
+	// {
+	// 	int32_t heuristic = 0;
+		
+
+	// }
+
 }
 
 namespace heuristic
