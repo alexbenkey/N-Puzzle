@@ -6,7 +6,7 @@
 /*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/09 13:44:29 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/30 17:21:22 by othello          ###   ########.fr       */
+/*   Updated: 2026/07/31 11:55:34 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -345,10 +345,7 @@ void	Display::HUD::renderData(nPuzzle* puzzle, nPuzzle::State* state) const
 					buffer = TextFormat("Moves: N/A");
 				break;
 			case 3:
-				// if (puzzle->getQueueIndex() == -1)
 					buffer = TextFormat("Queue: %i", puzzle->getQueueSize());
-				// else
-				// 	buffer = TextFormat("Queue: %i/%i", puzzle->getQueueIndex() + 1, puzzle->getQueueSize());
 				break;
 			case 4:
 			{

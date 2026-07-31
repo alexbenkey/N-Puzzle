@@ -6,7 +6,7 @@
 /*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/29 17:52:09 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/30 21:01:54 by othello          ###   ########.fr       */
+/*   Updated: 2026/07/31 11:55:09 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,6 @@ nPuzzle::Solver::Solver(nPuzzle& puzzle):
 				<< C_RESET	<< std::endl;
 #endif
 	this->heuristic = 1;
-	// this->queueIndex = -1;
 }
 
 // nPuzzle::Solver::Solver(const Solver &src)
