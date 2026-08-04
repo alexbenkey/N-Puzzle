@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   nPuzzle.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
+/*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 16:13:50 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/30 17:21:47 by othello          ###   ########.fr       */
+/*   Updated: 2026/08/04 15:06:59 by avon-ben         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -344,6 +344,13 @@ TRACE_POSITION();
 int32_t	nPuzzle::getBestSolverHeuristic(void) const
 {
 	return (this->solver->getTopHeuristic());
+}
+
+nPuzzle::Solvability nPuzzle::getSolvability(void) const
+{
+	if (this->solver == nullptr)
+		return nPuzzle::Solvability::UNKNOWN;
+	return this->solver->getSolvability();
 }
 
 void	nPuzzle::calculateHeuristic(void)

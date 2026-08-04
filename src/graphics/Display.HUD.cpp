@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Display.HUD.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
+/*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/09 13:44:29 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/31 14:03:40 by othello          ###   ########.fr       */
+/*   Updated: 2026/08/04 15:16:31 by avon-ben         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,7 @@ TRACE_POSITION();
 void	Display::HUD::configureDataSize(bool updateFrame)
 {
 TRACE_POSITION();
-	this->Data.width = MeasureText("  [M]anhattan: 00", this->fontSize);
+	this->Data.width = MeasureText("  Solvability: Unsolvable", this->fontSize);
 	this->Data.height = 4 * this->fontHeight;
 	Display::logRectangle("HUD.Data", this->Data);
 	if (updateFrame)
@@ -303,7 +303,23 @@ TRACE_POSITION();
 					buffer = TextFormat("Size: %ix%i", 0, 0);
 				break;
 			case 2:
-				buffer = TextFormat("Solvbility: ???");
+				const char * solvabilityMsg;
+				switch (puzzle->getSolvability())
+				{
+					case nPuzzle::Solvability::UNKNOWN:
+					solvabilityMsg = "Unknown";
+					break;
+
+									
+					case nPuzzle::Solvability::SOLVABLE:
+					solvabilityMsg = "Solvable";
+					break;
+
+					case nPuzzle::Solvability::UNSOLVABLE:
+					solvabilityMsg = "Unsolvable";
+					break;
+				}
+				buffer = TextFormat("Solvability: %s", solvabilityMsg);
 				break;
 			case 3:
 				if (state)
