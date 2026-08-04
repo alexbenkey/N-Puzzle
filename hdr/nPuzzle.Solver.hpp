@@ -6,7 +6,7 @@
 /*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/29 17:35:11 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/08/04 15:04:08 by avon-ben         ###   ########.fr       */
+/*   Updated: 2026/08/04 15:42:46 by avon-ben         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,15 +54,18 @@ class nPuzzle::Solver
 		void	addToQueue(nPuzzle::State* state);
 		nPuzzle::State*	popQueue(void);
 
+		bool 	isSolvable(void);
+		void	setSolvability(nPuzzle::Solvability val) {this->solvability.store(val);}
+
 	public:
 		Solver(nPuzzle&	puzzle);
 		~Solver(void);
 
-		bool 	isSolvable(void);
+
 		bool	solve(void);
 		bool	solveStep(bool calculateAllHeuristics = true);
 
-		void	setSolvability(nPuzzle::Solvability val) {this->solvability.store(val);}
+		// void	setSolvability(nPuzzle::Solvability val) {this->solvability.store(val);}
 		nPuzzle::Solvability	getSolvability(void) const {return this->solvability.load();}
 
 		size_t	getQueueSize(void) const;
