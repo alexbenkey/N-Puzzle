@@ -3,15 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   heuristic.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
+/*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/14 13:13:17 by othello           #+#    #+#             */
-/*   Updated: 2026/07/23 21:37:22 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/07/31 16:55:29 by avon-ben         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef HEURISTIC_HPP
-# define HEURTISTIC_HPP
+# define HEURISTIC_HPP
 
 # include <aio.h>	// int32_t
 
