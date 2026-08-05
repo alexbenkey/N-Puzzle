@@ -6,7 +6,7 @@
 /*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/29 17:52:09 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/31 12:18:51 by othello          ###   ########.fr       */
+/*   Updated: 2026/08/04 17:52:24 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,11 @@ nPuzzle::Solver::~Solver(void)
  * 	Member Functions
  * 
 \* ************************************************************************** */
+
+void	nPuzzle::Solver::setHeuristic(int32_t h)
+{
+	this->heuristic = h;
+}
 
 bool	nPuzzle::Solver::solve(void)
 {

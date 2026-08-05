@@ -43,7 +43,72 @@ Expansion to the Manhattan Distance.
 
 ### Walking Distance
 [not implemented]()
+
 _"Calculates the minimum moves required for tiles to reach their goals in separate 1D projections (rows and columns), accounting for tile conflicts."_
+
+Walking Distance converts a puzzle board into two abstract states. One representing the tile distribution across the rows, and the other respresenting the tile distribution across the columns. These abstract states only track how many tiles in each row/column belong in each row/column respectively. Instead of calculating the minimum steps required to solve the puzzle, these are used to BFS the minimum amount of steps required to get all tiles in their correct row/column.
+
+The following puzzle is used in the examples below:
+```
+Puzzle:
+[1, 2, 3]
+[4, 5, 6]
+[7, 8, _]
+
+Solution:
+[1, 2, 3]
+[8, _, 4]
+[7, 6, 5]
+```
+
+First the puzzle boards are converted into an abstract state by counting for each row/column how many of its tiles belong into each row/, where the empty tile is not counted. In the example: 
+The puzzle on row 1 contains 4, 5, and 6. This row contains 0 tiles from solution row 0, 1 tile (4) from solution row 1, and 2 tiles (5 and 6) from solution row 2. This results in a abstract row 1 of [0, 1, 2] for the row abstract.
+```
+Rows:
+[3, 0, 0]
+[0, 1, 2]
+[0, 1, 1]
+```
+The puzzle on column 1 contains 2, 5, and 8. This column conains 1 tile (8) from solution column 1, 1 tile (2) from solution column 1, and 1 tile (5) from solution column 2. This results in a abstract **row** 1 of [1, 1, 1] for the **column** abstract.
+```
+Columns:
+[2, 0, 1]
+[1, 1, 1]
+[0, 1, 1]
+```
+The solution's abstract has a noticable diagonal form, where each tile is on its correct row/column.
+```
+Solution:
+[3, 0, 0]
+[0, 2, 0]
+[0, 0, 3]
+```
+Starting from the solution's abstract, a BFS is performed while keeping track of which row contains the empty tile. Each iteration simulates moving the empty tile to an adjacent row by transferring the corresponding tile counts between the two affected rows in the abstract state. The BFS depth is tracked and stored alongside each unique generated abstract state.
+```
+Depth: 0 (solution)
+Empty Tile Row: 1
+[3, 0, 0]
+[0, 2, 0]
+[0, 0, 3]
+
+Depth: 1 (empty tile moved up)
+Empty Tile Row: 0
+[2, 0, 0]
+[1, 2, 0]
+[0, 0, 3]
+
+Depth: 1 (empty tile moved down)
+Empty Tile Row: 3
+[3, 0, 0]
+[0, 2, 1]
+[0, 0, 2]
+
+And so on...
+```
+
+Additionally, the abstract functions as key for a lookup table, preventing the need for recalculation of abstracts. This is especially useful since many different puzzle boards can produce the same abstract (the empty position is not tracked for this). This lookup table stores the BFS depths by which the abstract is reached from the solution's abstract.
+
+To calculate the Walking Distance heuristic, the BFS depth for both rows and columns are retrieved from their respective lookup tables and added together.
 
 ### Inversion Distance
 [not implemented]()
@@ -102,10 +167,16 @@ linking the `npuzzle` executable.
 [A* search algorithm](https://en.wikipedia.org/wiki/A*_search_algorithm)
 
 [Heuristic](https://en.wikipedia.org/wiki/Heuristic_(computer_science))
+ - [Manhattan Distance](https://en.wikipedia.org/wiki/Taxicab_geometry)
+ - [Walking Distance & Invert Distance](https://web.archive.org/web/20141224035932/http://juropollo.xe0.ru:80/stp_wd_translation_en.htm)
+ - [Pattern Database](https://www.zabkat.com/blog/15-puzzle-pattern-database.htm)
 
 [Admissible heuristic](https://en.wikipedia.org/wiki/Admissible_heuristic)
 
 [Raylib](https://github.com/raysan5/raylib)
+
+https://slidepuzzle.app/15-puzzle-solver/
+https://www.zabkat.com/blog/15-puzzle-pattern-database.htm
 
 ---
 
@@ -167,6 +238,16 @@ git push
 # Add to previous commit without new log entry
 git add <files>
 git commit --amend --no-edit
+
+# Rebase
+## Check the logs
+git log --oneline
+## Check all logs for current branch that are not on main | count them
+git log --oneline main..HEAD | wc -l
+## Start interactvie rebase
+git rebase -i HEAD~<commit count>
+## Push the result
+git push --force-with-lease
 ```
 
 # TODO
