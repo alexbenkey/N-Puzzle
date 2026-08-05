@@ -167,6 +167,9 @@ linking the `npuzzle` executable.
 [A* search algorithm](https://en.wikipedia.org/wiki/A*_search_algorithm)
 
 [Heuristic](https://en.wikipedia.org/wiki/Heuristic_(computer_science))
+ - [Manhattan Distance](https://en.wikipedia.org/wiki/Taxicab_geometry)
+ - [Walking Distance & Invert Distance](https://web.archive.org/web/20141224035932/http://juropollo.xe0.ru:80/stp_wd_translation_en.htm)
+ - [Pattern Database](https://www.zabkat.com/blog/15-puzzle-pattern-database.htm)
 
 [Admissible heuristic](https://en.wikipedia.org/wiki/Admissible_heuristic)
 
