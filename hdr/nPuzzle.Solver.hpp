@@ -6,7 +6,7 @@
 /*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/29 17:35:11 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/30 19:49:09 by othello          ###   ########.fr       */
+/*   Updated: 2026/08/04 17:55:28 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,8 @@ class nPuzzle::Solver
 	public:
 		Solver(nPuzzle&	puzzle);
 		~Solver(void);
+
+		void	setHeuristic(int32_t h);
 
 		bool	solve(void);
 		bool	solveStep(bool calculateAllHeuristics = true);

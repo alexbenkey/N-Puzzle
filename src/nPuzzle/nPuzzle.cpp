@@ -6,7 +6,7 @@
 /*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 16:13:50 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/30 17:21:47 by othello          ###   ########.fr       */
+/*   Updated: 2026/08/04 17:51:07 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -267,6 +267,7 @@ void	nPuzzle::maintainValidHeuristic(void)
 		this->heuristicIndex = 0;
 	else if (this->heuristicIndex >= heuristic::size)
 		this->heuristicIndex = heuristic::size - 1;
+	this->solver->setHeuristic(this->heuristicIndex);
 	std::cerr	<< "Heuristic set to "	<< this->heuristicIndex	<< ' '	<< heuristic::function[this->heuristicIndex].name	<< std::endl;
 }
 

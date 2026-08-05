@@ -6,7 +6,7 @@
 /*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/23 17:58:21 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/30 15:57:32 by othello          ###   ########.fr       */
+/*   Updated: 2026/07/31 17:28:05 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,20 @@ nPuzzle::Board::Board(void):
 				<< C_DGREEN	<< " called."
 				<< C_RESET	<< std::endl;
 #endif
+}
+
+nPuzzle::Board::Board(const nPuzzle::Board& src):
+	width(src.width),
+	height(src.height),
+	size(src.width * src.height)
+{
+#if DEBUG >= DEBUG_TRACE
+	std::cout	<< C_DGREEN	<< "Copy constructor "
+				<< C_GREEN	<< __func__
+				<< C_DGREEN	<< " called."
+				<< C_RESET	<< std::endl;
+#endif
+	*this = src;
 }
 
 /** ************************************************************************ **\
@@ -124,9 +138,24 @@ void	nPuzzle::Board::addTile(const int32_t value, const int32_t x, const int32_t
 	this->TilesByVal[value] = std::move(tile);
 	this->TilesByPos[pos] = tilePtr;
 }
-void	nPuzzle::Board::move(const int32_t direction)
+
+bool	nPuzzle::Board::move(nPuzzle::Direction direction)
 {
-	throw std::runtime_error("I need logic!");
+	const nPuzzle::Board::Tile&	empty = this->getEmptyTile();
+	int32_t	newX = empty.getX();
+	int32_t newY = empty.getY();
+	switch (direction)
+	{
+		case nPuzzle::Direction::UP:	--newY;	break;
+		case nPuzzle::Direction::DOWN:	++newY;	break;
+		case nPuzzle::Direction::LEFT:	--newX;	break;
+		case nPuzzle::Direction::RIGHT:	++newX;	break;
+		default:	break;
+	}
+	if (newX < 0 || newX >= this->width || newY < 0 || newY >= this->height)
+		return (false);
+	this->swapTiles(empty.getX(), empty.getY(), newX, newY);
+	return (true);
 }
 
 void	nPuzzle::Board::swapTiles(const int32_t x1, const int32_t y1, const int32_t x2, const int32_t y2)
