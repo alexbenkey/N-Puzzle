@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 #ifndef HEURISTIC_HPP
-# define HEURTISTIC_HPP
+# define HEURISTIC_HPP
 
 # include <aio.h>	// int32_t
 

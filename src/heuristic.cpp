@@ -15,7 +15,8 @@
 // Walking Distance
 #include <queue>	// std::queue
 #include <map>		// std::map
-#include <set>		// std::set
+#include <mutex>	// std::mutex
+#include <stdexcept>	// std::runtime_error
 
 #include <iostream>	// std::stream
 
@@ -57,48 +58,44 @@ namespace
 	class WalkingDistanceClass
 	{
 		private:
-			struct queueNode
+			struct abstractKey
 			{
-				std::vector<int16_t>	key;
-				int32_t					emptyPos;
-				int32_t					depth;
+				std::vector<int16_t>	counts;
+				int32_t					blankLine;
 
-				bool	operator<(const queueNode& other) const
+				bool	operator<(const abstractKey& other) const
 				{
-					if (this->emptyPos != other.emptyPos)
-						return this->emptyPos < other.emptyPos;
-					return this->key < other.key;
+					if (this->blankLine != other.blankLine)
+						return this->blankLine < other.blankLine;
+					return this->counts < other.counts;
 				}
 			};
 
-#warning	"Does not take width vs height into account"
 			struct lookupTable
 			{
-				std::queue<queueNode>					queue;
-				std::set<queueNode>						visited;
-				std::map<std::vector<int16_t>, int32_t>	h;
+				std::queue<abstractKey>				queue;
+				std::map<abstractKey, int32_t>		distance;
 				const int32_t	(nPuzzle::Board::Tile::*getCoord)() const;
+				int32_t							lineCount;
 			};
 
 			int32_t		width;
 			int32_t		height;
 			int32_t		size;
+			std::size_t	targetHash;
 			lookupTable	row;
 			lookupTable	col;
+			std::mutex	lookupMutex;
 
 			void	resetLookupTable(const nPuzzle::Board& target);
 			int32_t	lookupHeuristicHalf(const nPuzzle::Board& current, const nPuzzle::Board& target, lookupTable& table);
-			std::vector<int16_t>	generateKey(const nPuzzle::Board& current, const nPuzzle::Board& target, const int32_t (nPuzzle::Board::Tile::*getCoord)() const) const;
-			int32_t	expandLookupTable(lookupTable& table, const std::vector<int16_t>& key);
+			abstractKey	generateKey(const nPuzzle::Board& current, const nPuzzle::Board& target, const lookupTable& table) const;
+			int32_t	expandLookupTable(lookupTable& table, const abstractKey& key);
 
 		public:
 			WalkingDistanceClass(void);
 
 			int32_t	lookupHeuristic(const nPuzzle::Board& current, const nPuzzle::Board& target);
-			void	printQueue(std::queue<queueNode>& queue);
-			void	printQueueNode(const queueNode& node) const;
-			void	printKey(const std::vector<int16_t>& key, char delim = ' ') const;
-			void	printLookupTable(const lookupTable& table) const;
 	};
 
 	WalkingDistanceClass::WalkingDistanceClass(void)
@@ -106,31 +103,36 @@ namespace
 		this->width = -1;
 		this->height = -1;
 		this->size = -1;
+		this->targetHash = 0;
 		this->row.getCoord = &nPuzzle::Board::Tile::getY;
 		this->col.getCoord = &nPuzzle::Board::Tile::getX;
 	}
 
 	int32_t	WalkingDistanceClass::lookupHeuristic(const nPuzzle::Board& current, const nPuzzle::Board& target)
 	{
-		if (this->width != target.getWidth() || this->height != target.getHeight())
+		std::lock_guard<std::mutex>	lock(this->lookupMutex);
+
+		if (this->width != target.getWidth() ||
+			this->height != target.getHeight() ||
+			this->targetHash != target.hash())
 			resetLookupTable(target);
 
 		int32_t	rowH = this->lookupHeuristicHalf(current, target, this->row);
 		if (rowH < 0)
-			return (-1);
+			throw std::runtime_error("Walking Distance row key was not found");
 		
 		int32_t	colH = this->lookupHeuristicHalf(current, target, this->col);
 		if (colH < 0)
-			return (-1);
+			throw std::runtime_error("Walking Distance column key was not found");
 
 		return (rowH + colH);
 	}
 
 	int32_t	WalkingDistanceClass::lookupHeuristicHalf(const nPuzzle::Board& current, const nPuzzle::Board& target, lookupTable& table)
 	{
-		std::vector<int16_t>	currentKey = this->generateKey(current, target, table.getCoord);
-		std::map<std::vector<int16_t>, int32_t>::iterator found = table.h.find(currentKey);
-		if (found != table.h.end())
+		abstractKey	currentKey = this->generateKey(current, target, table);
+		std::map<abstractKey, int32_t>::iterator found = table.distance.find(currentKey);
+		if (found != table.distance.end())
 			return (found->second);
 		return (this->expandLookupTable(table, currentKey));
 	}
@@ -140,139 +142,78 @@ namespace
 		this->width = target.getWidth();
 		this->height = target.getHeight();
 		this->size = this->width * this->height;
+		this->targetHash = target.hash();
+
+		this->row.lineCount = this->height;
+		this->col.lineCount = this->width;
 
 		{
-			this->row.h.clear();
-			this->row.visited.clear();
+			this->row.distance.clear();
 			this->row.queue = {};
-			queueNode	newNode;
-			newNode.key = generateKey(target, target, this->row.getCoord);
-			newNode.emptyPos = (target.getEmptyTile().*this->row.getCoord)();
-			newNode.depth = 0;
-			this->row.queue.push(newNode);
+			abstractKey	goal = generateKey(target, target, this->row);
+			this->row.distance.emplace(goal, 0);
+			this->row.queue.push(goal);
 		}
 		{
-			this->col.h.clear();
-			this->col.visited.clear();
+			this->col.distance.clear();
 			this->col.queue = {};
-			queueNode	newNode;
-			newNode.key = generateKey(target, target, this->col.getCoord);
-			newNode.emptyPos = (target.getEmptyTile().*this->col.getCoord)();
-			newNode.depth = 0;
-			this->col.queue.push(newNode);
+			abstractKey	goal = generateKey(target, target, this->col);
+			this->col.distance.emplace(goal, 0);
+			this->col.queue.push(goal);
 		}
 	}
 
-	std::vector<int16_t>	WalkingDistanceClass::generateKey(const nPuzzle::Board& current, const nPuzzle::Board& target, const int32_t (nPuzzle::Board::Tile::*getCoord)() const) const
+	WalkingDistanceClass::abstractKey	WalkingDistanceClass::generateKey(const nPuzzle::Board& current, const nPuzzle::Board& target, const lookupTable& table) const
 	{
-		std::vector<int16_t>	key(this->width * this->height, 0);
+		abstractKey	key;
+		key.counts.assign(table.lineCount * table.lineCount, 0);
+		key.blankLine = (current.getEmptyTile().*table.getCoord)();
 
-		for (int32_t value = 0; value < this->size; ++value)
-			++key[(current.getTile(value).*getCoord)() * this->height + (target.getTile(value).*getCoord)()];
+		for (int32_t value = 1; value < this->size; ++value)
+		{
+			int32_t	currentLine = (current.getTile(value).*table.getCoord)();
+			int32_t	targetLine = (target.getTile(value).*table.getCoord)();
+			++key.counts[currentLine * table.lineCount + targetLine];
+		}
 		return (key);
 	}
 
-	int32_t	WalkingDistanceClass::expandLookupTable(lookupTable& table, const std::vector<int16_t>& key)
+	int32_t	WalkingDistanceClass::expandLookupTable(lookupTable& table, const abstractKey& key)
 	{
 		while (!table.queue.empty())
 		{
-			// Extract top node from queue
-			queueNode	current = table.queue.front();
+			abstractKey	current = table.queue.front();
 			table.queue.pop();
-			// Update visited
-			std::set<queueNode>::iterator found = table.visited.find(current);
-			if (found != table.visited.end())
+			int32_t	currentDepth = table.distance.at(current);
+
+			for (int32_t sourceLine : { current.blankLine - 1, current.blankLine + 1 })
 			{
-				if (found->depth <= current.depth)
+				if (sourceLine < 0 || sourceLine >= table.lineCount)
 					continue;
-				table.visited.erase(found);
-			}
-			table.visited.insert(current);
-			// Add to lookup table
-			auto foundh = table.h.find(current.key);
-			if (foundh == table.h.end())
-				table.h.emplace(current.key, current.depth);
-			else if (foundh->second > current.depth)
-				foundh->second = current.depth;
-			// Find and create new queue nodes
-#warning	"Doesn't seem to create proper h depths"
-			int32_t	emptyRow = current.emptyPos * this->width;
-			for (int32_t emptyCol = 0; emptyCol < this->width; ++emptyCol)
-			{
-				if (current.key[emptyRow + emptyCol] == 0)
-					continue;
-				for (int32_t tRow : { current.emptyPos - 1, current.emptyPos + 1} )
+
+				for (int32_t targetGroup = 0; targetGroup < table.lineCount; ++targetGroup)
 				{
-					if (tRow < 0 || tRow >= this->height)
+					int32_t	sourceIndex = sourceLine * table.lineCount + targetGroup;
+					if (current.counts[sourceIndex] == 0)
 						continue;
-					int32_t	targetRow = tRow * this->width;
-					for (int32_t targetCol = 0; targetCol < this->width; ++targetCol)
-					{
-						if (targetCol == emptyCol || current.key[targetRow + targetCol] == 0)
-							continue;
-						queueNode	next;
-						next.key = current.key;
-						--next.key[emptyRow + emptyCol];
-						++next.key[targetRow + emptyCol];
-						--next.key[targetRow + targetCol];
-						++next.key[emptyRow + targetCol];
-						next.emptyPos = tRow;
-						next.depth = current.depth + 1;
-						if (table.visited.find(next) != table.visited.end())
-							continue;
+
+					abstractKey	next = current;
+					int32_t	destinationIndex = current.blankLine * table.lineCount + targetGroup;
+					--next.counts[sourceIndex];
+					++next.counts[destinationIndex];
+					next.blankLine = sourceLine;
+
+					if (table.distance.emplace(next, currentDepth + 1).second)
 						table.queue.push(next);
-					}
 				}
 			}
-			// Check for key for lazy BFS
-			if (current.key == key)
-				return (current.depth);
+
+			// Keep lazy BFS nodes expandable for later lookups. Returning before
+			// this expansion would remove the requested node from the frontier.
+			if (!(current < key) && !(key < current))
+				return (currentDepth);
 		}
 		return (-1);
-	}
-
-	void	WalkingDistanceClass::printQueue(std::queue<queueNode>& queue)
-	{
-		for (size_t i = 0; i < queue.size(); ++i)
-		{
-			queueNode	node = queue.front();
-			queue.pop();
-			queue.push(node);
-			std::cerr	<< "queue "	<< i;
-			printQueueNode(node);
-		}
-	}
-
-	void	WalkingDistanceClass::printQueueNode(const queueNode& node) const
-	{
-		std::cerr	<< "[ ";
-		this->printKey(node.key);
-		std::fprintf(stderr, "]\td:%4i  e:%4i\n", node.depth, node.emptyPos);
-		std::cerr	<< std::flush;
-	}
-
-
-	void	WalkingDistanceClass::printKey(const std::vector<int16_t>& key, char delim) const
-	{
-		for (size_t i = 0; i < key.size(); ++i)
-		{
-			std::cerr	<< key[i];
-			if ((int32_t)i % this->width == this->width - 1)
-				std::cerr	<< delim;
-			else
-				std::cerr	<< ' ';
-		}
-		std::cerr	<< std::flush;
-	}
-
-	void	WalkingDistanceClass::printLookupTable(const lookupTable& table) const
-	{
-		for (auto i : table.h)
-		{
-			this->printKey(i.first);
-			std::cerr	<< "\th: "	<< i.second	<< '\n';
-		}
-		std::cerr	<< std::flush;
 	}
 
 	int32_t	walkingDistance(const nPuzzle::Board& current, const nPuzzle::Board& target)
