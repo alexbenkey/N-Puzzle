@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heuristic.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
+/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/14 12:51:34 by othello           #+#    #+#             */
-/*   Updated: 2026/08/05 19:29:48 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/08/06 16:06:29 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -183,7 +183,7 @@ namespace
 			std::set<queueNode>::iterator found = table.visited.find(current);
 			if (found != table.visited.end())
 			{
-				if (found->depth < current.depth)
+				if (found->depth <= current.depth)
 					continue;
 				table.visited.erase(found);
 			}
@@ -216,11 +216,10 @@ namespace
 						++next.key[targetRow + emptyCol];
 						--next.key[targetRow + targetCol];
 						++next.key[emptyRow + targetCol];
-						if (table.visited.find(next) != table.visited.end())
-							continue;
 						next.emptyPos = tRow;
 						next.depth = current.depth + 1;
-						// this->printQueueNode(next);
+						if (table.visited.find(next) != table.visited.end())
+							continue;
 						table.queue.push(next);
 					}
 				}
