@@ -90,37 +90,45 @@ void	nPuzzle::Target::setSize(const int32_t w, const int32_t h)
 	this->setTargetTiles();
 }
 
-void	nPuzzle::Target::setTargetTiles(void)
+void nPuzzle::Target::setTargetTiles(void)
 {
-	int32_t top = 0;
-	int32_t bottom = this->board.getHeight() - 1;
-	int32_t left = 0;
-	int32_t right = this->board.getWidth() - 1;
-	int32_t	size = this->board.getSize();
+TRACE_POSITION();
+    int32_t top    = 0;
+    int32_t bottom = this->board.getHeight() - 1;
+    int32_t left   = 0;
+    int32_t right  = this->board.getWidth() - 1;
 
-	for (int32_t i = 1; i < size;)
+    int32_t i = 1;
+    const int32_t size = this->board.getSize();
+
+	while (top <= bottom && left <= right)
 	{
-		// left → right
-		for (int32_t x = left; x <= right && i < size; ++x)
-			this->board.addTile(i++, x, top);
+		// left -> right
+		for (int32_t x = left; x <= right; ++x, ++i)
+			this->board.addTile(i == size ? 0 : i, x, top);
 		++top;
+		if (top > bottom)
+			break;
 
-		// top → bottom
-		for (int32_t y = top; y <= bottom && i < size; ++y)
-			this->board.addTile(i++, right, y);
+		// top -> bottom
+		for (int32_t y = top; y <= bottom; ++y, ++i)
+			this->board.addTile(i == size ? 0 : i, right, y);
 		--right;
+		if (left > right)
+			break;
 
-		// right → left
-		for (int32_t x = right; x >= left && i < size; --x)
-			this->board.addTile(i++, x, bottom);
+		// right -> left
+		for (int32_t x = right; x >= left; --x, ++i)
+			this->board.addTile(i == size ? 0 : i, x, bottom);
 		--bottom;
+		if (top > bottom)
+			break;
 
-		// bottom → top
-		for (int32_t y = bottom; y >= top && i < size; --y)
-			this->board.addTile(i++, left, y);
+		// bottom -> top
+		for (int32_t y = bottom; y >= top; --y, ++i)
+			this->board.addTile(i == size ? 0 : i, left, y);
 		++left;
 	}
-	this->board.addTile(0, right, top);
 }
 
 const nPuzzle::Board&	nPuzzle::Target::getBoard(void) const
