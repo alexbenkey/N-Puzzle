@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   nPuzzle.Solver.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
+/*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/29 17:52:09 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/31 12:18:51 by othello          ###   ########.fr       */
+/*   Updated: 2026/08/04 15:05:47 by avon-ben         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include "nPuzzle.State.hpp"
 #include "nPuzzle.Target.hpp"
 #include "nPuzzle.Board.hpp"
+#include "nPuzzle.Board.Tile.hpp"
 
 #include "colors.hpp"
 #include "heuristic.hpp"
@@ -74,9 +75,81 @@ nPuzzle::Solver::~Solver(void)
  * 
 \* ************************************************************************** */
 
+
+bool	nPuzzle::Solver::isSolvable(void)
+{
+	const nPuzzle::Board& target = 	this->puzzle.getTarget().getBoard();
+	const nPuzzle::Board& start = 	this->puzzle.getStartState().getBoard();
+
+	// arrange both current and target puzzle in 1d Array;
+	std::vector<int32_t> start1D;
+	std::vector<int32_t> target1D;
+
+	start1D.reserve(start.getSize());
+	target1D.reserve(target.getSize());
+
+	if (start.getWidth() != target.getWidth() || start.getHeight() != target.getHeight())
+		return(0);
+	
+	for (int32_t y = 0; y < target.getHeight(); ++y)
+	{
+		for (int32_t x = 0; x < target.getWidth(); ++x)
+		{
+			target1D.push_back(target.getTile(x,y).getVal());
+		
+			start1D.push_back(start.getTile(x, y).getVal());
+		}
+	}
+
+	std::vector<int32_t> targetPosition(target1D.size(), -1);
+
+	for (int32_t i = 0; i < target1D.size(); ++i){
+		targetPosition[target1D[i]] = i;
+	}
+
+	int32_t count = 0;
+
+	for (int32_t sorted = 0; sorted + 1 < start1D.size(); ++sorted)
+	{
+		bool swapped = false;
+
+		for (int32_t i = start1D.size() - 1; i > sorted; i--)
+		{
+			int32_t left = start1D[i - 1];
+			int32_t right = start1D[i];
+
+			if (targetPosition[left] > targetPosition[right])
+			{
+				std::swap(start1D[i - 1], start1D[i]);
+				++count;
+				swapped = true;
+			}
+		}
+
+		if (!swapped)
+			break;
+
+	}
+
+	const nPuzzle::Board::Tile& startBlank = start.getEmptyTile();
+	const nPuzzle::Board::Tile& targetBlank = target.getEmptyTile();
+
+	int32_t blankDistance = std::abs(startBlank.getX() - targetBlank.getX()) + std::abs(startBlank.getY() - targetBlank.getY());
+
+	return (count % 2 == blankDistance % 2);
+}
+
+
 bool	nPuzzle::Solver::solve(void)
 {
 TRACE_POSITION();
+	if (!this->isSolvable())
+	{
+		this->setSolvability(nPuzzle::Solvability::UNSOLVABLE);
+		std::cerr << "Puzzle is not solvable" << std::endl;
+		return false;
+	}
+	this->setSolvability(nPuzzle::Solvability::SOLVABLE);
 	while (!this->isSolved())
 		this->solveStep(false);
 	return (this->isSolved());
@@ -89,7 +162,11 @@ TRACE_POSITION();
 	if (this->isSolved())
 		return (true);
 	// Prevent Solving of unsolvable puzzle
-#warning unsolvable not implemented
+	// if (!this->isSolvable())
+	// {
+	// 	std::cerr << "puzzle is not solvable" << std::endl;
+	// 	return false;
+	// }
 	// Create first queue item for starting position
 	if (this->queue.size() == 0)
 		this->processState(new nPuzzle::State(*this->puzzle.state), calculateAllHeuristics);

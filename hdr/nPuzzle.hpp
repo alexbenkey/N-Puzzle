@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   nPuzzle.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
+/*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/23 14:41:42 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/30 17:21:32 by othello          ###   ########.fr       */
+/*   Updated: 2026/08/04 15:09:02 by avon-ben         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ class nPuzzle
 		int32_t	width;
 		int32_t	height;
 		int32_t	size;
+
 		nPuzzle::State*		start;
 		nPuzzle::State*		state;
 		nPuzzle::Target*	target;
@@ -69,6 +70,13 @@ class nPuzzle
 	protected:
 
 	public:
+		enum class Solvability
+		{
+			UNKNOWN,
+			SOLVABLE,
+			UNSOLVABLE
+		};
+
 		nPuzzle(void);
 		nPuzzle(std::istream& __is);
 		nPuzzle(const int32_t widthAndHeight);
@@ -78,6 +86,8 @@ class nPuzzle
 
 		void	parse(std::istream& __is);
 		void	resetToStart(void);
+
+		nPuzzle::Solvability getSolvability(void) const;
 
 		nPuzzle::State&	getCurrentState()	{ return (*this->state); }
 		nPuzzle::Target&	getTarget() const { return (*this->target); }
