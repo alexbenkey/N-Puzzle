@@ -6,7 +6,7 @@
 /*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 16:13:50 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/08/04 15:06:59 by avon-ben         ###   ########.fr       */
+/*   Updated: 2026/08/06 20:08:43 by avon-ben         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -340,6 +340,34 @@ bool	nPuzzle::solveStep(bool allHeuristics)
 TRACE_POSITION();
 	return (this->solver->solveStep(allHeuristics));
 }
+
+void	nPuzzle::setSearchMode(nPuzzle::searchMode mode)
+{
+	if (this->mode == mode)
+		return;
+
+	std::cout << "setting searchMode to: " ;
+	switch(mode){
+		case (nPuzzle::searchMode::ASTAR):
+			std::cout << "ASTAR" << std::endl;
+			break; 
+		case (nPuzzle::searchMode::GREEDY):
+			std::cout << "GREEDY" << std::endl;
+			break; 
+		case (nPuzzle::searchMode::UNIFORM):
+			std::cout << "UNIFORM" << std::endl;
+			break; 
+	}
+	this->clearSolver();
+	this->mode = mode;
+
+	if (this->state != nullptr)
+		this->state->setSearchMode(mode);
+
+	if (this->start != nullptr)
+		this->state->setSearchMode(mode);
+}
+
 
 int32_t	nPuzzle::getBestSolverHeuristic(void) const
 {
