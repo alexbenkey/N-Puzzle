@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   nPuzzle.Solver.hpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
+/*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/29 17:35:11 by ohengelm          #+#    #+#             */
 /*   Updated: 2026/08/04 17:55:28 by othello          ###   ########.fr       */
@@ -19,6 +19,7 @@
 # include <unordered_map>	// std::unordered_map
 # include <vector>	// std::vector
 # include <mutex>	// std::mutex
+# include <atomic> //std::atomic
 
 #pragma region "Comparator functions for contain sorting"
 struct BoardPtrHash
@@ -46,11 +47,15 @@ class nPuzzle::Solver
 		std::unordered_map<const nPuzzle::Board*, nPuzzle::State*, BoardPtrHash, BoardPtrEqual>	visited;
 		std::vector<nPuzzle::State*>	owner;
 		mutable std::mutex				queueMutex;
+		std::atomic<nPuzzle::Solvability> solvability{nPuzzle::Solvability::UNKNOWN};
 
 		void	processState(nPuzzle::State* state, bool calculateAllHeuristics);
 
 		void	addToQueue(nPuzzle::State* state);
 		nPuzzle::State*	popQueue(void);
+
+		bool 	isSolvable(void);
+		void	setSolvability(nPuzzle::Solvability val) {this->solvability.store(val);}
 
 	public:
 		Solver(nPuzzle&	puzzle);
@@ -60,6 +65,9 @@ class nPuzzle::Solver
 
 		bool	solve(void);
 		bool	solveStep(bool calculateAllHeuristics = true);
+
+		// void	setSolvability(nPuzzle::Solvability val) {this->solvability.store(val);}
+		nPuzzle::Solvability	getSolvability(void) const {return this->solvability.load();}
 
 		size_t	getQueueSize(void) const;
 		const nPuzzle::State&	getTopState(void) const;
@@ -73,6 +81,7 @@ class nPuzzle::Solver
 		void	clearQueue(void);
 
 		void	debugValidateQueueVisited(void);
+
 };
 
 #endif

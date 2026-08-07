@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   nPuzzle.State.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
+/*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/23 14:38:54 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/08/04 18:15:00 by othello          ###   ########.fr       */
+/*   Updated: 2026/08/06 20:23:26 by avon-ben         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -288,6 +288,7 @@ int32_t	nPuzzle::State::getHeuristic(int32_t h) const
 	return (this->heuristic.count(h) ? this->heuristic.at(h) : -1);
 }
 
+
 /** ************************************************************************ **\
  * 
  * 	Operators
@@ -297,20 +298,45 @@ int32_t	nPuzzle::State::getHeuristic(int32_t h) const
 bool	nPuzzle::State::operator<(const State &rhs) const noexcept
 {
 	#warning it is now required to set the particular used heuristic in the state class. 
-	const int32_t lhsHeurisic = this->getHeuristic(this->usedHeuristic);
-	const int32_t rhsHeurisic = rhs.getHeuristic(rhs.usedHeuristic);
-	const int32_t lhsScore = this->cost + lhsHeurisic;
-	const int32_t rhsScore = rhs.cost + rhsHeurisic;
 
-	// std::cout << "called " <<__func__ << std::endl;
-	// std::cout << "cost lhs: " << this->getCost() << "heuristic lhs: " << this->getHeuristic(hKey) << " Score lhs: " << lhsScore << std::endl;
-	// std::cout << "cost rhs: " << rhs.getCost() << "heuristic rhs: " << rhs.getHeuristic(hKey) << " Score rhs: " << rhsScore << std::endl << std::endl << std::endl;
+	int32_t lhsHeuristic = 0;
+	int32_t rhsHeuristic = 0;
+	int32_t lhsCost = 0;
+	int32_t rhsCost = 0;
+	int32_t lhsScore = 0;
+	int32_t rhsScore = 0;
+
+	switch (this->searchMode)
+		{
+		case (nPuzzle::searchMode::ASTAR):
+			// std::cout << "using ASTAR heuristic for comparison" << std::endl;
+			lhsHeuristic = this->getHeuristic(this->usedHeuristic);
+			rhsHeuristic = rhs.getHeuristic(rhs.usedHeuristic);
+			lhsCost = this->cost;
+			rhsCost = rhs.cost;
+			break ;
+
+		case (nPuzzle::searchMode::GREEDY):
+			// std::cout << "using GREEDY heuristic for comparison" << std::endl;
+			lhsHeuristic = this->getHeuristic(this->usedHeuristic);
+			rhsHeuristic = rhs.getHeuristic(rhs.usedHeuristic);
+			break ;
+
+		case (nPuzzle::searchMode::UNIFORM):
+			// std::cout << "using UNIFORM heuristic for comparison" << std::endl;
+			lhsCost = this->cost;
+			rhsCost = rhs.cost;
+			break ; 
+		}
+
+	lhsScore = lhsCost + lhsHeuristic;
+	rhsScore = rhsCost + rhsHeuristic;
 
 	if (lhsScore != rhsScore)
 		return lhsScore < rhsScore;
 
-	if (lhsHeurisic != rhsHeurisic)
-		return lhsHeurisic < rhsHeurisic;
+	if (lhsHeuristic != rhsHeuristic)
+		return lhsHeuristic < rhsHeuristic;
 	
 	return false;
 }
@@ -343,6 +369,8 @@ nPuzzle::State	&nPuzzle::State::operator=(const State &src)
 	this->cost = src.cost;
 	this->heuristic = src.heuristic;
 	this->usedHeuristic = src.usedHeuristic;
+	this->score = src.score;
+	this->searchMode = src.searchMode;
 	return (*this);
 }
 

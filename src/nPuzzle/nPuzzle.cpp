@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   nPuzzle.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
+/*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 16:13:50 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/08/04 17:51:07 by othello          ###   ########.fr       */
+/*   Updated: 2026/08/06 20:08:43 by avon-ben         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -342,9 +342,44 @@ TRACE_POSITION();
 	return (this->solver->solveStep(allHeuristics));
 }
 
+void	nPuzzle::setSearchMode(nPuzzle::searchMode mode)
+{
+	if (this->mode == mode)
+		return;
+
+	std::cout << "setting searchMode to: " ;
+	switch(mode){
+		case (nPuzzle::searchMode::ASTAR):
+			std::cout << "ASTAR" << std::endl;
+			break; 
+		case (nPuzzle::searchMode::GREEDY):
+			std::cout << "GREEDY" << std::endl;
+			break; 
+		case (nPuzzle::searchMode::UNIFORM):
+			std::cout << "UNIFORM" << std::endl;
+			break; 
+	}
+	this->clearSolver();
+	this->mode = mode;
+
+	if (this->state != nullptr)
+		this->state->setSearchMode(mode);
+
+	if (this->start != nullptr)
+		this->state->setSearchMode(mode);
+}
+
+
 int32_t	nPuzzle::getBestSolverHeuristic(void) const
 {
 	return (this->solver->getTopHeuristic());
+}
+
+nPuzzle::Solvability nPuzzle::getSolvability(void) const
+{
+	if (this->solver == nullptr)
+		return nPuzzle::Solvability::UNKNOWN;
+	return this->solver->getSolvability();
 }
 
 void	nPuzzle::calculateHeuristic(void)

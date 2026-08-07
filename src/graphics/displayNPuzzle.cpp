@@ -6,7 +6,7 @@
 /*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/02 16:48:19 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/31 13:20:35 by avon-ben         ###   ########.fr       */
+/*   Updated: 2026/08/06 19:22:46 by avon-ben         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,10 @@ static void	ProcessUserInput(int pressedKey, nPuzzle* puzzle, Display* display)
 		case KEY_T:	puzzle->printTarget();	break;
 		case KEY_S:	puzzle->printPuzzle();	break;
 		case KEY_Q:	puzzle->printQueue();	break;
-		case KEY_R:
+		case KEY_A:	puzzle->setSearchMode(nPuzzle::searchMode::ASTAR);	break;
+		case KEY_G: puzzle->setSearchMode(nPuzzle::searchMode::GREEDY); break;
+		case KEY_U: puzzle->setSearchMode(nPuzzle::searchMode::UNIFORM); break;
+		case KEY_R: 
 			if (IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT))
 			{
 				display->resetSolutionAnimation();

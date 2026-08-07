@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   nPuzzle.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
+/*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/23 14:41:42 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/30 17:21:32 by othello          ###   ########.fr       */
+/*   Updated: 2026/08/06 19:33:24 by avon-ben         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,18 +35,34 @@ class nPuzzle
 			DOWN,
 			LEFT
 		};
+
+		enum class searchMode
+		{
+			ASTAR,
+			GREEDY,
+			UNIFORM
+		};
+
+		enum class Solvability
+		{
+			UNKNOWN,
+			SOLVABLE,
+			UNSOLVABLE
+		};
 # pragma endregion
 
 	private:
 		int32_t	width;
 		int32_t	height;
 		int32_t	size;
+
 		nPuzzle::State*		start;
 		nPuzzle::State*		state;
 		nPuzzle::Target*	target;
 		nPuzzle::Solver*	solver;
 
-		int32_t							heuristicIndex = 1;
+		nPuzzle::searchMode mode = nPuzzle::searchMode::ASTAR;
+		int32_t		heuristicIndex = 1;
 
 		// Construction
 		void	setVariables(const int32_t width, const int32_t height);
@@ -69,6 +85,7 @@ class nPuzzle
 	protected:
 
 	public:
+
 		nPuzzle(void);
 		nPuzzle(std::istream& __is);
 		nPuzzle(const int32_t widthAndHeight);
@@ -79,9 +96,11 @@ class nPuzzle
 		void	parse(std::istream& __is);
 		void	resetToStart(void);
 
-		nPuzzle::State&	getCurrentState()	{ return (*this->state); }
+		nPuzzle::Solvability getSolvability(void) const;
+
+		nPuzzle::State&		getCurrentState()	{ return (*this->state); }
 		nPuzzle::Target&	getTarget() const { return (*this->target); }
-		nPuzzle::State&	getStartState()		{ return (*this->start); }
+		nPuzzle::State&		getStartState()		{ return (*this->start); }
 		const nPuzzle::State&	getQueueState(void);
 		void	incrementHeuristic(void);
 		void	decrementHeuristic(void);
@@ -90,6 +109,9 @@ class nPuzzle
 		int32_t	getQueueSize(void) const;
 
 		void	storeStartState(void);
+
+		void	setSearchMode(nPuzzle::searchMode mode);
+		nPuzzle::searchMode getSearchMode(void) {return this->mode; }
 
 		void	printPuzzle(void);
 		void	printTarget(void);
