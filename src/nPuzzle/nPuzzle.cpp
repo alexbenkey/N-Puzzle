@@ -267,6 +267,7 @@ void	nPuzzle::maintainValidHeuristic(void)
 		this->heuristicIndex = 0;
 	else if (this->heuristicIndex >= heuristic::size)
 		this->heuristicIndex = heuristic::size - 1;
+	this->solver->setHeuristic(this->heuristicIndex);
 	std::cerr	<< "Heuristic set to "	<< this->heuristicIndex	<< ' '	<< heuristic::function[this->heuristicIndex].name	<< std::endl;
 }
 

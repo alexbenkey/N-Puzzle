@@ -257,68 +257,12 @@ void	nPuzzle::State::moveTile(const nPuzzle::Board::Tile& tile)
 		throw std::runtime_error("Tile is not adjacent to the empty square");
 }
 
-bool	nPuzzle::State::move(Direction direction){
-	const nPuzzle::Board::Tile *toMove = nullptr; 
-	emptyPos.y = getEmptyTile().getY();
-	emptyPos.x = getEmptyTile().getX();
-
-	switch (direction){
-
-		case Direction::UP:
-			if (emptyPos.y == 0)
-			{
-				// #if DEBUG >= DEBUG_DEBUG
-				// std::cout	<< C_RED	<< "cannot move up, empty square is at the top"
-				// 			<< C_RESET	<< std::endl;
-				// #endif
-				return false;
-			}
-			toMove = &getTile(emptyPos.x, emptyPos.y - 1);
-			break ;
-		case Direction::RIGHT:
-			if (emptyPos.x == this->width - 1)
-			{
-				// #if DEBUG >= DEBUG_DEBUG
-				// std::cout	<< C_RED	<< "cannot move right, empty square is at the right edge"
-				// 			<< C_RESET	<< std::endl;
-				// #endif
-				return false;
-			}
-			toMove = &getTile(emptyPos.x + 1, emptyPos.y);
-			break ;
-
-		case(Direction::DOWN):
-			if (emptyPos.y == this->height - 1)
-			{
-				// #if DEBUG >= DEBUG_DEBUG
-				// std::cout	<< C_RED	<< "cannot move down, empty square is at the bottom"
-				// 			<< C_RESET	<< std::endl;
-				// #endif
-				return false;
-			}
-			toMove =  &getTile(emptyPos.x, emptyPos.y + 1);
-			break ;
-
-		case(Direction::LEFT):
-			if (emptyPos.x == 0)
-			{
-				// #if DEBUG >= DEBUG_DEBUG
-				// std::cout	<< C_RED	<< "cannot move left, empty square is at the left edge"
-				// 			<< C_RESET	<< std::endl;
-				// #endif
-				return false;
-			}
-			toMove =  &getTile(emptyPos.x - 1, emptyPos.y);
-			break ;
-	}
-		
-	this->moveTile(*toMove);
-	this->increaseCost();
-	// #if DEBUG >= DEBUG_DEBUG
-	// std::cout	<< C_GREEN	<< "Tile moved successfully"
-	// 			<< C_RESET	<< std::endl;
-	// #endif
-	return (true);
+bool	nPuzzle::State::move(Direction direction)
+{
+	bool	moved = this->board.move(direction);
+	if (moved == true)
+		this->increaseCost();
+	return (moved);
 }
 
 bool	nPuzzle::State::sameBoard(const State &rhs) const noexcept
