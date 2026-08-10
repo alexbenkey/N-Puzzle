@@ -6,7 +6,7 @@
 /*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/29 17:52:09 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/08/04 15:05:47 by avon-ben         ###   ########.fr       */
+/*   Updated: 2026/08/04 17:52:24 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,6 +74,11 @@ nPuzzle::Solver::~Solver(void)
  * 	Member Functions
  * 
 \* ************************************************************************** */
+
+void	nPuzzle::Solver::setHeuristic(int32_t h)
+{
+	this->heuristic = h;
+}
 
 
 bool	nPuzzle::Solver::isSolvable(void)

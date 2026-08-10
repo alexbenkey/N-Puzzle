@@ -6,7 +6,7 @@
 /*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/29 17:35:11 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/08/04 15:42:46 by avon-ben         ###   ########.fr       */
+/*   Updated: 2026/08/04 17:55:28 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,7 @@ class nPuzzle::Solver
 		Solver(nPuzzle&	puzzle);
 		~Solver(void);
 
+		void	setHeuristic(int32_t h);
 
 		bool	solve(void);
 		bool	solveStep(bool calculateAllHeuristics = true);

@@ -40,6 +40,7 @@ class nPuzzle::Board
 
 	public:
 		Board();
+		Board(const Board& src);
 		~Board();
 
 		void	setSize(const int32_t w, const int32_t h);
@@ -52,7 +53,7 @@ class nPuzzle::Board
 		const Tile& getEmptyTile(void) const;
 
 		void	addTile(const int32_t value, const int32_t x, const int32_t y);
-		void	move(const int32_t direction);
+		bool	move(nPuzzle::Direction direction);
 		void	swapTiles(const int32_t x1, const int32_t y1, const int32_t x2, const int32_t y2);
 
 		void	clearTiles(void);
@@ -62,6 +63,23 @@ class nPuzzle::Board
 		std::size_t	hash() const;
 
 		friend std::ostream&	operator<<(std::ostream& os, const Board& board);
+};
+
+struct BoardHash
+{
+    std::size_t operator()(const nPuzzle::Board& board) const noexcept
+    {
+        return board.hash();
+    }
+};
+
+struct BoardEqual
+{
+    bool operator()(const nPuzzle::Board& lhs,
+                    const nPuzzle::Board& rhs) const noexcept
+    {
+        return lhs == rhs;
+    }
 };
 
 #endif
