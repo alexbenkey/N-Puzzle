@@ -6,7 +6,7 @@
 /*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 16:13:50 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/08/10 16:34:38 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/08/10 20:10:29 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -198,6 +198,7 @@ void	nPuzzle::parse(std::istream& __is)
 	}
 	this->state->calculateAllHeuristics(this->target->getBoard());
 	this->storeStartState();
+	this->solver->determineSolvability();
 }
 
 bool	nPuzzle::emptyLine(const std::string &line) const
@@ -394,7 +395,7 @@ void	nPuzzle::printTarget(void)
 
 void	nPuzzle::printQueue(void)
 {
-	this->solver->printQueueStatus();
+	// this->solver->printQueueStatus();
 }
 
 std::vector<const nPuzzle::State*>	nPuzzle::getSolution(void) const

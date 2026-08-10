@@ -6,7 +6,7 @@
 /*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/29 17:52:09 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/08/10 16:32:21 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/08/10 20:04:31 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,9 @@ nPuzzle::Solver::Solver(nPuzzle& puzzle):
 				<< C_DGREEN	<< " called."
 				<< C_RESET	<< std::endl;
 #endif
+	this->workerState = STOP;
+	this->solved = false;
+	this->solvability.store(nPuzzle::Solvability::UNKNOWN);
 }
 
 /** ************************************************************************ **\
@@ -54,8 +57,8 @@ nPuzzle::Solver::~Solver(void)
 				<< C_RED	<< __func__
 				<< C_DRED	<< " called"
 				<< C_RESET	<< std::endl;
-	this->clearQueue();
 #endif
+	this->stopWorker();
 }
 
 /** ************************************************************************ **\
@@ -64,7 +67,221 @@ nPuzzle::Solver::~Solver(void)
  * 
 \* ************************************************************************** */
 
-bool	nPuzzle::Solver::isSolvable(void)
+WorkerState	nPuzzle::Solver::getWorkerState(void) const
+{
+	std::lock_guard<std::mutex>	lock(this->mutex);
+
+	return (this->workerState);
+}
+
+void	nPuzzle::Solver::setWorkerState(WorkerState state)
+{
+	{
+		std::lock_guard<std::mutex>	lock(this->mutex);
+		this->workerState = state;
+	}
+	this->workerCondition.notify_one();
+}
+
+void	nPuzzle::Solver::ensureActiveWorker(void)
+{
+	if (this->worker.joinable())
+		return ;
+	this->setWorkerState(WorkerState::IDLE);
+	this->worker = std::thread(&nPuzzle::Solver::solveWorker, this);
+}
+
+void	nPuzzle::Solver::stopWorker(void)
+{
+	this->setWorkerState(WorkerState::STOP);
+	if (this->worker.joinable())
+		this->worker.join();
+}
+
+void	nPuzzle::Solver::setCalculateAllHeuristics(bool all)
+{
+	std::unique_lock<std::mutex>	lock(this->mutex);
+
+	this->calculateAllHeuristics = all;
+}
+bool	nPuzzle::Solver::getCalculateAllHeuristics(void) const
+{
+	std::unique_lock<std::mutex>	lock(this->mutex);
+
+	return (this->calculateAllHeuristics);
+}
+
+void	nPuzzle::Solver::solveWorker(void)
+{
+	while (this->getWorkerState() > WorkerState::STOP)
+	{
+		std::unique_lock<std::mutex>	lock(this->mutex);
+		this->workerCondition.wait(lock, [this]() { return this->workerState != WorkerState::IDLE; });
+		lock.unlock();
+		this->solveStepWorker();
+		if (this->getWorkerState() == WorkerState::RUNONE)
+			this->setWorkerState(WorkerState::IDLE);
+	}
+}
+
+void	nPuzzle::Solver::solveStepWorker(void)
+{
+	// Prevent solving of an already solved puzzle
+	if (this->isSolved())
+		return ;
+	// Prevent solving of an unsolvable puzzle
+	if (this->getSolvability() == nPuzzle::Solvability::UNSOLVABLE)
+		return ;
+	// Create first queue item from start position
+	if (this->queue.size() == 0)
+		this->processState(new nPuzzle::State(*this->puzzle.state));
+	// Retrieve first element from queue
+	nPuzzle::State*	current = this->popQueue();
+	// Create upto 4 new states and process them
+	for (nPuzzle::Direction direction : {
+		nPuzzle::Direction::UP,
+		nPuzzle::Direction::RIGHT,
+		nPuzzle::Direction::DOWN,
+		nPuzzle::Direction::LEFT,
+	})
+	{
+		nPuzzle::State*	next = new nPuzzle::State(*current);
+		if (next->move(direction))
+		{
+#warning shouldnt this be in move?
+			next->setPrevious(current);
+			this->processState(next);
+		}
+		else
+			delete next;
+	}
+	// Check Solved State
+	this->determineIsSolved();
+}
+
+void	nPuzzle::Solver::processState(nPuzzle::State* state)
+{
+TRACE_POSITION();
+	// Calculate heuristics
+	const nPuzzle::Board&	target = this->puzzle.getTarget().getBoard();
+	if (this->getCalculateAllHeuristics())
+		state->calculateAllHeuristics(target);
+	else
+		state->calculateOneHeuristic(target);
+	// Store state in Queue
+	this->addToQueue(state);
+TRACE_POSITION();
+}
+
+void	nPuzzle::Solver::addToQueue(nPuzzle::State* state)
+{
+	std::lock_guard<std::mutex>	lock(this->mutex);
+
+	const nPuzzle::Board&	board = state->getBoard();
+	auto found = this->visited.find(&board);
+	if (found == this->visited.end())
+	{
+		this->owner.push_back(state);
+		this->queue.emplace(state);
+		this->visited.emplace(&board, state);
+	}
+	else if (found->second->getCost() > state->getCost())
+	{
+		this->owner.push_back(state);
+		this->queue.emplace(state);
+		found->second = state;
+	}
+	else
+		delete state;
+}
+
+nPuzzle::State*	nPuzzle::Solver::popQueue(void)
+{
+	std::lock_guard<std::mutex>	lock(this->mutex);
+	while (!this->queue.empty())
+	{
+		nPuzzle::State*	top = this->queue.top();
+		this->queue.pop();
+		auto found = this->visited.find(&top->getBoard());
+		if (found == this->visited.end())
+		{
+			std::fprintf(stderr, "Took a board configuration from queue which did not exist in visited\n");
+			this->visited.emplace(&top->getBoard(), top);
+			// this->debugValidateQueueVisited();
+			throw std::runtime_error("Took a board configuration from queue which did not exist in visited");
+		}
+		if (found->second == top)
+			return (top);
+	}
+	return (nullptr);
+}
+
+size_t	nPuzzle::Solver::getQueueSize(void) const
+{
+	std::lock_guard<std::mutex>	lock(this->mutex);
+
+	return (this->queue.size());
+}
+
+int32_t	nPuzzle::Solver::getTopCost(void) const
+{
+	std::lock_guard<std::mutex>	lock(this->mutex);
+
+	if (this->queue.empty())
+		return (this->puzzle.start->getCost());
+	return (this->queue.top()->getCost());
+}
+
+int32_t	nPuzzle::Solver::getTopHeuristic(void) const
+{
+	std::lock_guard<std::mutex> lock(this->mutex);
+
+	if (this->queue.empty())
+		return (this->puzzle.state->getHeuristic(this->heuristicIndex));
+	return (this->queue.top()->getHeuristic(this->heuristicIndex));
+}
+
+const nPuzzle::State&	nPuzzle::Solver::getTopState(void) const
+{
+	std::lock_guard<std::mutex>	lock(this->mutex);
+
+	if (this->queue.empty())
+		return (*this->puzzle.state);
+	return (*this->queue.top());
+}
+
+void	nPuzzle::Solver::solve(void)
+{
+	this->ensureActiveWorker();
+	this->setCalculateAllHeuristics(false);
+	this->setWorkerState(WorkerState::RUNALL);
+}
+
+bool	nPuzzle::Solver::solveStep(bool calculateAllHeuristics)
+{
+	this->ensureActiveWorker();
+	this->setCalculateAllHeuristics(calculateAllHeuristics);
+	this->setWorkerState(WorkerState::RUNONE);
+	return (this->isSolved());
+}
+
+void	nPuzzle::Solver::determineIsSolved(void)
+{
+	std::lock_guard<std::mutex>	lock(this->mutex);
+
+	this->solved = !this->queue.empty() && this->queue.top()->getHeuristic(this->heuristicIndex) == 0;
+	if (this->solved == true)
+		this->workerState = WorkerState::IDLE;
+}
+
+bool	nPuzzle::Solver::isSolved(void)
+{
+	std::lock_guard<std::mutex>	lock(this->mutex);
+
+	return (this->solved);
+}
+
+void	nPuzzle::Solver::determineSolvability(void)
 {
 	const nPuzzle::Board&	target = this->puzzle.getTarget().getBoard();
 	const nPuzzle::Board&	start = this->puzzle.getStartState().getBoard();
@@ -77,7 +294,10 @@ bool	nPuzzle::Solver::isSolvable(void)
 	target1D.reserve(target.getSize());
 
 	if (start.getWidth() != target.getWidth() || start.getHeight() != target.getHeight())
-		return(0);
+	{
+		this->setSolvability(nPuzzle::Solvability::UNSOLVABLE);
+		return ;
+	}
 
 	for (int32_t y = 0; y < target.getHeight(); ++y)
 	{
@@ -123,303 +343,30 @@ bool	nPuzzle::Solver::isSolvable(void)
 
 	int32_t blankDistance = std::abs(startBlank.getX() - targetBlank.getX()) + std::abs(startBlank.getY() - targetBlank.getY());
 
-	return (count % 2 == blankDistance % 2);
-}
-
-
-bool	nPuzzle::Solver::solve(void)
-{
-TRACE_POSITION();
-	if (!this->isSolvable())
-	{
+	if (count % 2 == blankDistance % 2)
+		this->setSolvability(nPuzzle::Solvability::SOLVABLE);
+	else
 		this->setSolvability(nPuzzle::Solvability::UNSOLVABLE);
-		std::cerr << "Puzzle is not solvable" << std::endl;
-		return false;
-	}
-	this->setSolvability(nPuzzle::Solvability::SOLVABLE);
-	while (!this->isSolved())
-		this->solveStep(false);
-	return (this->isSolved());
 }
 
-bool	nPuzzle::Solver::solveStep(bool calculateAllHeuristics)
+nPuzzle::Solvability	nPuzzle::Solver::getSolvability(void) const
 {
-TRACE_POSITION();
-	// Prevent solving of already solved puzzle
-	if (this->isSolved())
-		return (true);
-	// Prevent Solving of unsolvable puzzle
-	// if (!this->isSolvable())
-	// {
-	// 	std::cerr << "puzzle is not solvable" << std::endl;
-	// 	return false;
-	// }
-	// Create first queue item for starting position
-	if (this->queue.size() == 0)
-		this->processState(new nPuzzle::State(*this->puzzle.state), calculateAllHeuristics);
-	// Retrieve first element from queue
-	nPuzzle::State*	current = this->popQueue();
-	// Create upto 4 new states, one per direction and process them
-	for (nPuzzle::Direction direction : {
-		nPuzzle::Direction::UP,
-		nPuzzle::Direction::RIGHT,
-		nPuzzle::Direction::DOWN,
-		nPuzzle::Direction::LEFT,
-	})
-	{
-		nPuzzle::State*	next = new nPuzzle::State(*current);
-		if (next->move(direction))
-		{
-			next->setPrevious(current);
-			this->processState(next, calculateAllHeuristics);
-		}
-		else
-			delete next;
-	}
-#if DEBUG >= DEBUG_DEBUG
-	// print queue
-	this->printQueueStatus();
-#endif
-	return (isSolved());
+	std::lock_guard<std::mutex>	lock(this->mutex);
+
+	return (this->solvability.load());
 }
 
-void	nPuzzle::Solver::processState(nPuzzle::State* state, bool calculateAllHeuristics)
+void	nPuzzle::Solver::setSolvability(nPuzzle::Solvability val)
 {
-TRACE_POSITION();
-	// Calculate heuristics
-	const nPuzzle::Board&	target = this->puzzle.getTarget().getBoard();
-	if (calculateAllHeuristics)
-		state->calculateAllHeuristics(target);
-	else
-		state->calculateOneHeuristic(target);
-	// Store state in Queue
-	this->addToQueue(state);
-TRACE_POSITION();
-}
+	std::lock_guard<std::mutex>	lock(this->mutex);
 
-void	nPuzzle::Solver::addToQueue(nPuzzle::State* state)
-{
-	std::lock_guard<std::mutex>	lock(this->queueMutex);
-	const nPuzzle::Board&	board = state->getBoard();
-	auto found = this->visited.find(&board);
-	if (found == this->visited.end())
-	{
-		this->owner.push_back(state);
-		this->queue.emplace(state);
-		this->visited.emplace(&board, state);
-	}
-	else if (found->second->getCost() > state->getCost())
-	{
-		this->owner.push_back(state);
-		this->queue.emplace(state);
-		found->second = state;
-	}
-	else
-		delete state;
-}
-
-nPuzzle::State*	nPuzzle::Solver::popQueue(void)
-{
-	std::lock_guard<std::mutex>	lock(this->queueMutex);
-
-	while (!this->queue.empty())
-	{
-		nPuzzle::State*	top = this->queue.top();
-		this->queue.pop();
-		auto found = this->visited.find(&top->getBoard());
-		if (found == this->visited.end())
-		{
-			std::fprintf(stderr, "Took a board configuration from queue which did not exist in visited\n");
-			this->visited.emplace(&top->getBoard(), top);
-			this->debugValidateQueueVisited();
-			throw std::runtime_error("Took a board configuration from queue which did not exist in visited");
-		}
-		if (found->second == top)
-			return (top);
-	}
-	return (nullptr);
-}
-
-void nPuzzle::Solver::debugValidateQueueVisited()
-{
-	while (!this->queue.empty())
-	{
-		nPuzzle::State*	top = this->queue.top();
-		this->queue.pop();
-
-		const nPuzzle::Board*	board = &top->getBoard();
-
-		std::size_t	lookupHash = BoardPtrHash{}(board);
-		std::size_t	lookupBucket = this->visited.bucket(board);
-
-		auto	found = this->visited.find(board);
-		if (found != this->visited.end())
-		{
-			continue;
-		}
-
-		std::cerr	<< "################################\n"
-					<< "Queue node not found\n"
-					<< "Board ptr: "		<< board		<< '\n'
-					<< "Hash:      "		<< lookupHash	<< '\n'
-					<< "Board:\n"
-					<< *board
-					<< std::endl;
-
-		std::cerr	<< "Bucket contents:\n"
-					<< "Bucket:    "		<< lookupBucket	<< '\n'
-					<< "Buckets:   "		<< this->visited.bucket_count() << '\n'
-					<< "Visited:   "		<< this->visited.size() << '\n'
-					<< std::flush;
-
-		for (auto it = this->visited.begin(lookupBucket);
-			 it != this->visited.end(lookupBucket);
-			 ++it)
-		{
-			const nPuzzle::Board* storedBoard = it->first;
-
-			std::cerr	<< "Bucket\n"
-						<< "  Stored ptr: "	<< storedBoard << '\n'
-						<< "  Stored hash: "	<< BoardPtrHash{}(storedBoard) << '\n'
-						<< "  Equal:       "	<< BoardPtrEqual{}(storedBoard, board) << '\n'
-						<< "  Same ptr:    "	<< (storedBoard == board) << '\n'
-						<< *storedBoard	<< '\n'
-						<< std::flush;
-		}
-
-		std::cerr << "Manual scan:\n";
-
-		bool	manualFound = false;
-		for (const auto i : this->visited)
-		{
-			const nPuzzle::Board*	storedBoard = i.first;
-			const nPuzzle::State*	state = i.second;
-
-			bool	equal = (*storedBoard == *board);
-			bool	samePtr = (storedBoard == board);
-			bool	sameHash = (storedBoard->hash() == board->hash());
-
-			if (equal)
-			{
-				manualFound = true;
-
-				std::size_t	storedBucket = visited.bucket(storedBoard);
-
-				std::cerr	<< "MANUAL MATCH FOUND\n"
-							<< "Stored ptr:   "	<< storedBoard	<< '\n'
-							<< "Lookup ptr:   "	<< board		<< '\n'
-							<< "Stored hash:  "	<< storedBoard->hash() << '\n'
-							<< "Lookup hash:  "	<< board->hash() << '\n'
-							<< "Same ptr:     "	<< samePtr << '\n'
-							<< "Same hash:    "	<< sameHash << '\n'
-							<< "Equal:        "	<< equal << '\n'
-							<< "Stored state: "	<< state << '\n'
-							<< "Lookup state: "	<< top << '\n'
-							<< "Stored bucket:"	<< storedBucket	<< '\n'
-							<< "Lookup bucket:"	<< lookupBucket	<< '\n'
-							<< "Bucket match: "	<< (storedBucket == lookupBucket) << '\n'
-							<< "Board:\n"
-							<< *storedBoard
-							<< std::endl;
-
-				std::cerr << "Walking stored bucket:\n";
-
-				bool	foundSelf = false;
-				for (auto it = this->visited.begin(storedBucket);
-					 it != this->visited.end(storedBucket);
-					 ++it)
-				{
-					std::cerr	<< "  Node\n"
-								<< "    ptr:       " << it->first << '\n'
-								<< "    hash:      " << BoardPtrHash{}(it->first) << '\n'
-								<< "    same ptr:  " << (it->first == storedBoard) << '\n'
-								<< "    equal:     " << BoardPtrEqual{}(it->first, storedBoard) << '\n'
-								<< std::flush;
-
-					if (it->first == storedBoard)
-						foundSelf = true;
-				}
-
-				std::cerr	<< "Stored node reachable from bucket: "
-							<< foundSelf
-							<< std::endl;
-
-				auto refind = this->visited.find(storedBoard);
-
-				std::cerr	<< "find(storedPtr): "
-							<< (refind != this->visited.end())
-							<< '\n';
-
-				if (refind != this->visited.end())
-				{
-					std::cerr	<< "Returned ptr: "
-								<< refind->first
-								<< '\n'
-								<< "Returned state: "
-								<< refind->second
-								<< std::endl;
-				}
-			}
-		}
-
-		if (!manualFound)
-		{
-			std::cerr << "NO MANUAL MATCH FOUND" << std::endl;
-		}
-
-		std::cerr << "Queue state:\n"
-				  << "State ptr: " << top << '\n'
-				  << "Cost:      " << top->getCost() << '\n'
-				  << std::endl;
-
-		delete top;
-	}
-}
-
-size_t	nPuzzle::Solver::getQueueSize(void) const
-{
-	std::lock_guard<std::mutex>	lock(this->queueMutex);
-	return (this->queue.size());
-}
-
-const nPuzzle::State&	nPuzzle::Solver::getTopState(void) const
-{
-	std::lock_guard<std::mutex>	lock(this->queueMutex);
-
-	if (this->queue.empty())
-		return (*this->puzzle.state);
-	return (*this->queue.top());
-}
-
-int32_t	nPuzzle::Solver::getTopCost(void) const
-{
-	std::lock_guard<std::mutex>	lock(this->queueMutex);
-
-	if (this->queue.empty())
-		return (this->puzzle.start->getCost());
-	return (this->queue.top()->getCost());
-}
-
-int32_t	nPuzzle::Solver::getTopHeuristic(void) const
-{
-	std::lock_guard<std::mutex> lock(this->queueMutex);
-
-	if (this->queue.empty())
-		return (this->puzzle.state->getHeuristic(this->heuristicIndex));
-	return (this->queue.top()->getHeuristic(this->heuristicIndex));
-}
-
-bool	nPuzzle::Solver::isSolved(void) const
-{
-	std::lock_guard<std::mutex>	lock(this->queueMutex);
-
-	return (!this->queue.empty() && this->queue.top()->getHeuristic(this->heuristicIndex) == 0);
+	this->solvability.store(val);
 }
 
 std::vector<const nPuzzle::State*>	nPuzzle::Solver::getSolution(void) const
 {
 	std::vector<const nPuzzle::State*>	path;
-	std::lock_guard<std::mutex>	lock(this->queueMutex);
+	std::lock_guard<std::mutex>	lock(this->mutex);
 
 	if (this->queue.empty())
 		return path;
@@ -439,29 +386,10 @@ std::vector<const nPuzzle::State*>	nPuzzle::Solver::getSolution(void) const
 	return path;
 }
 
-void	nPuzzle::Solver::printQueueStatus(void) const
-{
-	{
-		std::lock_guard<std::mutex>	lock(this->queueMutex);
-
-		std::fprintf(stderr, "# Queue[%lu]\n", this->queue.size());
-		if (!this->queue.empty())
-		{
-			const nPuzzle::State*	top = this->queue.top();
-			int32_t	g = top->getCost();
-			int32_t	h = top->getHeuristic(this->heuristicIndex);
-			std::fprintf(stderr, "#  %-16p g:%3i h:%3i f:%3i\n", top, g, h, g + h);
-			std::fflush(stderr);
-			std::cerr	<< *top	<< std::endl;
-		}
-	}
-	if (this->isSolved())
-		std::fprintf(stderr, "#  Puzzle is Solved");
-}
-
 void	nPuzzle::Solver::clearQueue(void)
 {
-	std::lock_guard<std::mutex>	lock(this->queueMutex);
+	this->stopWorker();
+	std::lock_guard<std::mutex>	lock(this->mutex);
 
 	for (nPuzzle::State* state: this->owner)
 		delete state;
@@ -469,6 +397,7 @@ void	nPuzzle::Solver::clearQueue(void)
 	this->queue = {};
 	this->visited.clear();
 }
+
 
 /** ************************************************************************ **\
  * 

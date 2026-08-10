@@ -6,7 +6,7 @@
 /*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/02 16:48:19 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/08/10 15:27:17 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/08/10 19:56:08 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,8 +112,7 @@ std::cerr	<< C_DGRAY	<< __FILE__	<<"::"	<< C_RESET	<< __func__	<< __LINE__	<< st
 		case KEY_ENTER:
 		{
 			display->resetSolutionAnimation();
-			std::thread	solveThread(&nPuzzle::solve, puzzle);
-			solveThread.detach();
+			puzzle->solve();
 		}
 			break;
 		default:	break;
