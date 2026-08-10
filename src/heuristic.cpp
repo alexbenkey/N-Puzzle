@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heuristic.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/14 12:51:34 by othello           #+#    #+#             */
-/*   Updated: 2026/08/06 19:21:14 by othello          ###   ########.fr       */
+/*   Updated: 2026/08/10 15:55:35 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,7 +120,7 @@ namespace
 		int32_t	rowH = this->lookupHeuristicHalf(current, target, this->row);
 		if (rowH < 0)
 			return (-1);
-		
+
 		int32_t	colH = this->lookupHeuristicHalf(current, target, this->col);
 		if (colH < 0)
 			return (-1);
@@ -302,10 +302,10 @@ namespace
 				for (int32_t y_2 = y_1 + 1; y_2 < target.getHeight(); ++ y_2)
 				{
 					const int32_t val2 = current.getTile(x, y_2).getVal();
-					
+
 					if (val2 == 0 || foundConflicts[val2] != 0 )
 						continue;
-						
+
 					const nPuzzle::Board::Tile &T2 = target.getTile(val2);
 					if (T2.getX() == x && T1.getY() > T2.getY())
 					{
@@ -326,11 +326,11 @@ namespace
 
 				if (val1 == 0 || foundConflicts[val1] != 0)
 					continue;
-				
+
 				const nPuzzle::Board::Tile &T1 = target.getTile(val1);
 				if (T1.getY() != y)
 					continue;
-				
+
 				for (int32_t x_2 = x_1 + 1; x_2 < current.getWidth(); ++x_2)
 				{ 
 					const int32_t val2 = current.getTile(x_2, y).getVal();
@@ -351,7 +351,7 @@ namespace
 		}
 	for (int32_t i : foundConflicts)
 		heuristic += i;
-	
+
 	return (heuristic);
 
 	}
@@ -363,8 +363,8 @@ namespace heuristic
 	{
 		{ "Displaced", displaced },
 		{ "Manhattan", manhattan },
+		{ "Linear Conflicts", LinearConflicts},
 		{ "Walking Distance", walkingDistance },
-		{ "Linear Conflicts", LinearConflicts}
 	};
 
 	const int32_t	size = sizeof(function) / sizeof(List);

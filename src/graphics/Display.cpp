@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Display.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
+/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/02 17:58:28 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/30 15:04:59 by avon-ben         ###   ########.fr       */
+/*   Updated: 2026/08/10 15:51:53 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -197,7 +197,7 @@ void	Display::configureScreen(void)
 #endif
 	int	width = (int)this->HUD->width() + (int)this->Frame.width + this->margin * 3;
 	int	height =(int)std::max(this->HUD->height(), this->Frame.height) + this->margin * 2;
-	
+
 	TraceLog(LOG_INFO, "Setting Window: %4ix%-4i", width, height);
 	SetWindowSize(width, height);
 	SetWindowPosition(DEFAULT_MARGIN, DEFAULT_MARGIN + 100);
@@ -449,7 +449,7 @@ void Display::renderSolutionAnimation(void)
 {
 	if (!this->puzzle)
 		return;
-	
+
 	if (this->solutionPath.empty())
 		this->startSolutionAnimation();
 

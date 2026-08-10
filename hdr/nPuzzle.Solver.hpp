@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   nPuzzle.Solver.hpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
+/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/29 17:35:11 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/08/04 17:55:28 by othello          ###   ########.fr       */
+/*   Updated: 2026/08/10 15:53:06 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 # include <unordered_map>	// std::unordered_map
 # include <vector>	// std::vector
 # include <mutex>	// std::mutex
-# include <atomic> //std::atomic
+# include <atomic>	// std::atomic
 
 #pragma region "Comparator functions for contain sorting"
 struct BoardPtrHash
@@ -41,27 +41,25 @@ struct StateCompare
 class nPuzzle::Solver
 {
 	private:
-		nPuzzle&	puzzle;
-		int32_t		heuristic;
+		const nPuzzle&	puzzle;
+		const int32_t&	heuristicIndex;
 		std::priority_queue<nPuzzle::State*, std::vector<nPuzzle::State*>, StateCompare>	queue;
 		std::unordered_map<const nPuzzle::Board*, nPuzzle::State*, BoardPtrHash, BoardPtrEqual>	visited;
 		std::vector<nPuzzle::State*>	owner;
 		mutable std::mutex				queueMutex;
-		std::atomic<nPuzzle::Solvability> solvability{nPuzzle::Solvability::UNKNOWN};
+		std::atomic<nPuzzle::Solvability>	solvability{nPuzzle::Solvability::UNKNOWN};
 
 		void	processState(nPuzzle::State* state, bool calculateAllHeuristics);
 
 		void	addToQueue(nPuzzle::State* state);
 		nPuzzle::State*	popQueue(void);
 
-		bool 	isSolvable(void);
+		bool	isSolvable(void);
 		void	setSolvability(nPuzzle::Solvability val) {this->solvability.store(val);}
 
 	public:
 		Solver(nPuzzle&	puzzle);
 		~Solver(void);
-
-		void	setHeuristic(int32_t h);
 
 		bool	solve(void);
 		bool	solveStep(bool calculateAllHeuristics = true);
@@ -72,7 +70,7 @@ class nPuzzle::Solver
 		size_t	getQueueSize(void) const;
 		const nPuzzle::State&	getTopState(void) const;
 		int32_t	getTopCost(void) const;
-		int32_t getTopHeuristic(void) const;
+		int32_t	getTopHeuristic(void) const;
 		bool	isSolved(void) const;
 		std::vector<const nPuzzle::State*>	getSolution(void) const;
 
@@ -81,7 +79,6 @@ class nPuzzle::Solver
 		void	clearQueue(void);
 
 		void	debugValidateQueueVisited(void);
-
 };
 
 #endif

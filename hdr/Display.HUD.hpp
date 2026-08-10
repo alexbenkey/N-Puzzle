@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Display.HUD.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/23 21:26:59 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/31 13:19:36 by othello          ###   ########.fr       */
+/*   Updated: 2026/08/10 15:52:29 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ struct Display::HUD
 		void	renderHeuristics(nPuzzle::State* state, int32_t h) const;
 		void	renderControls(void) const;
 		void	renderMovement(void) const;
-	
+
 	public:
 		HUD(void);
 		~HUD(void);

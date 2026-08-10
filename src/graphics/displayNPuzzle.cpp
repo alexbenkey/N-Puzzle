@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   displayNPuzzle.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
+/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/02 16:48:19 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/08/06 19:22:46 by avon-ben         ###   ########.fr       */
+/*   Updated: 2026/08/10 15:27:17 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,13 +79,13 @@ static void	ProcessUserInput(int pressedKey, nPuzzle* puzzle, Display* display)
 			break;
 		case KEY_DOWN:
 			if (IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT))
-				puzzle->incrementHeuristic();
+				puzzle->incrementHeuristicIndex();
 			else
 				puzzle->moveDown();
 			break;
 		case KEY_UP:
 			if (IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT))
-				puzzle->decrementHeuristic();
+				puzzle->decrementHeuristicIndex();
 			else
 				puzzle->moveUp();
 			break;

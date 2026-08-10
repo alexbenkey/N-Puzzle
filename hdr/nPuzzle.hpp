@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   nPuzzle.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
+/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/23 14:41:42 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/08/06 19:33:24 by avon-ben         ###   ########.fr       */
+/*   Updated: 2026/08/10 16:19:57 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ class nPuzzle
 		nPuzzle::Target*	target;
 		nPuzzle::Solver*	solver;
 
-		nPuzzle::searchMode mode = nPuzzle::searchMode::ASTAR;
+		nPuzzle::searchMode	mode = nPuzzle::searchMode::ASTAR;
 		int32_t		heuristicIndex = 1;
 
 		// Construction
@@ -82,10 +82,7 @@ class nPuzzle
 		void			clearState(nPuzzle::State** state);
 		void			clearTarget(void);
 
-	protected:
-
 	public:
-
 		nPuzzle(void);
 		nPuzzle(std::istream& __is);
 		nPuzzle(const int32_t widthAndHeight);
@@ -98,13 +95,13 @@ class nPuzzle
 
 		nPuzzle::Solvability getSolvability(void) const;
 
-		nPuzzle::State&		getCurrentState()	{ return (*this->state); }
+		nPuzzle::State&		getCurrentState() const	{ return (*this->state); }
 		nPuzzle::Target&	getTarget() const { return (*this->target); }
-		nPuzzle::State&		getStartState()		{ return (*this->start); }
+		nPuzzle::State&		getStartState()	const	{ return (*this->start); }
 		const nPuzzle::State&	getQueueState(void);
-		void	incrementHeuristic(void);
-		void	decrementHeuristic(void);
-		void	maintainValidHeuristic(void);
+		void	incrementHeuristicIndex(void);
+		void	decrementHeuristicIndex(void);
+		void	setHeuristicIndex(int32_t index);
 		int32_t	getHeuristicIndex(void) const;
 		int32_t	getQueueSize(void) const;
 
@@ -122,21 +119,21 @@ class nPuzzle
 		// void	printAllTiles(const nPuzzle::State& state) const;
 		// void	printAllTilesFlex(nPuzzle::State& state);
 
-		int32_t getWidth(void) const { return this->width; }
-		int32_t getHeight(void) const { return this->height; }
-		int32_t getSize(void) const { return this->size; }
+		int32_t	getWidth(void) const { return this->width; }
+		int32_t	getHeight(void) const { return this->height; }
+		int32_t	getSize(void) const { return this->size; }
 
 		bool	moveUp(int32_t h = -1);
 		bool	moveDown(int32_t h = -1);
 		bool	moveLeft(int32_t h = -1);
 		bool	moveRight(int32_t h = -1);
-	
+
 		void	solve(void);
 		bool	solveStep(bool allHeuristics = false);
 		int32_t	getBestSolverHeuristic(void) const;
 		bool	isSolved(void) const;
-		void	calculateHeuristic(void);
-		void	calculateHeuristic(int32_t h);
+		// void	calculateHeuristic(void);
+		// void	calculateHeuristic(int32_t h);
 
 		nPuzzle	&operator=(const nPuzzle &src);
 };

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   nPuzzle.Board.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/23 17:58:21 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/31 17:28:05 by othello          ###   ########.fr       */
+/*   Updated: 2026/08/10 15:51:12 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,7 +162,7 @@ void	nPuzzle::Board::swapTiles(const int32_t x1, const int32_t y1, const int32_t
 {
 	int32_t	pos1 = y1 * this->width + x1;
 	int32_t	pos2 = y2 * this->width + x2;
-	
+
 	// Swapping Tile coordinates.
 	nPuzzle::Board::Tile*	tile1 = this->TilesByPos.at(pos1);
 	nPuzzle::Board::Tile*	tile2 = this->TilesByPos.at(pos2);

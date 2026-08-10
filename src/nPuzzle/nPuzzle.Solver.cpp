@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   nPuzzle.Solver.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
+/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/29 17:52:09 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/08/04 17:52:24 by othello          ###   ########.fr       */
+/*   Updated: 2026/08/10 16:32:21 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,8 @@
 \* ************************************************************************** */
 
 nPuzzle::Solver::Solver(nPuzzle& puzzle):
-	puzzle(puzzle)
+	puzzle(puzzle),
+	heuristicIndex(puzzle.heuristicIndex)
 {
 #if DEBUG >= DEBUG_TRACE
 	std::cout	<< C_DGREEN	<< "Default constructor "
@@ -38,19 +39,7 @@ nPuzzle::Solver::Solver(nPuzzle& puzzle):
 				<< C_DGREEN	<< " called."
 				<< C_RESET	<< std::endl;
 #endif
-	this->heuristic = 1;
 }
-
-// nPuzzle::Solver::Solver(const Solver &src)
-// {
-// #if DEBUG >= DEBUG_TRACE
-// 	std::cout	<< C_DGREEN	<< "Copy constructor "
-// 				<< C_GREEN	<< __func__
-// 				<< C_DGREEN	<< " called."
-// 				<< C_RESET	<< std::endl;
-// #endif
-// 	*this = src;
-// }
 
 /** ************************************************************************ **\
  * 
@@ -64,7 +53,7 @@ nPuzzle::Solver::~Solver(void)
 	std::cout	<< C_DRED	<< "Deconstructor "
 				<< C_RED	<< __func__
 				<< C_DRED	<< " called"
-				<< C_RESET	<< std::endl;	
+				<< C_RESET	<< std::endl;
 	this->clearQueue();
 #endif
 }
@@ -75,33 +64,26 @@ nPuzzle::Solver::~Solver(void)
  * 
 \* ************************************************************************** */
 
-void	nPuzzle::Solver::setHeuristic(int32_t h)
-{
-	this->heuristic = h;
-}
-
-
 bool	nPuzzle::Solver::isSolvable(void)
 {
-	const nPuzzle::Board& target = 	this->puzzle.getTarget().getBoard();
-	const nPuzzle::Board& start = 	this->puzzle.getStartState().getBoard();
+	const nPuzzle::Board&	target = this->puzzle.getTarget().getBoard();
+	const nPuzzle::Board&	start = this->puzzle.getStartState().getBoard();
 
 	// arrange both current and target puzzle in 1d Array;
-	std::vector<int32_t> start1D;
-	std::vector<int32_t> target1D;
+	std::vector<int32_t>	start1D;
+	std::vector<int32_t>	target1D;
 
 	start1D.reserve(start.getSize());
 	target1D.reserve(target.getSize());
 
 	if (start.getWidth() != target.getWidth() || start.getHeight() != target.getHeight())
 		return(0);
-	
+
 	for (int32_t y = 0; y < target.getHeight(); ++y)
 	{
 		for (int32_t x = 0; x < target.getWidth(); ++x)
 		{
 			target1D.push_back(target.getTile(x,y).getVal());
-		
 			start1D.push_back(start.getTile(x, y).getVal());
 		}
 	}
@@ -112,7 +94,7 @@ bool	nPuzzle::Solver::isSolvable(void)
 		targetPosition[target1D[i]] = i;
 	}
 
-	int32_t count = 0;
+	int32_t	count = 0;
 
 	for (int32_t sorted = 0; sorted + 1 < start1D.size(); ++sorted)
 	{
@@ -136,8 +118,8 @@ bool	nPuzzle::Solver::isSolvable(void)
 
 	}
 
-	const nPuzzle::Board::Tile& startBlank = start.getEmptyTile();
-	const nPuzzle::Board::Tile& targetBlank = target.getEmptyTile();
+	const nPuzzle::Board::Tile&	startBlank = start.getEmptyTile();
+	const nPuzzle::Board::Tile&	targetBlank = target.getEmptyTile();
 
 	int32_t blankDistance = std::abs(startBlank.getX() - targetBlank.getX()) + std::abs(startBlank.getY() - targetBlank.getY());
 
@@ -196,7 +178,7 @@ TRACE_POSITION();
 	}
 #if DEBUG >= DEBUG_DEBUG
 	// print queue
-	// this->printQueueStatus();
+	this->printQueueStatus();
 #endif
 	return (isSolved());
 }
@@ -204,18 +186,12 @@ TRACE_POSITION();
 void	nPuzzle::Solver::processState(nPuzzle::State* state, bool calculateAllHeuristics)
 {
 TRACE_POSITION();
-	// Configure state for heuristics
-	if (!state->setUsedHeuristic(this->heuristic))
-	{
-		delete state;
-		return ;
-	}
 	// Calculate heuristics
 	const nPuzzle::Board&	target = this->puzzle.getTarget().getBoard();
 	if (calculateAllHeuristics)
-		state->calculateHeuristic(target);
+		state->calculateAllHeuristics(target);
 	else
-		state->calculateHeuristic(this->heuristic, target);
+		state->calculateOneHeuristic(target);
 	// Store state in Queue
 	this->addToQueue(state);
 TRACE_POSITION();
@@ -268,15 +244,15 @@ void nPuzzle::Solver::debugValidateQueueVisited()
 {
 	while (!this->queue.empty())
 	{
-		nPuzzle::State* top = this->queue.top();
+		nPuzzle::State*	top = this->queue.top();
 		this->queue.pop();
 
-		const nPuzzle::Board* board = &top->getBoard();
+		const nPuzzle::Board*	board = &top->getBoard();
 
-		std::size_t lookupHash = BoardPtrHash{}(board);
-		std::size_t lookupBucket = this->visited.bucket(board);
+		std::size_t	lookupHash = BoardPtrHash{}(board);
+		std::size_t	lookupBucket = this->visited.bucket(board);
 
-		auto found = this->visited.find(board);
+		auto	found = this->visited.find(board);
 		if (found != this->visited.end())
 		{
 			continue;
@@ -313,21 +289,21 @@ void nPuzzle::Solver::debugValidateQueueVisited()
 
 		std::cerr << "Manual scan:\n";
 
-		bool manualFound = false;
+		bool	manualFound = false;
 		for (const auto i : this->visited)
 		{
 			const nPuzzle::Board*	storedBoard = i.first;
 			const nPuzzle::State*	state = i.second;
 
-			bool equal = (*storedBoard == *board);
-			bool samePtr = (storedBoard == board);
-			bool sameHash = (storedBoard->hash() == board->hash());
+			bool	equal = (*storedBoard == *board);
+			bool	samePtr = (storedBoard == board);
+			bool	sameHash = (storedBoard->hash() == board->hash());
 
 			if (equal)
 			{
 				manualFound = true;
 
-				std::size_t storedBucket = visited.bucket(storedBoard);
+				std::size_t	storedBucket = visited.bucket(storedBoard);
 
 				std::cerr	<< "MANUAL MATCH FOUND\n"
 							<< "Stored ptr:   "	<< storedBoard	<< '\n'
@@ -348,7 +324,7 @@ void nPuzzle::Solver::debugValidateQueueVisited()
 
 				std::cerr << "Walking stored bucket:\n";
 
-				bool foundSelf = false;
+				bool	foundSelf = false;
 				for (auto it = this->visited.begin(storedBucket);
 					 it != this->visited.end(storedBucket);
 					 ++it)
@@ -429,28 +405,28 @@ int32_t	nPuzzle::Solver::getTopHeuristic(void) const
 	std::lock_guard<std::mutex> lock(this->queueMutex);
 
 	if (this->queue.empty())
-		return (this->puzzle.state->getHeuristic(this->heuristic));
-	return (this->queue.top()->getHeuristic(this->heuristic));
+		return (this->puzzle.state->getHeuristic(this->heuristicIndex));
+	return (this->queue.top()->getHeuristic(this->heuristicIndex));
 }
 
 bool	nPuzzle::Solver::isSolved(void) const
 {
 	std::lock_guard<std::mutex>	lock(this->queueMutex);
 
-	return (!this->queue.empty() && this->queue.top()->getHeuristic(this->heuristic) == 0);
+	return (!this->queue.empty() && this->queue.top()->getHeuristic(this->heuristicIndex) == 0);
 }
 
 std::vector<const nPuzzle::State*>	nPuzzle::Solver::getSolution(void) const
 {
-	std::vector<const nPuzzle::State*> path;
+	std::vector<const nPuzzle::State*>	path;
 	std::lock_guard<std::mutex>	lock(this->queueMutex);
 
 	if (this->queue.empty())
 		return path;
-	
+
 	const nPuzzle::State * current = this->queue.top(); 
 
-	if (current->getHeuristic(this->heuristic) != 0)
+	if (current->getHeuristic(this->heuristicIndex) != 0)
 		return path;
 
 	while (current != nullptr)
@@ -473,7 +449,7 @@ void	nPuzzle::Solver::printQueueStatus(void) const
 		{
 			const nPuzzle::State*	top = this->queue.top();
 			int32_t	g = top->getCost();
-			int32_t	h = top->getHeuristic(this->heuristic);
+			int32_t	h = top->getHeuristic(this->heuristicIndex);
 			std::fprintf(stderr, "#  %-16p g:%3i h:%3i f:%3i\n", top, g, h, g + h);
 			std::fflush(stderr);
 			std::cerr	<< *top	<< std::endl;

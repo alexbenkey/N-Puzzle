@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   nPuzzle.State.hpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
+/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/23 14:32:56 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/08/06 20:05:53 by avon-ben         ###   ########.fr       */
+/*   Updated: 2026/08/10 16:33:01 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,28 +22,20 @@
 
 class nPuzzle::State
 {
-// # pragma region "Nested Objects"
-// 	public:
-// 		class		Tile;
-// # pragma endregion "Nested Objects"
 	private:
-
-	protected:
-
-		// std::vector<std::vector<Tile> >	tiles;
 		Board	board;
 		struct Position {
 			int32_t x;
 			int32_t y;
 		}; 
 
-		int32_t	width;
-		int32_t	height;
-		int32_t	size;
+		const int32_t&	width;
+		const int32_t&	height;
+		const int32_t&	size;
+		const int32_t&	heuristicIndex;
 		std::map<int32_t, int32_t>	heuristic;
-		int32_t   usedHeuristic = 1;
 		int32_t	cost = 0;
-		int32_t score = 0;
+		int32_t	score = 0;
 		nPuzzle::State *previous = nullptr;
 		nPuzzle::searchMode searchMode = nPuzzle::searchMode::ASTAR;
 
@@ -53,31 +45,24 @@ class nPuzzle::State
 		bool	validPuzzlePlacement(void) const;
 
 	public:
-		State(void);
-		State(const int32_t size);
-		State(const int32_t width, const int32_t height);
+		State(const int32_t& width, const int32_t& height, const int32_t& size, const int32_t& heuristicIndex);
 		State(const State &src);
 		~State(void);
 
-		int32_t getPuzzleHeight(void) const {return this->height; }
-		int32_t getPuzzleWidth(void) const {return this->width; } 
-		int32_t getPuzzleSize(void) const {return this->size; }
-		int32_t getUsedHeuristic(void) const {return this->usedHeuristic; }
+		int32_t	getPuzzleHeight(void) const { return this->height; }
+		int32_t	getPuzzleWidth(void) const { return this->width; } 
+		int32_t	getPuzzleSize(void) const { return this->size; }
+		// int32_t	getUsedHeuristic(void) const {return this->usedHeuristic; }
 
-		bool	setUsedHeuristic(int32_t value);
-		void	generateTiles(void);
+		// bool	setUsedHeuristic(int32_t value);
 
-		void setSearchMode(nPuzzle::searchMode mode) {this->searchMode = mode;}
+		void	setSearchMode(nPuzzle::searchMode mode) {this->searchMode = mode;}
 
 		void	addTile(const int32_t value, const int32_t x, const int32_t y) { this->board.addTile(value, x, y); }
-		// Tile&		getTile(const int32_t value);
-		const nPuzzle::Board::Tile&	getTile(const int32_t value) const;
-# warning maybe this should be removed in favor of a swapTiles function
-		// nPuzzle::Board::Tile&		getTile(const int32_t x, const int32_t y);
-		const nPuzzle::Board::Tile&	getTile(const int32_t x, const int32_t y) const;
-		// Tile& 		getEmptyTile() { return tiles[emptyPos.y][emptyPos.x]; }
-		const nPuzzle::Board::Tile&	getEmptyTile() const { return this->board.getEmptyTile(); }
 		const nPuzzle::Board&	getBoard() const { return this->board; }
+		const nPuzzle::Board::Tile&	getTile(const int32_t value) const;
+		const nPuzzle::Board::Tile&	getTile(const int32_t x, const int32_t y) const;
+		const nPuzzle::Board::Tile&	getEmptyTile() const { return this->board.getEmptyTile(); }
 
 		void setPrevious(nPuzzle::State *state) {this->previous = state;}
 		const nPuzzle::State *getPrevious(void) const { return this->previous;}
@@ -87,23 +72,24 @@ class nPuzzle::State
 		// void	printTilePos(const Tile& Tile) const;
 		int32_t	getTileValue(const int32_t x, const int32_t y) const;
 
-		void setEmptyPos(int32_t x, int32_t y) { emptyPos = {x, y}; }
-		Position getEmptyPos() const {return emptyPos; }
+		void	setEmptyPos(int32_t x, int32_t y) { emptyPos = {x, y}; }
+		Position	getEmptyPos() const {return emptyPos; }
 
-		void 	moveTile(const nPuzzle::Board::Tile& tile);
-		void 	increaseCost(void) { ++this->cost; };
+		void	moveTile(const nPuzzle::Board::Tile& tile);
+		void	increaseCost(void) { ++this->cost; };
 
 		bool	move(Direction direction);
-	
-		void	calculateHeuristic(const nPuzzle::Board& target);
-		void	calculateHeuristic(int32_t h, const nPuzzle::Board& target);
+
+		void	calculateAllHeuristics(const nPuzzle::Board& target);
+		void	calculateOneHeuristic(const nPuzzle::Board& target);
+		void	calculateOneHeuristic(const nPuzzle::Board& target, int32_t h);
 		int32_t	getHeuristic(int32_t h) const;
 
 		int32_t	getCost(void) const	{ return (this->cost); }
-		// int32_t getHeuristic(void) const {return (this->heuristic); }
+		// int32_t	getHeuristic(void) const {return (this->heuristic); }
 
 		bool	sameBoard(const State &rhs) const noexcept;
-		
+
 		State	&operator=(const State &src);
 
 		bool	operator<(const State &rhs) const noexcept;

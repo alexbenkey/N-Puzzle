@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Display.HUD.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
+/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/09 13:44:29 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/08/04 15:16:31 by avon-ben         ###   ########.fr       */
+/*   Updated: 2026/08/10 15:51:39 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -307,17 +307,14 @@ TRACE_POSITION();
 				switch (puzzle->getSolvability())
 				{
 					case nPuzzle::Solvability::UNKNOWN:
-					solvabilityMsg = "Unknown";
-					break;
-
-									
+						solvabilityMsg = "Unknown";
+						break;
 					case nPuzzle::Solvability::SOLVABLE:
-					solvabilityMsg = "Solvable";
-					break;
-
+						solvabilityMsg = "Solvable";
+						break;
 					case nPuzzle::Solvability::UNSOLVABLE:
-					solvabilityMsg = "Unsolvable";
-					break;
+						solvabilityMsg = "Unsolvable";
+						break;
 				}
 				buffer = TextFormat("Solvability: %s", solvabilityMsg);
 				break;

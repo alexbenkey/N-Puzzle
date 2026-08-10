@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   nPuzzle.State.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
+/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/23 14:38:54 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/08/06 20:23:26 by avon-ben         ###   ########.fr       */
+/*   Updated: 2026/08/10 16:32:06 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,38 +25,11 @@
  * 
 \* ************************************************************************** */
 
-nPuzzle::State::State(void):
-	width(0),
-	height(0),
-	size(0)
-{
-#if DEBUG >= DEBUG_TRACE
-	std::cout	<< C_DGREEN	<< "Default constructor "
-				<< C_GREEN	<< __func__
-				<< C_DGREEN	<< " called."
-				<< C_RESET	<< std::endl;
-#endif
-	this->generateTiles();
-}
-
-nPuzzle::State::State(const int32_t size):
-	width(size),
-	height(size),
-	size(size * size)
-{
-#if DEBUG >= DEBUG_TRACE
-	std::cout	<< C_DGREEN	<< "Default constructor "
-				<< C_GREEN	<< __func__
-				<< C_DGREEN	<< " called."
-				<< C_RESET	<< std::endl;
-#endif
-	this->generateTiles();
-}
-
-nPuzzle::State::State(const int32_t width, const int32_t height):
+nPuzzle::State::State(const int32_t& width, const int32_t& height, const int32_t& size, const int32_t& heuristicIndex):
 	width(width),
 	height(height),
-	size(width * height)
+	size(size),
+	heuristicIndex(heuristicIndex)
 {
 #if DEBUG >= DEBUG_TRACE
 	std::cout	<< C_DGREEN	<< "Default constructor "
@@ -64,21 +37,14 @@ nPuzzle::State::State(const int32_t width, const int32_t height):
 				<< C_DGREEN	<< " called."
 				<< C_RESET	<< std::endl;
 #endif
-	this->generateTiles();
-}
-
-void	nPuzzle::State::generateTiles(void)
-{
 	this->board.setSize(this->width, this->height);
-	// this->tiles.resize(this->height);
-	// for (int32_t y = 0; y < this->height; ++y)
-	// 	this->tiles[y].resize(this->width);
 }
 
 nPuzzle::State::State(const State &src):
-	width(src.getPuzzleWidth()),
-	height(src.getPuzzleHeight()),
-	size(src.getPuzzleSize())
+	width(src.width),
+	height(src.height),
+	size(src.size),
+	heuristicIndex(src.heuristicIndex)
 {
 #if DEBUG >= DEBUG_TRACE
 	std::cout	<< C_DGREEN	<< "Copy constructor "
@@ -134,8 +100,7 @@ nPuzzle::State::~State(void)
 // 	std::cout	<< std::flush;
 // }
 
-#include <set>
-
+#warning these functions are replaced by solvability
 bool	nPuzzle::State::validPuzzle(void) const
 {
 	return (validPuzzleContent() && validPuzzlePlacement());
@@ -165,63 +130,20 @@ bool	nPuzzle::State::validPuzzleContent(void) const
 
 bool	nPuzzle::State::validPuzzlePlacement(void) const
 {
+#warning this was the note I couldnt find again XD
 	// Idont know, something with inversion and extra on even numbers
 	// Spiral sucks
 	return (true);
 }
 
-// nPuzzle::Board::Tile&	nPuzzle::State::getTile(int32_t value)
-// {
-// 	if ((size_t)value > tiles.size()){
-// 		std::runtime_error("Out of bounds Value");
-// 	}
-// 	for (size_t y = 0; y < this->tiles.size(); ++y)
-// 	{
-// 		for (size_t x = 0; x < this->tiles[y].size(); ++x)
-// 		{
-// 			if (this->tiles[y][x].getVal() == value)
-// 				return (this->tiles[y][x]);
-// 		}
-// 	}
-// 	return (this->tiles[0][0]);
-// }
-
-bool	nPuzzle::State::setUsedHeuristic(int32_t value)
-{
-	if (value < 0 || value >= this->heuristic.size())
-		return false;
-
-	this->usedHeuristic = value;
-	return true;
-}
-
 const nPuzzle::Board::Tile&	nPuzzle::State::getTile(const int32_t value) const
 {
 	return (this->board.getTile(value));
-	// if ((size_t)value > tiles.size()){
-	// 	std::runtime_error("Out of bounds Value");
-	// }
-	// for (size_t y = 0; y < this->tiles.size(); ++y)
-	// {
-	// 	for (size_t x = 0; x < this->tiles[y].size(); ++x)
-	// 	{
-	// 		if (this->tiles[y][x].getVal() == value)
-	// 			return (this->tiles[y][x]);
-	// 	}
-	// }
-	// return (this->tiles[0][0]);
 }
-
-// nPuzzle::Board::Tile&	nPuzzle::State::getTile(const int32_t x, const int32_t y)
-// {
-// 	return (this->board.getTile(x, y));
-// 	// return tiles[y][x];
-// }
 
 const nPuzzle::Board::Tile&	nPuzzle::State::getTile(const int32_t x, const int32_t y) const
 {
 	return (this->board.getTile(x, y));
-	// return tiles[y][x];
 }
 
 // void	nPuzzle::State::printTilePos(const nPuzzle::Board::Tile& Tile) const
@@ -230,28 +152,19 @@ const nPuzzle::Board::Tile&	nPuzzle::State::getTile(const int32_t x, const int32
 // 				<< " at position [X,Y]:" << Tile.getxPos() << ", " << Tile.getyPos() << std::endl;
 // }
 
-int32_t	nPuzzle::State::getTileValue(const int32_t x, const int32_t y) const
-{
-	return (this->board.getTile(x, y).getVal());
-	// return tiles[y][x].getVal();
-}
-
 void	nPuzzle::State::moveTile(const nPuzzle::Board::Tile& tile)
 {
 	// Check if the tile is adjacent to the empty square
-	int32_t emptyX = emptyPos.x;
-	int32_t emptyY = emptyPos.y;
-	int32_t tileX = tile.getX();
-	int32_t tileY = tile.getY();
+	int32_t	emptyX = emptyPos.x;
+	int32_t	emptyY = emptyPos.y;
+	int32_t	tileX = tile.getX();
+	int32_t	tileY = tile.getY();
 
 	// check of tile is adjacent to empty square
 	if ((abs(emptyX - tileX) == 1 && emptyY == tileY) || (abs(emptyY - tileY) == 1 && emptyX == tileX))
 	{
 		//swap the values of the empty tile and the given tile, update the empty position to the tile's position
 		this->board.swapTiles(emptyX, emptyY, tileX, tileY);
-		// getTile(emptyX, emptyY).setVal(tile.getVal());
-		// tile.setVal(0);
-		// setEmptyPos(tileX, tileY);
 	}
 	else
 		throw std::runtime_error("Tile is not adjacent to the empty square");
@@ -272,13 +185,18 @@ bool	nPuzzle::State::sameBoard(const State &rhs) const noexcept
 	return (this->board == rhs.board);
 }
 
-void	nPuzzle::State::calculateHeuristic(const nPuzzle::Board& target)
+void	nPuzzle::State::calculateAllHeuristics(const nPuzzle::Board& target)
 {
 	for (int32_t h = 0; h < heuristic::size; ++h)
-		this->calculateHeuristic(h, target);
+		this->calculateOneHeuristic(target, h);
 }
 
-void	nPuzzle::State::calculateHeuristic(int32_t h, const nPuzzle::Board& target)
+void	nPuzzle::State::calculateOneHeuristic(const nPuzzle::Board& target)
+{
+	this->calculateOneHeuristic(target, this->heuristicIndex);
+}
+
+void	nPuzzle::State::calculateOneHeuristic(const nPuzzle::Board& target, int32_t h)
 {
 	this->heuristic[h] = heuristic::getHeuristic(h, this->board, target);
 }
@@ -287,7 +205,6 @@ int32_t	nPuzzle::State::getHeuristic(int32_t h) const
 {
 	return (this->heuristic.count(h) ? this->heuristic.at(h) : -1);
 }
-
 
 /** ************************************************************************ **\
  * 
@@ -299,27 +216,27 @@ bool	nPuzzle::State::operator<(const State &rhs) const noexcept
 {
 	#warning it is now required to set the particular used heuristic in the state class. 
 
-	int32_t lhsHeuristic = 0;
-	int32_t rhsHeuristic = 0;
-	int32_t lhsCost = 0;
-	int32_t rhsCost = 0;
-	int32_t lhsScore = 0;
-	int32_t rhsScore = 0;
+	int32_t	lhsHeuristic = 0;
+	int32_t	rhsHeuristic = 0;
+	int32_t	lhsCost = 0;
+	int32_t	rhsCost = 0;
+	int32_t	lhsScore = 0;
+	int32_t	rhsScore = 0;
 
 	switch (this->searchMode)
-		{
+	{
 		case (nPuzzle::searchMode::ASTAR):
 			// std::cout << "using ASTAR heuristic for comparison" << std::endl;
-			lhsHeuristic = this->getHeuristic(this->usedHeuristic);
-			rhsHeuristic = rhs.getHeuristic(rhs.usedHeuristic);
+			lhsHeuristic = this->getHeuristic(this->heuristicIndex);
+			rhsHeuristic = rhs.getHeuristic(rhs.heuristicIndex);
 			lhsCost = this->cost;
 			rhsCost = rhs.cost;
 			break ;
 
 		case (nPuzzle::searchMode::GREEDY):
 			// std::cout << "using GREEDY heuristic for comparison" << std::endl;
-			lhsHeuristic = this->getHeuristic(this->usedHeuristic);
-			rhsHeuristic = rhs.getHeuristic(rhs.usedHeuristic);
+			lhsHeuristic = this->getHeuristic(this->heuristicIndex);
+			rhsHeuristic = rhs.getHeuristic(rhs.heuristicIndex);
 			break ;
 
 		case (nPuzzle::searchMode::UNIFORM):
@@ -327,7 +244,7 @@ bool	nPuzzle::State::operator<(const State &rhs) const noexcept
 			lhsCost = this->cost;
 			rhsCost = rhs.cost;
 			break ; 
-		}
+	}
 
 	lhsScore = lhsCost + lhsHeuristic;
 	rhsScore = rhsCost + rhsHeuristic;
@@ -337,7 +254,7 @@ bool	nPuzzle::State::operator<(const State &rhs) const noexcept
 
 	if (lhsHeuristic != rhsHeuristic)
 		return lhsHeuristic < rhsHeuristic;
-	
+
 	return false;
 }
 
@@ -359,16 +276,15 @@ nPuzzle::State	&nPuzzle::State::operator=(const State &src)
 {
 	if (this == &src)
 		return (*this);
-	// if (this->width != src.width || this->height != src.height)
-	// 	return (*this);
-	this->width = src.width;
-	this->height = src.height;
-	this->size = this->width * this->height;
+	if (this->width != src.width || this->height != src.height)
+		throw std::invalid_argument(std::string(
+			"Cannot assign State: dimension mismatch w: ") + 
+			std::to_string(this->width) + "/" + std::to_string(src.width) + ", h: " + 
+			std::to_string(this->height) + "/" + std::to_string(src.height));
 	this->board = src.board;
 	this->emptyPos = src.emptyPos;
 	this->cost = src.cost;
 	this->heuristic = src.heuristic;
-	this->usedHeuristic = src.usedHeuristic;
 	this->score = src.score;
 	this->searchMode = src.searchMode;
 	return (*this);
