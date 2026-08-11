@@ -248,6 +248,17 @@ git log --oneline main..HEAD | wc -l
 git rebase -i HEAD~<commit count>
 ## Push the result
 git push --force-with-lease
+
+# Remove files from last commit
+## undo last commit
+git reset --soft HEAD~1
+## remove files from git add
+git restore --staged path/to/file1 path/to/file2
+## recommit
+git commit -m "your original commit message"
+## push again
+git push --force-with-lease
+
 ```
 
 # TODO
