@@ -6,7 +6,7 @@
 /*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/02 16:48:19 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/08/11 19:08:07 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/08/11 20:05:11 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,6 +94,7 @@ static void	ProcessUserInputShift(int pressedKey, nPuzzle* puzzle, Display* disp
 {
 	switch (pressedKey)
 	{
+#warning when changing search mode or heuristic while solution is playing either 'Segmentation fault (core dumped)' or 'vector::_M_range_check: __n (which is 1666318464) >= this->size() (which is 16)'
 		case KEY_RIGHT:	puzzle->incrementSearchMode();	break;
 		case KEY_LEFT:	puzzle->decrementSearchMode();	break;
 		case KEY_DOWN:	puzzle->incrementHeuristicIndex();	break;

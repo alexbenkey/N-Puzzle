@@ -6,7 +6,7 @@
 /*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 16:13:50 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/08/11 19:05:29 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/08/11 19:56:00 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -272,6 +272,7 @@ void	nPuzzle::setHeuristicIndex(int32_t index)
 #if DEBUG >= DEBUG_INFO
 	std::fprintf(stderr, "Heuristic set to [%2i]%s\n", this->heuristicIndex, heuristic::function[this->heuristicIndex].name);
 #endif
+	this->clearSolver();
 }
 
 int32_t	nPuzzle::getHeuristicIndex(void) const
@@ -360,7 +361,7 @@ void	nPuzzle::setSearchMode(nPuzzle::searchMode mode)
 		mode = nPuzzle::searchMode::UNIFORM;
 	if (this->mode == mode)
 		return ;
-	
+
 	this->clearSolver();
 	this->mode = mode;
 }
