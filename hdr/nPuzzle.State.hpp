@@ -6,7 +6,7 @@
 /*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/23 14:32:56 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/08/10 16:33:01 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/08/11 19:12:02 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,17 +27,17 @@ class nPuzzle::State
 		struct Position {
 			int32_t x;
 			int32_t y;
-		}; 
+		};
 
 		const int32_t&	width;
 		const int32_t&	height;
 		const int32_t&	size;
 		const int32_t&	heuristicIndex;
+		const nPuzzle::searchMode&	searchMode;
 		std::map<int32_t, int32_t>	heuristic;
 		int32_t	cost = 0;
 		int32_t	score = 0;
 		nPuzzle::State *previous = nullptr;
-		nPuzzle::searchMode searchMode = nPuzzle::searchMode::ASTAR;
 
 		Position emptyPos = {0, 0};
 
@@ -45,18 +45,16 @@ class nPuzzle::State
 		bool	validPuzzlePlacement(void) const;
 
 	public:
-		State(const int32_t& width, const int32_t& height, const int32_t& size, const int32_t& heuristicIndex);
+		State(const nPuzzle& puzzle);
 		State(const State &src);
 		~State(void);
 
 		int32_t	getPuzzleHeight(void) const { return this->height; }
-		int32_t	getPuzzleWidth(void) const { return this->width; } 
+		int32_t	getPuzzleWidth(void) const { return this->width; }
 		int32_t	getPuzzleSize(void) const { return this->size; }
 		// int32_t	getUsedHeuristic(void) const {return this->usedHeuristic; }
 
 		// bool	setUsedHeuristic(int32_t value);
-
-		void	setSearchMode(nPuzzle::searchMode mode) {this->searchMode = mode;}
 
 		void	addTile(const int32_t value, const int32_t x, const int32_t y) { this->board.addTile(value, x, y); }
 		const nPuzzle::Board&	getBoard() const { return this->board; }

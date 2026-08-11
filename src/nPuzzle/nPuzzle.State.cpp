@@ -6,7 +6,7 @@
 /*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/23 14:38:54 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/08/10 16:32:06 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/08/11 19:07:38 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,11 +25,12 @@
  * 
 \* ************************************************************************** */
 
-nPuzzle::State::State(const int32_t& width, const int32_t& height, const int32_t& size, const int32_t& heuristicIndex):
-	width(width),
-	height(height),
-	size(size),
-	heuristicIndex(heuristicIndex)
+nPuzzle::State::State(const nPuzzle& puzzle):
+	width(puzzle.width),
+	height(puzzle.height),
+	size(puzzle.size),
+	heuristicIndex(puzzle.heuristicIndex),
+	searchMode(puzzle.mode)
 {
 #if DEBUG >= DEBUG_TRACE
 	std::cout	<< C_DGREEN	<< "Default constructor "
@@ -44,7 +45,8 @@ nPuzzle::State::State(const State &src):
 	width(src.width),
 	height(src.height),
 	size(src.size),
-	heuristicIndex(src.heuristicIndex)
+	heuristicIndex(src.heuristicIndex),
+	searchMode(src.searchMode)
 {
 #if DEBUG >= DEBUG_TRACE
 	std::cout	<< C_DGREEN	<< "Copy constructor "
@@ -214,7 +216,7 @@ int32_t	nPuzzle::State::getHeuristic(int32_t h) const
 
 bool	nPuzzle::State::operator<(const State &rhs) const noexcept
 {
-	#warning it is now required to set the particular used heuristic in the state class. 
+	#warning it is now required to set the particular used heuristic in the state class.
 
 	int32_t	lhsHeuristic = 0;
 	int32_t	rhsHeuristic = 0;
@@ -243,7 +245,7 @@ bool	nPuzzle::State::operator<(const State &rhs) const noexcept
 			// std::cout << "using UNIFORM heuristic for comparison" << std::endl;
 			lhsCost = this->cost;
 			rhsCost = rhs.cost;
-			break ; 
+			break ;
 	}
 
 	lhsScore = lhsCost + lhsHeuristic;
@@ -286,7 +288,6 @@ nPuzzle::State	&nPuzzle::State::operator=(const State &src)
 	this->cost = src.cost;
 	this->heuristic = src.heuristic;
 	this->score = src.score;
-	this->searchMode = src.searchMode;
 	return (*this);
 }
 

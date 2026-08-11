@@ -16,12 +16,12 @@
 # include "Errors.hpp"
 # include <cstring>	// strrchr
 # define LOG_LINE(level, format, ...) \
-    TraceLog(level, \
-        C_DGRAY "%s" C_RESET ":" C_DORANGE "%s" C_RESET "[" C_ORANGE "%i" C_RESET "] " format, \
-        strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__, \
-        __func__, \
-        __LINE__, \
-        ##__VA_ARGS__)
+	TraceLog(level, \
+		C_DGRAY "%s" C_RESET ":" C_DORANGE "%s" C_RESET "[" C_ORANGE "%i" C_RESET "] " format, \
+		strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__, \
+		__func__, \
+		__LINE__, \
+		##__VA_ARGS__)
 
 # define LOG_AS_TRACE(format, ...) LOG_LINE(LOG_TRACE, format, ##__VA_ARGS__)
 # define LOG_AS_DEBUG(format, ...) LOG_LINE(LOG_DEBUG, format, ##__VA_ARGS__)
@@ -56,8 +56,6 @@ class Display
 		float	fontHeight;
 		int		margin;
 
-		static std::unordered_map<char, std::string>	hotkeyList;
-
 		// Sizes
 		void	configureMinimumSizes(void);
 		void	configureMaximumSizes(void);
@@ -85,7 +83,6 @@ class Display
 		double 	solutionStepDelay;
 		bool	solutionPlaying;
 
-
 	protected:
 
 	public:
@@ -102,6 +99,7 @@ class Display
 		bool	setMargin(const int margin, bool updateSizes = true, bool includeHUD = true);
 		// Rendering
 		void	render(void);
+		void	renderHUD(bool shiftPressed = false);
 		void	renderAsStartState(void);
 		void	renderAsCurrentState(void);
 		void	renderAsQueueState(void);
@@ -109,7 +107,7 @@ class Display
 
 		void 	startSolutionAnimation(void);
 		void 	resetSolutionAnimation(void);
-		void 	renderSolutionAnimation(void); 
+		void 	renderSolutionAnimation(void);
 
 		bool	isPuzzleSolved(void) const{return this->puzzle != nullptr && this->puzzle->isSolved();}
 		// Display	&operator=(const Display &src);

@@ -6,7 +6,7 @@
 /*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/23 14:41:42 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/08/10 16:19:57 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/08/11 19:35:16 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,8 @@ class nPuzzle
 
 # pragma region	"Enum Classes"
 		enum class Direction
-		{ 
-			UP, 
+		{
+			UP,
 			RIGHT,
 			DOWN,
 			LEFT
@@ -38,9 +38,10 @@ class nPuzzle
 
 		enum class searchMode
 		{
-			ASTAR,
 			GREEDY,
-			UNIFORM
+			ASTAR,
+			UNIFORM,
+			size
 		};
 
 		enum class Solvability
@@ -107,6 +108,8 @@ class nPuzzle
 
 		void	storeStartState(void);
 
+		void	incrementSearchMode(void);
+		void	decrementSearchMode(void);
 		void	setSearchMode(nPuzzle::searchMode mode);
 		nPuzzle::searchMode getSearchMode(void) {return this->mode; }
 

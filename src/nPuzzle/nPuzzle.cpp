@@ -6,7 +6,7 @@
 /*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 16:13:50 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/08/10 20:10:29 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/08/11 19:05:29 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -184,7 +184,7 @@ void	nPuzzle::parse(std::istream& __is)
 		throw std::runtime_error("Invalid puzzle size line: expected 1 or 2 positive integers");
 	this->height = numbers[size - 1];
 	this->size = this->width * this->height;
-	this->state = new nPuzzle::State(this->width, this->height, this->size, this->heuristicIndex);
+	this->state = new nPuzzle::State(*this);
 	this->target = new nPuzzle::Target();
 	this->target->setSize(this->width, this->height);
 
@@ -342,33 +342,28 @@ TRACE_POSITION();
 	return (this->solver->solveStep(allHeuristics));
 }
 
-void	nPuzzle::setSearchMode(nPuzzle::searchMode mode)
+void	nPuzzle::incrementSearchMode(void)
 {
-	if (this->mode == mode)
-		return;
-
-	std::cout << "setting searchMode to: " ;
-	switch(mode){
-		case (nPuzzle::searchMode::ASTAR):
-			std::cout << "ASTAR" << std::endl;
-			break; 
-		case (nPuzzle::searchMode::GREEDY):
-			std::cout << "GREEDY" << std::endl;
-			break; 
-		case (nPuzzle::searchMode::UNIFORM):
-			std::cout << "UNIFORM" << std::endl;
-			break; 
-	}
-	this->clearSolver();
-	this->mode = mode;
-
-	if (this->state != nullptr)
-		this->state->setSearchMode(mode);
-
-	if (this->start != nullptr)
-		this->state->setSearchMode(mode);
+	this->setSearchMode(static_cast<nPuzzle::searchMode>(static_cast<int32_t>(this->mode) + 1));
 }
 
+void	nPuzzle::decrementSearchMode(void)
+{
+	this->setSearchMode(static_cast<nPuzzle::searchMode>(static_cast<int32_t>(this->mode) - 1));
+}
+
+void	nPuzzle::setSearchMode(nPuzzle::searchMode mode)
+{
+	if (mode < nPuzzle::searchMode::GREEDY)
+		mode = nPuzzle::searchMode::GREEDY;
+	if (mode > nPuzzle::searchMode::UNIFORM)
+		mode = nPuzzle::searchMode::UNIFORM;
+	if (this->mode == mode)
+		return ;
+	
+	this->clearSolver();
+	this->mode = mode;
+}
 
 int32_t	nPuzzle::getBestSolverHeuristic(void) const
 {

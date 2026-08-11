@@ -6,7 +6,7 @@
 /*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/02 17:58:28 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/08/10 15:51:53 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/08/11 19:34:46 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,24 +20,17 @@
 
 #include <iostream>	// std::stream
 
-std::unordered_map<char, std::string> Display::hotkeyList = {
-	{ 'R', "Reset to Start" },
-	{ 'q', "Display Queue" },
-	{ 't', "Display Target" },
-	{ 's', "Display Start" },
-};
-
 /** ************************************************************************ **\
  * 
  * 	Constructors
  * 
 \* ************************************************************************** */
 
-Display::Display(nPuzzle* puzzle): 
-	puzzle(puzzle), 
-	solutionIndex(0), 
-	lastSolutionStep(0.0), 
-	solutionStepDelay(0.30), 
+Display::Display(nPuzzle* puzzle):
+	puzzle(puzzle),
+	solutionIndex(0),
+	lastSolutionStep(0.0),
+	solutionStepDelay(0.30),
 	solutionPlaying(false)
 {
 #if DEBUG >= DEBUG_TRACE
@@ -349,17 +342,23 @@ void	Display::logRectangle(const char* name, const Rectangle& rect)
 	TraceLog(TraceLogLevel::LOG_INFO, "%-12s x %4.0f y %4.0f w %4.0f h %4.0f", name, rect.x, rect.y, rect.width, rect.height);
 }
 
-
 void	Display::render(void)
 {
+	this->renderHUD();
 	this->renderAsCurrentState();
+}
+
+void	Display::renderHUD(bool shiftPressed)
+{
+	if (!this->puzzle)
+		return ;
+	this->HUD->render(this->puzzle, &this->puzzle->getCurrentState(), shiftPressed);
 }
 
 void	Display::renderAsStartState(void)
 {
 	if (!this->puzzle)
 		return ;
-	this->HUD->render(this->puzzle, &this->puzzle->getCurrentState());
 	this->renderBoard(this->puzzle->getStartState().getBoard());
 }
 
@@ -367,7 +366,6 @@ void	Display::renderAsCurrentState(void)
 {
 	if (!this->puzzle)
 		return ;
-	this->HUD->render(this->puzzle, &this->puzzle->getCurrentState());
 	this->renderBoard(this->puzzle->getCurrentState().getBoard());
 }
 
@@ -375,7 +373,6 @@ void	Display::renderAsQueueState(void)
 {
 	if (!this->puzzle)
 		return ;
-	this->HUD->render(this->puzzle, &this->puzzle->getCurrentState());
 	this->renderBoard(this->puzzle->getQueueState().getBoard());
 }
 
@@ -383,29 +380,22 @@ void	Display::renderAsTargetState(void)
 {
 	if (!this->puzzle)
 		return ;
-	this->HUD->render(this->puzzle, &this->puzzle->getCurrentState());
 	this->renderBoard(this->puzzle->getTarget().getBoard());
 }
 
 void	Display::renderBoard(const nPuzzle::Board& board)
 {
-#if DEBUG >= DEBUG_ALL
-	LOG_AS_TRACE();
-#endif
+TRACE_POSITION();
 	// Background
 	ClearBackground(Color{127, 63, 23, 255});
 	// HUD
 	this->renderTiles(board);
-#if DEBUG >= DEBUG_ALL
-	LOG_AS_TRACE();
-#endif
+TRACE_POSITION();
 }
 
 void	Display::renderTiles(const nPuzzle::Board& board)
 {
-#if DEBUG >= DEBUG_ALL
-	LOG_AS_TRACE();
-#endif
+TRACE_POSITION();
 	Color	tileColor = {192, 192, 192, 255};
 	int	xOffset = (this->tile.width - 20) / 2;
 	int	yOffset = (this->tile.height - 20) / 2;
@@ -432,9 +422,7 @@ void	Display::renderTiles(const nPuzzle::Board& board)
 			}
 		}
 
-#if DEBUG >= DEBUG_ALL
-	LOG_AS_TRACE();
-#endif
+	TRACE_POSITION();
 }
 
 void Display::startSolutionAnimation(void)

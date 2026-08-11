@@ -267,8 +267,6 @@ git push --force-with-lease
    - Manhattan Distance (MD): Sums the horizontal and vertical distances each tile must move to reach its goal. It is more accurate than misplaced tiles and is sufficient to solve the 8-puzzle efficiently. 
    - Linear Conflict: Adds to the Manhattan distance when two tiles are in the same row or column but in the wrong order, requiring additional moves to resolve. 
    - Walking Distance (WD): Calculates the minimum moves required for tiles to reach their goals in separate 1D projections (rows and columns), accounting for tile conflicts. 
-   - Inversion Distance: Uses the number of inversions in the tile sequence to estimate the minimum vertical and horizontal moves required. 
+   - Inversion Distance: Uses the number of inversions in the tile sequence to estimate the minimum vertical and horizontal moves required.
 - comparison operators upgrade
-- floating point exception on assets/pregens/solvable.1.1.puzzle
-- upgrade visuals for shift press and bonus
 - thread for lazy lookup table on walking distance

@@ -6,7 +6,7 @@
 /*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/23 21:26:59 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/08/10 15:52:29 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/08/11 18:59:22 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,16 +18,25 @@
 struct Display::HUD
 {
 	private:
+		static std::vector<std::pair<const char*, const char*> >	hotkeyList;
+		static std::vector<std::pair<const char*, const char*> >	hotkeyListAlternative;
+
 		int margin;
 		float	fontSize;
 		float	fontHeight;
 
-		Rectangle	Frame;
-		Rectangle	Data;
-		Rectangle	Solver;
-		Rectangle	Heuristics;
-		Rectangle	Controls;
-		Rectangle	Movement;
+		struct DoubleRectangle
+		{
+			Rectangle	Frame;
+			Rectangle	Left;
+			Rectangle	Right;
+		};
+		Rectangle		Frame;
+		DoubleRectangle	Data;
+		DoubleRectangle	Solver;
+		DoubleRectangle	Heuristics;
+		DoubleRectangle	Controls;
+		Rectangle		Movement;
 		// Positions
 		void	configureFramePosition(void);
 		void	configureDataPosition(void);
@@ -38,10 +47,12 @@ struct Display::HUD
 		// Render
 		void	renderFrame(void) const;
 		void	renderData(nPuzzle* puzzle, nPuzzle::State* state) const;
-		void	renderSolver(nPuzzle* puzzle) const;
-		void	renderHeuristics(nPuzzle::State* state, int32_t h) const;
-		void	renderControls(void) const;
+		void	renderSolver(nPuzzle* puzzle, bool alternative = false) const;
+		void	renderHeuristics(nPuzzle::State* state, int32_t h, bool alternative = false) const;
+		void	renderControls(bool alternative = false) const;
 		void	renderMovement(void) const;
+
+		void	DrawArrow(int32_t x, int32_t y, int32_t size, int32_t dir) const;
 
 	public:
 		HUD(void);
@@ -65,7 +76,7 @@ struct Display::HUD
 		// Positions
 		void	configurePositions(void);
 		// Render
-		void	render(nPuzzle* puzzle, nPuzzle::State* state) const;
+		void	render(nPuzzle* puzzle, nPuzzle::State* state, bool alternative = false) const;
 };
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/09 13:44:29 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/08/11 14:13:01 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/08/11 19:12:03 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,24 @@
 #include "Errors.hpp"
 
 #include <iostream>	// std::stream
+
+std::vector<std::pair<const char*, const char*> > Display::HUD::hotkeyList = {
+	{ "s", "Display Start" },
+	{ "t", "Display Target" },
+	{ "q", "Display Queue" },
+	{ "SPACE", "Solve step" },
+	{ "ENTER", "Solve" },
+	{ "SHIFT", "More options..." },
+};
+
+std::vector<std::pair<const char*, const char*> > Display::HUD::hotkeyListAlternative = {
+	{ "S", "Display Start" },
+	{ "T", "Display Target" },
+	{ "Q", "Display Queue" },
+	{ "R", "Reset to Start" },
+	{ "SPACE", "Solve step" },
+	{ "ENTER", "Solve" },
+};
 
 /** ************************************************************************ **\
  * 
@@ -100,9 +118,17 @@ TRACE_POSITION();
 void	Display::HUD::configureDataSize(bool updateFrame)
 {
 TRACE_POSITION();
-	this->Data.width = MeasureText("  Solvability: Unsolvable", this->fontSize);
-	this->Data.height = 4 * this->fontHeight;
-	Display::logRectangle("HUD.Data", this->Data);
+	this->Data.Left.width = MeasureText("Solvability:", this->fontSize);
+	this->Data.Left.height = this->fontHeight * 3;
+	Display::logRectangle("HUD.Data.Left", this->Data.Left);
+
+	this->Data.Right.width = MeasureText("Unsolvable", this->fontSize);
+	this->Data.Right.height = this->Data.Left.height;
+	Display::logRectangle("HUD.Data.Right", this->Data.Right);
+
+	this->Data.Frame.width = this->Data.Left.width + this->Data.Right.width + (float)this->margin;
+	this->Data.Frame.height = std::max(this->Data.Left.height, this->Data.Right.height) + this->fontHeight;
+
 	if (updateFrame)
 		this->configureFrameSize();
 
@@ -112,13 +138,20 @@ TRACE_POSITION();
 void	Display::HUD::configureSolverSize(bool updateFrame)
 {
 TRACE_POSITION();
-	this->Solver.width = 0;
-	for (const Rectangle& rect : { this->Data, this->Heuristics, this->Controls, this->Movement })
-	{
-		this->Solver.width = std::max(this->Solver.width, rect.width);
-	}
-	this->Solver.height = 3 * this->fontHeight;
-	Display::logRectangle("HUD.Solver", this->Solver);
+	this->Solver.Left.width = (float)MeasureText("Queue:", this->fontSize);
+	this->Solver.Left.height = this->fontHeight * 2;
+	Display::logRectangle("HUD.Solver.Left", this->Solver.Left);
+
+	this->Solver.Right.width = (float)MeasureText("Uniform-cost", this->fontSize);
+	this->Solver.Right.height = this->Solver.Left.height;
+	Display::logRectangle("HUD.Solver.Right", this->Solver.Right);
+
+	this->Solver.Frame.width = this->Solver.Left.width + this->Solver.Right.width + this->margin;
+	for (const Rectangle& rect : { this->Data.Frame, this->Heuristics.Frame, this->Controls.Frame, this->Movement })
+		this->Solver.Frame.width = std::max(this->Solver.Frame.width, rect.width);
+	this->Solver.Frame.height = this->Solver.Left.height + this->fontHeight * 3;
+	Display::logRectangle("HUD.Solver.Frame", this->Solver.Frame);
+
 	if (updateFrame)
 		this->configureFrameSize();
 
@@ -128,14 +161,22 @@ TRACE_POSITION();
 void	Display::HUD::configureHeuristicsSize(bool updateFrame)
 {
 TRACE_POSITION();
-	this->Heuristics.height = (heuristic::size + 2) * this->fontHeight;
+	this->Heuristics.Left.height = heuristic::size * this->fontHeight;
+	this->Heuristics.Right.height = this->Heuristics.Left.height;
+	this->Heuristics.Frame.height = this->Heuristics.Left.height + 2 * this->fontHeight;
+
+	this->Heuristics.Left.width = 0;
 	for (int32_t line = 0; line < heuristic::size; ++line)
 	{
-		float	width = (float)MeasureText(TextFormat("[0] %s: 000", heuristic::function[line].name), this->fontSize);
-		if (width > this->Heuristics.width)
-			this->Heuristics.width = width;
+		this->Heuristics.Left.width = std::max(this->Heuristics.Left.width, (float)MeasureText(heuristic::function[line].name, this->fontSize));
 	}
-	Display::logRectangle("HUD.Heuristics", this->Heuristics);
+	this->Heuristics.Right.width = (float)MeasureText("0000", this->fontSize);
+	this->Heuristics.Frame.width = std::max(this->Heuristics.Left.width + this->Heuristics.Right.width + this->margin, 
+											this->fontHeight * 2 + (float)MeasureText(" Change heuristic", this->fontSize));
+	Display::logRectangle("HUD.Heuristics.Frame", this->Heuristics.Frame);
+	Display::logRectangle("HUD.Heuristics.Left", this->Heuristics.Left);
+	Display::logRectangle("HUD.Heuristics.Right", this->Heuristics.Right);
+
 	if (updateFrame)
 		this->configureFrameSize();
 
@@ -145,14 +186,22 @@ TRACE_POSITION();
 void	Display::HUD::configureControlSize(bool updateFrame)
 {
 TRACE_POSITION();
-	this->Controls.width = 0;
-	for (const auto& key : Display::hotkeyList)
+	this->Controls.Left.width = 0;
+	this->Controls.Right.width = 0;
+	for (const auto& list: {Display::HUD::hotkeyList, Display::HUD::hotkeyListAlternative})
 	{
-		const char* buffer = TextFormat("[%c] %s", key.first, key.second.c_str());
-		this->Controls.width = std::max(this->Controls.width, (float)MeasureText(buffer, this->fontSize));
+		for (const auto& key: list)
+		{
+			const char* buffer = TextFormat("[%s] ", key.first);
+			this->Controls.Left.width = std::max(this->Controls.Left.width, (float)MeasureText(buffer, this->fontSize));
+			this->Controls.Right.width = std::max(this->Controls.Right.width, (float)MeasureText(key.second, this->fontSize));
+		}
 	}
-	this->Controls.height = ((float)Display::hotkeyList.size() + 1) * this->fontHeight;
-	Display::logRectangle("HUD.Controls", this->Controls);
+	this->Controls.Frame.width = this->Controls.Left.width + this->Controls.Right.width;
+	this->Controls.Left.height = std::max((float)Display::HUD::hotkeyList.size(), (float)Display::HUD::hotkeyListAlternative.size()) * this->fontHeight;
+	this->Controls.Right.height = this->Controls.Left.height;
+	this->Controls.Frame.height = this->Controls.Left.height + this->fontHeight;
+
 	if (updateFrame)
 		this->configureFrameSize();
 
@@ -176,7 +225,7 @@ void	Display::HUD::configureFrameSize(bool updatePositions)
 TRACE_POSITION();
 	this->Frame.width = 0;
 	this->Frame.height = (float)this->margin;
-	for (const Rectangle& rect : { this->Data, this->Solver, this->Heuristics, this->Controls, this->Movement })
+	for (const Rectangle& rect : { this->Data.Frame, this->Solver.Frame, this->Heuristics.Frame, this->Controls.Frame, this->Movement })
 	{
 		this->Frame.width = std::max(this->Frame.width, rect.width);
 		this->Frame.height += rect.height + this->margin;
@@ -215,9 +264,17 @@ TRACE_POSITION();
 void	Display::HUD::configureDataPosition(void)
 {
 TRACE_POSITION();
-	this->Data.x = this->Frame.x + this->margin;
-	this->Data.y = this->Frame.y + this->margin;
-	Display::logRectangle("HUD.Data", this->Data);
+	this->Data.Frame.x = this->Frame.x + this->margin;
+	this->Data.Frame.y = this->Frame.y + this->margin;
+	Display::logRectangle("HUD.Data.Frame", this->Data.Frame);
+
+	this->Data.Left.x = this->Data.Frame.x;
+	this->Data.Left.y = this->Data.Frame.y + this->fontHeight;
+	Display::logRectangle("HUD.Data.Left", this->Data.Left);
+
+	this->Data.Right.x = this->Data.Left.x + this->Data.Left.width + (float)this->margin;
+	this->Data.Right.y = this->Data.Left.y;
+	Display::logRectangle("HUD.Data.Right", this->Data.Right);
 
 TRACE_POSITION();
 }
@@ -225,9 +282,17 @@ TRACE_POSITION();
 void	Display::HUD::configureSolverPosition(void)
 {
 TRACE_POSITION();
-	this->Solver.x = this->Frame.x + this->margin;
-	this->Solver.y = this->Data.y + this->Data.height + this->margin;
-	Display::logRectangle("HUD.Solver", this->Solver);
+	this->Solver.Frame.x = this->Frame.x + this->margin;
+	this->Solver.Frame.y = this->Data.Frame.y + this->Data.Frame.height + this->margin;
+	Display::logRectangle("HUD.Solver.Frame", this->Solver.Frame);
+
+	this->Solver.Left.x = this->Solver.Frame.x;
+	this->Solver.Left.y = this->Solver.Frame.y + this->fontHeight;
+	Display::logRectangle("HUD.Solver.Left", this->Solver.Left);
+
+	this->Solver.Right.x = this->Solver.Left.x + this->Solver.Left.width + this->margin;
+	this->Solver.Right.y = this->Solver.Left.y;
+	Display::logRectangle("HUD.Solver.Right", this->Solver.Right);
 
 TRACE_POSITION();
 }
@@ -235,9 +300,15 @@ TRACE_POSITION();
 void	Display::HUD::configureHeuristicsPosition(void)
 {
 TRACE_POSITION();
-	this->Heuristics.x = this->Frame.x + this->margin;
-	this->Heuristics.y = this->Solver.y + this->Solver.height + this->margin;
-	Display::logRectangle("HUD.Heuristics", this->Heuristics);
+	this->Heuristics.Frame.x = this->Frame.x + this->margin;
+	this->Heuristics.Frame.y = this->Solver.Frame.y + this->Solver.Frame.height + this->margin;
+	Display::logRectangle("HUD.Heuristics.Frame", this->Heuristics.Frame);
+	this->Heuristics.Left.x = this->Heuristics.Frame.x;
+	this->Heuristics.Left.y = this->Heuristics.Frame.y + this->fontHeight;
+	Display::logRectangle("HUD.Heuristics.Left", this->Heuristics.Left);
+	this->Heuristics.Right.x = this->Heuristics.Left.x + this->Heuristics.Left.width;
+	this->Heuristics.Right.y = this->Heuristics.Left.y;
+	Display::logRectangle("HUD.Heuristics.Right", this->Heuristics.Right);
 
 TRACE_POSITION();
 }
@@ -245,9 +316,17 @@ TRACE_POSITION();
 void	Display::HUD::configureControlsPosition(void)
 {
 TRACE_POSITION();
-	this->Controls.x = this->Frame.x + this->margin;
-	this->Controls.y = this->Heuristics.y + this->Heuristics.height + this->margin;
-	Display::logRectangle("HUD.Controls", this->Controls);
+	this->Controls.Frame.x = this->Frame.x + this->margin;
+	this->Controls.Frame.y = this->Heuristics.Frame.y + this->Heuristics.Frame.height + this->margin;
+	Display::logRectangle("HUD.Controls.Frame", this->Controls.Frame);
+
+	this->Controls.Left.x = this->Controls.Frame.x;
+	this->Controls.Left.y = this->Controls.Frame.y + this->fontHeight;
+	Display::logRectangle("HUD.Controls.Left", this->Controls.Left);
+
+	this->Controls.Right.x = this->Controls.Left.x + this->Controls.Left.width;
+	this->Controls.Right.y = this->Controls.Left.y;
+	Display::logRectangle("HUD.Controls.Right", this->Controls.Right);
 
 TRACE_POSITION();
 }
@@ -256,21 +335,22 @@ void	Display::HUD::configureMovementPosition(void)
 {
 TRACE_POSITION();
 	this->Movement.x = this->Frame.x + (this->Frame.width - this->Movement.width) / 2;
-	this->Movement.y = this->Controls.y + this->Controls.height + this->margin;
+	this->Movement.y = this->Controls.Frame.y + this->Controls.Frame.height + this->margin;
 	Display::logRectangle("HUD.Movement", this->Movement);
 
 TRACE_POSITION();
 }
 
-void	Display::HUD::render(nPuzzle* puzzle, nPuzzle::State* state) const
+void	Display::HUD::render(nPuzzle* puzzle, nPuzzle::State* state, bool alternative) const
 {
 TRACE_POSITION();
 	this->renderFrame();
 	this->renderData(puzzle, state);
-	this->renderSolver(puzzle);
-	this->renderHeuristics(state, puzzle->getHeuristicIndex());
-	this->renderControls();
-	this->renderMovement();
+	this->renderSolver(puzzle, alternative);
+	this->renderHeuristics(state, puzzle->getHeuristicIndex(), alternative);
+	this->renderControls(alternative);
+	if (!alternative)
+		this->renderMovement();
 
 TRACE_POSITION();
 }
@@ -286,48 +366,51 @@ void	Display::HUD::renderData(nPuzzle* puzzle, nPuzzle::State* state) const
 {
 TRACE_POSITION();
 #if DEBUG >= DEBUG_DEBUG
-	DrawRectangleLinesEx(this->Data, 1, Color{255,23,23,255});
+	DrawRectangleLinesEx(this->Data.Frame, 1, Color{255,23,23,255});
 #endif
-	const char*		buffer;
+	const char*		buffer1;
+	const char*		buffer2;
 	static int32_t	oldPercentage = 0;
 
-	DrawText("nPuzzle", this->Data.x, this->Data.y, this->fontSize, RED);
-	for (size_t i = 1; ; i++)
+	DrawText("nPuzzle", this->Data.Frame.x, this->Data.Frame.y, this->fontSize, RED);
+	for (size_t i = 0; ; i++)
 	{
 		switch (i)
 		{
-			case 1:
+			case 0:
+				buffer1 = TextFormat("Size:");
 				if (puzzle)
-					buffer = TextFormat("Size: %ix%i", puzzle->getWidth(), puzzle->getHeight());
+					buffer2 = TextFormat("%ix%i", puzzle->getWidth(), puzzle->getHeight());
 				else
-					buffer = TextFormat("Size: %ix%i", 0, 0);
+					buffer2 = TextFormat("%ix%i", 0, 0);
 				break;
-			case 2:
-				const char * solvabilityMsg;
+			case 1:
+				buffer1 = TextFormat("Solvability:");
 				switch (puzzle->getSolvability())
 				{
 					case nPuzzle::Solvability::UNKNOWN:
-						solvabilityMsg = "Unknown";
+						buffer2 = TextFormat("Unknown");
 						break;
 					case nPuzzle::Solvability::SOLVABLE:
-						solvabilityMsg = "Solvable";
+						buffer2 = TextFormat("Solvable");
 						break;
 					case nPuzzle::Solvability::UNSOLVABLE:
-						solvabilityMsg = "Unsolvable";
+						buffer2 = TextFormat("Unsolvable");
 						break;
 				}
-				buffer = TextFormat("Solvability: %s", solvabilityMsg);
 				break;
-			case 3:
+			case 2:
+				buffer1 = TextFormat("Moves:");
 				if (state)
-					buffer = TextFormat("Moves: %i", state->getCost());
+					buffer2 = TextFormat("%i", state->getCost());
 				else
-					buffer = TextFormat("Moves: N/A");
+					buffer2 = TextFormat("N/A");
 				break;
 			default:
 				goto endLoop;
 		}
-		DrawText(buffer, this->Data.x, this->Data.y + i * this->fontHeight, this->fontSize, WHITE);
+		DrawText(buffer1, this->Data.Left.x, this->Data.Left.y + i * this->fontHeight, this->fontSize, WHITE);
+		DrawText(buffer2, this->Data.Right.x, this->Data.Right.y + i * this->fontHeight, this->fontSize, WHITE);
 	}
 	endLoop:
 	return;
@@ -335,30 +418,51 @@ TRACE_POSITION();
 TRACE_POSITION();
 }
 
-void	Display::HUD::renderSolver(nPuzzle* puzzle) const
+void	Display::HUD::renderSolver(nPuzzle* puzzle, bool alternative) const
 {
 TRACE_POSITION();
 #if DEBUG >= DEBUG_DEBUG
-	DrawRectangleLinesEx(this->Solver, 1, Color{255,23,23,255});
+	DrawRectangleLinesEx(this->Solver.Frame, 1, Color{255,23,23,255});
 #endif
 	const char*	buffer;
 	int32_t	posY;
 
 	// Header
 	{
-		posY = this->Solver.y;
+		posY = this->Solver.Frame.y;
 		buffer = TextFormat("Solver");
-		DrawText(buffer, this->Solver.x, posY, this->fontSize, RED);
+		DrawText(buffer, this->Solver.Frame.x, posY, this->fontSize, RED);
+	}
+	// Mode
+	{
+		posY = this->Solver.Left.y;
+		DrawText("Mode:", this->Solver.Left.x, posY, this->fontSize, WHITE);
+		switch (puzzle->getSearchMode())
+		{
+			case nPuzzle::searchMode::GREEDY:
+				buffer = TextFormat("%12s", "Greedy");
+				break;
+			case nPuzzle::searchMode::ASTAR:
+				buffer = TextFormat("%12s", "A*");
+				break;
+			case nPuzzle::searchMode::UNIFORM:
+				buffer = TextFormat("%12s", "Uniform-cost");
+				break;
+			default:
+				buffer = TextFormat("N/A");
+		}
+		DrawText(buffer, this->Solver.Right.x, posY, this->fontSize, WHITE);
 	}
 	// Queue
 	{
-		posY = this->Solver.y + this->fontHeight;
-		buffer = TextFormat("Queue: %7i", puzzle->getQueueSize());
-		DrawText(buffer, this->Solver.x, posY, this->fontSize, WHITE);
+		posY = this->Solver.Left.y + this->fontHeight;
+		DrawText("Queue:", this->Solver.Left.x, posY, this->fontSize, WHITE);
+		buffer = TextFormat("%12i", puzzle->getQueueSize());
+		DrawText(buffer, this->Solver.Right.x, posY, this->fontSize, WHITE);
 	}
 	// Progress
 	{
-		posY = this->Solver.y + this->fontHeight * 2;
+		posY = this->Solver.Frame.y + this->Solver.Frame.height - this->fontHeight * 2;
 		static int32_t	oldPercentage = 0;
 		int32_t	h = puzzle->getBestSolverHeuristic();
 		int32_t g = puzzle->getQueueState().getCost();
@@ -367,52 +471,71 @@ TRACE_POSITION();
 			--oldPercentage;
 		else
 			oldPercentage = percentage;
-		DrawRectangle(this->Solver.x, posY, this->Solver.width * oldPercentage / 100, this->fontHeight, GRAY);
-		DrawRectangle(this->Solver.x, posY, this->Solver.width * percentage / 100, this->fontHeight, WHITE);
-		DrawRectangleLines(this->Solver.x, posY, this->Solver.width, this->fontHeight, WHITE);
+		DrawRectangle(this->Solver.Frame.x, posY, this->Solver.Frame.width * oldPercentage / 100, this->fontHeight, GRAY);
+		DrawRectangle(this->Solver.Frame.x, posY, this->Solver.Frame.width * percentage / 100, this->fontHeight, WHITE);
+		DrawRectangleLines(this->Solver.Frame.x, posY, this->Solver.Frame.width, this->fontHeight, WHITE);
 
 		int32_t	adjustX = MeasureText("G: 000",this->fontSize) / 2;
 		buffer = TextFormat("G: %3i", g);
-		DrawText(buffer, this->Solver.x + this->Solver.width / 3 - adjustX, posY, this->fontSize, ORANGE);
+		DrawText(buffer, this->Solver.Frame.x + this->Solver.Frame.width / 3 - adjustX, posY, this->fontSize, ORANGE);
 		buffer = TextFormat("H: %3i", h);
-		DrawText(buffer, this->Solver.x + this->Solver.width * 2 / 3 - adjustX, posY, this->fontSize, ORANGE);
+		DrawText(buffer, this->Solver.Frame.x + this->Solver.Frame.width * 2 / 3 - adjustX, posY, this->fontSize, ORANGE);
+	}
+	// Movement
+	if (alternative)
+	{
+		int	posY = this->Solver.Frame.y + this->Solver.Frame.height - this->fontHeight;
+		this->DrawArrow(this->Solver.Frame.x, posY, this->fontHeight, 2);
+		this->DrawArrow(this->Solver.Frame.x + this->fontHeight, posY, this->fontHeight, 3);
+		DrawText(" Change Mode", this->Solver.Frame.x + this->fontHeight * 2, posY, this->fontSize, WHITE);
 	}
 }
 
-void	Display::HUD::renderHeuristics(nPuzzle::State* state, int32_t h) const
+void	Display::HUD::renderHeuristics(nPuzzle::State* state, int32_t h, bool alternative) const
 {
 TRACE_POSITION();
 #if DEBUG >= DEBUG_DEBUG
-	DrawRectangleLinesEx(this->Heuristics, 1, Color{255,23,23,255});
+	DrawRectangleLinesEx(this->Heuristics.Frame, 1, Color{255,23,23,255});
 #endif
 	const char* buffer;
 	Color	selected{255, 127, 0, 255};
 	Color	unselected = WHITE;
 
-	DrawText("Heuristics", this->Heuristics.x, this->Heuristics.y, this->fontSize, RED);
+	DrawText("Heuristics", this->Heuristics.Frame.x, this->Heuristics.Frame.y, this->fontSize, RED);
 	for (int32_t line = 0; line < heuristic::size; ++line)
 	{
-		buffer = TextFormat("%s: %i", heuristic::function[line].name, state->getHeuristic(line));
-		DrawText(buffer, this->Heuristics.x, this->Heuristics.y + (line + 1) * this->fontHeight, this->fontSize, (line == h) ? selected : unselected);
+		int posY = this->Heuristics.Left.y + line * this->fontHeight;
+		DrawText(heuristic::function[line].name, this->Heuristics.Left.x, posY, this->fontSize, (line == h) ? selected : unselected);
+		buffer = TextFormat(" %4i", state->getHeuristic(line));
+		DrawText(buffer, this->Heuristics.Right.x, posY, this->fontSize, (line == h) ? selected : unselected);
 	}
-	DrawText("[SHIFT] + [^]/[v]", this->Heuristics.x, this->Heuristics.y + (heuristic::size + 1) * this->fontHeight, this->fontSize, WHITE);
+	if (alternative)
+	{
+		int posY = this->Heuristics.Frame.y + this->Heuristics.Frame.height - this->fontHeight;
+		DrawArrow(this->Heuristics.Frame.x, posY, this->fontHeight, 0);
+		DrawArrow(this->Heuristics.Frame.x + this->fontHeight, posY, this->fontHeight, 1);
+		DrawText(" Change heuristic", this->Heuristics.Frame.x + this->fontHeight * 2, posY, this->fontSize, WHITE);
+	}
 TRACE_POSITION();
 }
 
-void	Display::HUD::renderControls(void) const
+void	Display::HUD::renderControls(bool alternative) const
 {
 TRACE_POSITION();
 #if DEBUG >= DEBUG_DEBUG
-	DrawRectangleLinesEx(this->Controls, 1, Color{23,255,23,255});
+	DrawRectangleLinesEx(this->Controls.Frame, 1, Color{23,255,23,255});
 #endif
-	DrawText("Controls", this->Controls.x, this->Controls.y, this->fontSize, RED);
+	DrawText("Controls", this->Controls.Frame.x, this->Controls.Frame.y, this->fontSize, RED);
 
 	const char*	buffer;
-	size_t	i = 1;
-	for (auto it = Display::hotkeyList.begin(); it != Display::hotkeyList.end(); ++it, ++i)
-	{
-		buffer = TextFormat("[%c] %s", it->first, it->second.c_str());
-		DrawText(buffer, this->Controls.x, this->Controls.y + i * this->fontHeight, this->fontSize, WHITE);
+	size_t	i = 0;
+	const std::vector<std::pair<const char*, const char*> >&	list = (alternative) ? Display::HUD::hotkeyListAlternative : Display::HUD::hotkeyList;
+
+	for (auto it = list.begin(); it != list.end(); ++it, ++i)
+{
+		buffer = TextFormat("[%s]", it->first);
+		DrawText(buffer, this->Controls.Left.x, this->Controls.Left.y + i * this->fontHeight, this->fontSize, WHITE);
+		DrawText(it->second, this->Controls.Right.x, this->Controls.Right.y + i * this->fontHeight, this->fontSize, WHITE);
 	}
 }
 
@@ -429,8 +552,62 @@ TRACE_POSITION();
 	width = length / 3;
 	DrawRectangle(this->Movement.x, this->Movement.y + (length - width) / 2, length, width, Color{192,192,192,255});
 	DrawRectangle(this->Movement.x + (length - width) / 2, this->Movement.y, width, length, Color{192,192,192,255});
-
+	//arrow UP
+	int32_t	posX = this->Movement.x + this->Movement.width / 3;
+	int32_t	posY = this->Movement.y;
+	this->DrawArrow(posX, posY, this->Movement.width / 3, 0);
+	//Arrow DOWN
+	posY += this->Movement.height * 2 / 3;
+	this->DrawArrow(posX, posY, this->Movement.width / 3, 1);
+	// Arrow LEFT
+	posX = this->Movement.x;
+	posY = this->Movement.y + this->Movement.height / 3;
+	this->DrawArrow(posX, posY, this->Movement.width / 3, 2);
+	// Arrow RIGHT
+	posX += this->Movement.width * 2 / 3;
+	this->DrawArrow(posX, posY, this->Movement.width / 3, 3);
 TRACE_POSITION();
+}
+
+void	Display::HUD::DrawArrow(int32_t x, int32_t y, int32_t size, int32_t dir) const
+{
+	const float cx = x + size * 0.5f;
+	const float cy = y + size * 0.5f;
+	const float margin = size * 0.2f;
+	const float head = size * 0.25f;
+
+	// Draw line
+	if (dir == 0 || dir == 1)
+		DrawLineEx({cx, y + margin}, {cx, y + size - margin}, 2.0f, WHITE);
+	else
+		DrawLineEx({x + margin, cy}, {x + size - margin, cy}, 2.0f, WHITE);
+	// Draw head
+	switch (dir)
+	{
+		// UP
+		case 0:
+		DrawLineEx({cx, y + margin}, {cx - head, y + margin + head}, 2.0f, WHITE);
+		DrawLineEx({cx, y + margin}, {cx + head, y + margin + head}, 2.0f, WHITE);
+			break;
+		// DOWN
+		case 1:
+			DrawLineEx({cx, y + size - margin}, {cx - head, y + size - margin - head}, 2.0f, WHITE);
+			DrawLineEx({cx, y + size - margin}, {cx + head, y + size - margin - head}, 2.0f, WHITE);
+			break;
+		// LEFT
+		case 2:
+			DrawLineEx({x + margin, cy}, {x + margin + head, cy - head}, 2.0f, WHITE);
+			DrawLineEx({x + margin, cy}, {x + margin + head, cy + head}, 2.0f, WHITE);
+			break;
+		// RIGHT
+		case 3:
+			DrawLineEx({x + size - margin, cy}, {x + size - margin - head, cy - head}, 2.0f, WHITE);
+			DrawLineEx({x + size - margin, cy}, {x + size - margin - head, cy + head}, 2.0f, WHITE);
+			break;
+		default:
+			break;
+	}
+
 }
 
 /** ************************************************************************ **\
