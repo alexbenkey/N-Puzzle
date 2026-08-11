@@ -6,7 +6,7 @@
 /*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/09 13:44:29 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/08/10 15:51:39 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/08/11 14:13:01 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -362,12 +362,11 @@ TRACE_POSITION();
 		static int32_t	oldPercentage = 0;
 		int32_t	h = puzzle->getBestSolverHeuristic();
 		int32_t g = puzzle->getQueueState().getCost();
-		int32_t	percentage = (g * 100) / (g + h);
+		int32_t	percentage = (g + h == 0) ? 0 : (g * 100) / (g + h);
 		if (percentage < oldPercentage)
 			--oldPercentage;
 		else
 			oldPercentage = percentage;
-
 		DrawRectangle(this->Solver.x, posY, this->Solver.width * oldPercentage / 100, this->fontHeight, GRAY);
 		DrawRectangle(this->Solver.x, posY, this->Solver.width * percentage / 100, this->fontHeight, WHITE);
 		DrawRectangleLines(this->Solver.x, posY, this->Solver.width, this->fontHeight, WHITE);
