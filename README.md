@@ -270,3 +270,5 @@ git push --force-with-lease
    - Inversion Distance: Uses the number of inversions in the tile sequence to estimate the minimum vertical and horizontal moves required.
 - comparison operators upgrade
 - thread for lazy lookup table on walking distance
+   - Created,but currently returns -2 while thread is still running. Is not called afterwards
+   - nPuzzle.Solver could also use threadWorker?
