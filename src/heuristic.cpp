@@ -6,7 +6,7 @@
 /*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/14 12:51:34 by othello           #+#    #+#             */
-/*   Updated: 2026/08/20 20:41:03 by othello          ###   ########.fr       */
+/*   Updated: 2026/08/21 18:59:55 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -498,7 +498,6 @@ class WalkingDistanceClass2
 			}
 			// BFS
 			queueNode	current = WalkingDistanceClass2::extractTopFromQueue(table);
-std::cerr	<< "WD BFS: "	<< current.depth	<< std::endl;
 			if (!WalkingDistanceClass2::updateVisitedList(table, current))
 				return (-2);
 			WalkingDistanceClass2::addToLookupTable(table, current);

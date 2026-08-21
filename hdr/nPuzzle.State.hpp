@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   nPuzzle.State.hpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
+/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/23 14:32:56 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/08/11 19:12:02 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/08/21 18:46:23 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,8 @@ class nPuzzle::State
 		const int32_t&	size;
 		const int32_t&	heuristicIndex;
 		const nPuzzle::searchMode&	searchMode;
-		std::map<int32_t, int32_t>	heuristic;
+		mutable std::map<int32_t, int32_t>			heuristic;
+		mutable std::map<int32_t, nPuzzle::Board>	pending;
 		int32_t	cost = 0;
 		int32_t	score = 0;
 		nPuzzle::State *previous = nullptr;
@@ -80,8 +81,10 @@ class nPuzzle::State
 
 		void	calculateAllHeuristics(const nPuzzle::Board& target);
 		void	calculateOneHeuristic(const nPuzzle::Board& target);
-		void	calculateOneHeuristic(const nPuzzle::Board& target, int32_t h);
+		void	calculateOneHeuristic(const nPuzzle::Board& target, int32_t h) const;
 		int32_t	getHeuristic(int32_t h) const;
+		void	addPendingHeuristic(int32_t h, const nPuzzle::Board& target) const;
+		void	checkPendingHeuristic(int32_t h) const;
 
 		int32_t	getCost(void) const	{ return (this->cost); }
 		// int32_t	getHeuristic(void) const {return (this->heuristic); }

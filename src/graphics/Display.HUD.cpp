@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Display.HUD.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
+/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/09 13:44:29 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/08/11 19:12:03 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/08/21 19:16:09 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -478,7 +478,16 @@ TRACE_POSITION();
 		int32_t	adjustX = MeasureText("G: 000",this->fontSize) / 2;
 		buffer = TextFormat("G: %3i", g);
 		DrawText(buffer, this->Solver.Frame.x + this->Solver.Frame.width / 3 - adjustX, posY, this->fontSize, ORANGE);
-		buffer = TextFormat("H: %3i", h);
+		switch (h)
+		{
+			case -2:	buffer = TextFormat("H: %3s", "??");	break;
+			default:
+				if (h < 0)
+					buffer = TextFormat("H: %3s", "err");
+				else
+					buffer = TextFormat("H: %3i", h);
+				break;
+		}
 		DrawText(buffer, this->Solver.Frame.x + this->Solver.Frame.width * 2 / 3 - adjustX, posY, this->fontSize, ORANGE);
 	}
 	// Movement
@@ -506,7 +515,16 @@ TRACE_POSITION();
 	{
 		int posY = this->Heuristics.Left.y + line * this->fontHeight;
 		DrawText(heuristic::function[line].name, this->Heuristics.Left.x, posY, this->fontSize, (line == h) ? selected : unselected);
-		buffer = TextFormat(" %4i", state->getHeuristic(line));
+		int32_t	h = state->getHeuristic(line);
+		switch (h)
+		{
+			case	-2:	buffer = TextFormat(" %4s", "??");	break;
+			default:
+				if (h < 0)
+					buffer = TextFormat(" %4s", "err");
+				else
+					buffer = TextFormat(" %4i", h);	break;
+		}
 		DrawText(buffer, this->Heuristics.Right.x, posY, this->fontSize, (line == h) ? selected : unselected);
 	}
 	if (alternative)

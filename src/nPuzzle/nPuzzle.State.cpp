@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   nPuzzle.State.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
+/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/23 14:38:54 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/08/11 19:07:38 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/08/21 18:59:14 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -198,14 +198,40 @@ void	nPuzzle::State::calculateOneHeuristic(const nPuzzle::Board& target)
 	this->calculateOneHeuristic(target, this->heuristicIndex);
 }
 
-void	nPuzzle::State::calculateOneHeuristic(const nPuzzle::Board& target, int32_t h)
+void	nPuzzle::State::calculateOneHeuristic(const nPuzzle::Board& target, int32_t h) const
 {
+TRACE_POSITION("%i %s", h, heuristic::function[h].name);
 	this->heuristic[h] = heuristic::getHeuristic(h, this->board, target);
+	switch (this->heuristic[h])
+	{
+		case -2:
+			this->addPendingHeuristic(h, target);
+			break;
+		default:
+			break;
+	}
 }
 
 int32_t	nPuzzle::State::getHeuristic(int32_t h) const
 {
+	this->checkPendingHeuristic(h);
 	return (this->heuristic.count(h) ? this->heuristic.at(h) : -1);
+}
+
+void	nPuzzle::State::addPendingHeuristic(int32_t h, const nPuzzle::Board& target) const
+{
+	this->pending[h] = target;
+}
+
+void	nPuzzle::State::checkPendingHeuristic(int32_t h) const
+{
+	std::map<int32_t, nPuzzle::Board>::iterator	found = this->pending.find(h);
+	if (found == this->pending.end())
+		return;
+TRACE_POSITION();
+	nPuzzle::Board	target = std::move(found->second);
+	this->pending.erase(found);
+	this->calculateOneHeuristic(target, h);
 }
 
 /** ************************************************************************ **\
