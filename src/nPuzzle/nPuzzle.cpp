@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   nPuzzle.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
+/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 16:13:50 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/08/11 19:56:00 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/09/02 17:35:21 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -433,6 +433,8 @@ void	nPuzzle::resetToStart(void)
 {
 	this->clearSolver();
 	*this->state = *this->start;
+	this->start->clearPendingHeuristics();
+	this->start->calculateAllHeuristics(this->target->getBoard());
 }
 
 /** ************************************************************************ **\

@@ -6,12 +6,13 @@
 /*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/20 16:01:17 by othello           #+#    #+#             */
-/*   Updated: 2026/08/20 20:26:08 by othello          ###   ########.fr       */
+/*   Updated: 2026/09/02 18:25:40 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "threadWorker.hpp"
 #include "Errors.hpp"
+#include "colors.hpp"
 
 #include <iostream>	// std::stream
 

@@ -6,7 +6,7 @@
 /*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/23 14:38:54 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/08/21 18:59:14 by othello          ###   ########.fr       */
+/*   Updated: 2026/09/02 18:23:07 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,63 +79,29 @@ nPuzzle::State::~State(void)
  * 
 \* ************************************************************************** */
 
-// #include <iomanip>
-
-// void	nPuzzle::State::printPuzzle(void) const
-// {
-// 	if (validPuzzle())
-// 		std::cout	<< "# Unknown puzzle solvability\n";
-// 	else
-// 		std::cout	<< "# This puzzle is unsolvable\n";
-// 	if (getPuzzleHeight() != getPuzzleWidth())
-// 		std::cout	<< "puzzle width " << getPuzzleWidth()	<< ' ';
-
-// 	std::cout	<< getPuzzleHeight()	<< '\n';
-// 	for (int32_t y = 0; y < getPuzzleHeight(); ++y)
-// 	{
-// 		for (int32_t x = 0; x < getPuzzleWidth(); ++x)
-// 		{
-// 			std::cout << std::setw(3) << tiles[y][x].getVal() << ' ';
-// 		}
-// 		std::cout << '\n';
-// 	}
-// 	std::cout	<< std::flush;
-// }
-
-#warning these functions are replaced by solvability
-bool	nPuzzle::State::validPuzzle(void) const
+void	nPuzzle::State::addTile(const int32_t value, const int32_t x, const int32_t y)
 {
-	return (validPuzzleContent() && validPuzzlePlacement());
+	this->board.addTile(value, x, y);
 }
 
-bool	nPuzzle::State::validPuzzleContent(void) const
+int32_t	nPuzzle::State::getPuzzleSize(void) const
 {
-	// std::set<int32_t>	set;
-
-	// for (size_t y = 0; y < tiles.size(); ++y)
-	// 	for (size_t x = 0; x < tiles[y].size(); ++x)
-	// 		if (!set.insert(tiles[y][x].getVal()).second)
-	// 		{
-	// 			if (tiles[y][x].getVal() == 0)
-	// 				throw std::runtime_error("Duplicate 0 tile, probably incomplete puzzle");
-	// 			else
-	// 				throw std::runtime_error("Duplicate tile value");
-	// 		}
-	// if (*set.begin() != 0)
-	// 	throw std::runtime_error("Missing 0 tile");
-	// if (*set.rbegin() != this->size - 1)
-	// 	throw std::runtime_error(std::string("Out of bounds value "));
-	// if (set.size() != (size_t)this->size)
-	// 	throw std::runtime_error("Missing numbers");
-	return (true);
+	return this->size;
 }
 
-bool	nPuzzle::State::validPuzzlePlacement(void) const
+int32_t	nPuzzle::State::getPuzzleHeight(void) const
 {
-#warning this was the note I couldnt find again XD
-	// Idont know, something with inversion and extra on even numbers
-	// Spiral sucks
-	return (true);
+	return this->height;
+}
+
+int32_t	nPuzzle::State::getPuzzleWidth(void) const
+{
+	return this->width;
+}
+
+const nPuzzle::Board&	nPuzzle::State::getBoard() const
+{
+	return this->board;
 }
 
 const nPuzzle::Board::Tile&	nPuzzle::State::getTile(const int32_t value) const
@@ -148,28 +114,16 @@ const nPuzzle::Board::Tile&	nPuzzle::State::getTile(const int32_t x, const int32
 	return (this->board.getTile(x, y));
 }
 
-// void	nPuzzle::State::printTilePos(const nPuzzle::Board::Tile& Tile) const
-// {
-// 	std::cout	<< "Found tile with value: " << Tile.getVal()
-// 				<< " at position [X,Y]:" << Tile.getxPos() << ", " << Tile.getyPos() << std::endl;
-// }
-
-void	nPuzzle::State::moveTile(const nPuzzle::Board::Tile& tile)
+const nPuzzle::Board::Tile&	nPuzzle::State::getEmptyTile() const
 {
-	// Check if the tile is adjacent to the empty square
-	int32_t	emptyX = emptyPos.x;
-	int32_t	emptyY = emptyPos.y;
-	int32_t	tileX = tile.getX();
-	int32_t	tileY = tile.getY();
+	return this->board.getEmptyTile();
+}
 
-	// check of tile is adjacent to empty square
-	if ((abs(emptyX - tileX) == 1 && emptyY == tileY) || (abs(emptyY - tileY) == 1 && emptyX == tileX))
-	{
-		//swap the values of the empty tile and the given tile, update the empty position to the tile's position
-		this->board.swapTiles(emptyX, emptyY, tileX, tileY);
-	}
-	else
-		throw std::runtime_error("Tile is not adjacent to the empty square");
+bool	nPuzzle::State::sameBoard(const State &rhs) const noexcept
+{
+	if (this == &rhs)
+		return (true);
+	return (this->board == rhs.board);
 }
 
 bool	nPuzzle::State::move(Direction direction)
@@ -180,11 +134,14 @@ bool	nPuzzle::State::move(Direction direction)
 	return (moved);
 }
 
-bool	nPuzzle::State::sameBoard(const State &rhs) const noexcept
+void	nPuzzle::State::increaseCost(void)
 {
-	if (this == &rhs)
-		return (true);
-	return (this->board == rhs.board);
+	++this->cost;
+};
+
+int32_t	nPuzzle::State::getCost(void) const
+{
+	return (this->cost);
 }
 
 void	nPuzzle::State::calculateAllHeuristics(const nPuzzle::Board& target)
@@ -214,6 +171,7 @@ TRACE_POSITION("%i %s", h, heuristic::function[h].name);
 
 int32_t	nPuzzle::State::getHeuristic(int32_t h) const
 {
+TRACE_POSITION("%i", h);
 	this->checkPendingHeuristic(h);
 	return (this->heuristic.count(h) ? this->heuristic.at(h) : -1);
 }
@@ -232,6 +190,23 @@ TRACE_POSITION();
 	nPuzzle::Board	target = std::move(found->second);
 	this->pending.erase(found);
 	this->calculateOneHeuristic(target, h);
+}
+
+void	nPuzzle::State::clearPendingHeuristics(void)
+{
+	this->heuristic.clear();
+	this->pending.clear();
+}
+
+
+void	nPuzzle::State::setPrevious(nPuzzle::State *state)
+{
+	this->previous = state;
+}
+
+const nPuzzle::State*	nPuzzle::State::getPrevious(void) const
+{
+	return this->previous;
 }
 
 /** ************************************************************************ **\
@@ -310,7 +285,7 @@ nPuzzle::State	&nPuzzle::State::operator=(const State &src)
 			std::to_string(this->width) + "/" + std::to_string(src.width) + ", h: " + 
 			std::to_string(this->height) + "/" + std::to_string(src.height));
 	this->board = src.board;
-	this->emptyPos = src.emptyPos;
+	// this->emptyPos = src.emptyPos;
 	this->cost = src.cost;
 	this->heuristic = src.heuristic;
 	this->score = src.score;

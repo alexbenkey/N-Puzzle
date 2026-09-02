@@ -6,7 +6,7 @@
 /*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/23 14:32:56 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/08/21 18:46:23 by othello          ###   ########.fr       */
+/*   Updated: 2026/09/02 18:24:46 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,17 +17,12 @@
 # include "nPuzzle.Board.hpp"
 
 # include <aio.h>	// int32_t
-# include <vector>	// std::vector
 # include <map>	// std::map
 
 class nPuzzle::State
 {
 	private:
 		Board	board;
-		struct Position {
-			int32_t x;
-			int32_t y;
-		};
 
 		const int32_t&	width;
 		const int32_t&	height;
@@ -40,59 +35,52 @@ class nPuzzle::State
 		int32_t	score = 0;
 		nPuzzle::State *previous = nullptr;
 
-		Position emptyPos = {0, 0};
+	private:
 
-		bool	validPuzzleContent(void) const;
-		bool	validPuzzlePlacement(void) const;
+		// Board getters
+		bool	sameBoard(const State &rhs) const noexcept;
+
+		// Moving Tiles
+		void	increaseCost(void);
+
+		// Solution
+		void	addPendingHeuristic(int32_t h, const nPuzzle::Board& target) const;
+		void	checkPendingHeuristic(int32_t h) const;
 
 	public:
 		State(const nPuzzle& puzzle);
 		State(const State &src);
 		~State(void);
 
-		int32_t	getPuzzleHeight(void) const { return this->height; }
-		int32_t	getPuzzleWidth(void) const { return this->width; }
-		int32_t	getPuzzleSize(void) const { return this->size; }
-		// int32_t	getUsedHeuristic(void) const {return this->usedHeuristic; }
+		// Parsing
+		void	addTile(const int32_t value, const int32_t x, const int32_t y);
 
-		// bool	setUsedHeuristic(int32_t value);
-
-		void	addTile(const int32_t value, const int32_t x, const int32_t y) { this->board.addTile(value, x, y); }
-		const nPuzzle::Board&	getBoard() const { return this->board; }
+		// Board getters
+		int32_t	getPuzzleSize(void) const;
+		int32_t	getPuzzleHeight(void) const;
+		int32_t	getPuzzleWidth(void) const;
+		const nPuzzle::Board&	getBoard() const;
 		const nPuzzle::Board::Tile&	getTile(const int32_t value) const;
 		const nPuzzle::Board::Tile&	getTile(const int32_t x, const int32_t y) const;
-		const nPuzzle::Board::Tile&	getEmptyTile() const { return this->board.getEmptyTile(); }
+		const nPuzzle::Board::Tile&	getEmptyTile() const;
 
-		void setPrevious(nPuzzle::State *state) {this->previous = state;}
-		const nPuzzle::State *getPrevious(void) const { return this->previous;}
-
-		// void	printPuzzle(void) const;
-		bool	validPuzzle(void) const;
-		// void	printTilePos(const Tile& Tile) const;
-		int32_t	getTileValue(const int32_t x, const int32_t y) const;
-
-		void	setEmptyPos(int32_t x, int32_t y) { emptyPos = {x, y}; }
-		Position	getEmptyPos() const {return emptyPos; }
-
-		void	moveTile(const nPuzzle::Board::Tile& tile);
-		void	increaseCost(void) { ++this->cost; };
-
+		// Moving Tiles
 		bool	move(Direction direction);
+		int32_t	getCost(void) const;
 
+		// Calculation
 		void	calculateAllHeuristics(const nPuzzle::Board& target);
 		void	calculateOneHeuristic(const nPuzzle::Board& target);
 		void	calculateOneHeuristic(const nPuzzle::Board& target, int32_t h) const;
 		int32_t	getHeuristic(int32_t h) const;
-		void	addPendingHeuristic(int32_t h, const nPuzzle::Board& target) const;
-		void	checkPendingHeuristic(int32_t h) const;
+		void	clearPendingHeuristics(void);
 
-		int32_t	getCost(void) const	{ return (this->cost); }
-		// int32_t	getHeuristic(void) const {return (this->heuristic); }
+		// Solution
+		void	setPrevious(nPuzzle::State *state);
+		const nPuzzle::State*	getPrevious(void) const;
 
-		bool	sameBoard(const State &rhs) const noexcept;
-
+		// operator overloads
 		State	&operator=(const State &src);
-
 		bool	operator<(const State &rhs) const noexcept;
 		bool	operator<=(const State &rhs) const noexcept;
 		bool	operator>(const State &rhs) const noexcept;

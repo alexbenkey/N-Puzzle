@@ -6,7 +6,7 @@
 /*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/29 17:52:09 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/09/02 16:39:54 by othello          ###   ########.fr       */
+/*   Updated: 2026/09/02 17:12:37 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,7 +136,6 @@ TRACE_POSITION();
 		state->calculateOneHeuristic(target);
 	// Store state in Queue
 	this->addToQueue(state);
-TRACE_POSITION();
 }
 
 void	nPuzzle::Solver::addToQueue(nPuzzle::State* state)
@@ -218,6 +217,7 @@ const nPuzzle::State&	nPuzzle::Solver::getTopState(void) const
 
 void	nPuzzle::Solver::solve(void)
 {
+TRACE_POSITION();
 	this->setCalculateAllHeuristics(false);
 	this->setWorkerState(ThreadWorker::State::RUNNING);
 }
@@ -354,13 +354,16 @@ std::vector<const nPuzzle::State*>	nPuzzle::Solver::getSolution(void) const
 void	nPuzzle::Solver::clearQueue(void)
 {
 	this->thread.setState(ThreadWorker::State::IDLE);
-	std::lock_guard<std::mutex>	lock(this->thread.mutex);
+	{
+		std::lock_guard<std::mutex>	lock(this->thread.mutex);
 
-	for (nPuzzle::State* state: this->owner)
-		delete state;
-	this->owner.clear();
-	this->queue = {};
-	this->visited.clear();
+		for (nPuzzle::State* state: this->owner)
+			delete state;
+		this->owner.clear();
+		this->queue = {};
+		this->visited.clear();
+	}
+	this->determineIsSolved();
 }
 
 /** ************************************************************************ **\
