@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   nPuzzle.Solver.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
+/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/29 17:52:09 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/08/10 20:04:31 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/09/02 16:39:54 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,8 @@
 
 nPuzzle::Solver::Solver(nPuzzle& puzzle):
 	puzzle(puzzle),
-	heuristicIndex(puzzle.heuristicIndex)
+	heuristicIndex(puzzle.heuristicIndex),
+	thread([this]{ nPuzzle::Solver::solveStepWorker(); })
 {
 #if DEBUG >= DEBUG_TRACE
 	std::cout	<< C_DGREEN	<< "Default constructor "
@@ -39,7 +40,6 @@ nPuzzle::Solver::Solver(nPuzzle& puzzle):
 				<< C_DGREEN	<< " called."
 				<< C_RESET	<< std::endl;
 #endif
-	this->workerState = STOP;
 	this->solved = false;
 	this->solvability.store(nPuzzle::Solvability::UNKNOWN);
 }
@@ -58,7 +58,7 @@ nPuzzle::Solver::~Solver(void)
 				<< C_DRED	<< " called"
 				<< C_RESET	<< std::endl;
 #endif
-	this->stopWorker();
+	this->thread.setState(ThreadWorker::State::STOP);
 }
 
 /** ************************************************************************ **\
@@ -67,61 +67,27 @@ nPuzzle::Solver::~Solver(void)
  * 
 \* ************************************************************************** */
 
-WorkerState	nPuzzle::Solver::getWorkerState(void) const
+ThreadWorker::State	nPuzzle::Solver::getWorkerState(void) const
 {
-	std::lock_guard<std::mutex>	lock(this->mutex);
-
-	return (this->workerState);
+	return (this->thread.getState());
 }
 
-void	nPuzzle::Solver::setWorkerState(WorkerState state)
+void	nPuzzle::Solver::setWorkerState(ThreadWorker::State state)
 {
-	{
-		std::lock_guard<std::mutex>	lock(this->mutex);
-		this->workerState = state;
-	}
-	this->workerCondition.notify_one();
-}
-
-void	nPuzzle::Solver::ensureActiveWorker(void)
-{
-	if (this->worker.joinable())
-		return ;
-	this->setWorkerState(WorkerState::IDLE);
-	this->worker = std::thread(&nPuzzle::Solver::solveWorker, this);
-}
-
-void	nPuzzle::Solver::stopWorker(void)
-{
-	this->setWorkerState(WorkerState::STOP);
-	if (this->worker.joinable())
-		this->worker.join();
+	this->thread.setState(state);
 }
 
 void	nPuzzle::Solver::setCalculateAllHeuristics(bool all)
 {
-	std::unique_lock<std::mutex>	lock(this->mutex);
+	std::unique_lock<std::mutex>	lock(this->thread.mutex);
 
 	this->calculateAllHeuristics = all;
 }
 bool	nPuzzle::Solver::getCalculateAllHeuristics(void) const
 {
-	std::unique_lock<std::mutex>	lock(this->mutex);
+	std::unique_lock<std::mutex>	lock(this->thread.mutex);
 
 	return (this->calculateAllHeuristics);
-}
-
-void	nPuzzle::Solver::solveWorker(void)
-{
-	while (this->getWorkerState() > WorkerState::STOP)
-	{
-		std::unique_lock<std::mutex>	lock(this->mutex);
-		this->workerCondition.wait(lock, [this]() { return this->workerState != WorkerState::IDLE; });
-		lock.unlock();
-		this->solveStepWorker();
-		if (this->getWorkerState() == WorkerState::RUNONE)
-			this->setWorkerState(WorkerState::IDLE);
-	}
 }
 
 void	nPuzzle::Solver::solveStepWorker(void)
@@ -175,7 +141,7 @@ TRACE_POSITION();
 
 void	nPuzzle::Solver::addToQueue(nPuzzle::State* state)
 {
-	std::lock_guard<std::mutex>	lock(this->mutex);
+	std::lock_guard<std::mutex>	lock(this->thread.mutex);
 
 	const nPuzzle::Board&	board = state->getBoard();
 	auto found = this->visited.find(&board);
@@ -197,7 +163,7 @@ void	nPuzzle::Solver::addToQueue(nPuzzle::State* state)
 
 nPuzzle::State*	nPuzzle::Solver::popQueue(void)
 {
-	std::lock_guard<std::mutex>	lock(this->mutex);
+	std::lock_guard<std::mutex>	lock(this->thread.mutex);
 	while (!this->queue.empty())
 	{
 		nPuzzle::State*	top = this->queue.top();
@@ -218,14 +184,14 @@ nPuzzle::State*	nPuzzle::Solver::popQueue(void)
 
 size_t	nPuzzle::Solver::getQueueSize(void) const
 {
-	std::lock_guard<std::mutex>	lock(this->mutex);
+	std::lock_guard<std::mutex>	lock(this->thread.mutex);
 
 	return (this->queue.size());
 }
 
 int32_t	nPuzzle::Solver::getTopCost(void) const
 {
-	std::lock_guard<std::mutex>	lock(this->mutex);
+	std::lock_guard<std::mutex>	lock(this->thread.mutex);
 
 	if (this->queue.empty())
 		return (this->puzzle.start->getCost());
@@ -234,7 +200,7 @@ int32_t	nPuzzle::Solver::getTopCost(void) const
 
 int32_t	nPuzzle::Solver::getTopHeuristic(void) const
 {
-	std::lock_guard<std::mutex> lock(this->mutex);
+	std::lock_guard<std::mutex>	lock(this->thread.mutex);
 
 	if (this->queue.empty())
 		return (this->puzzle.state->getHeuristic(this->heuristicIndex));
@@ -243,7 +209,7 @@ int32_t	nPuzzle::Solver::getTopHeuristic(void) const
 
 const nPuzzle::State&	nPuzzle::Solver::getTopState(void) const
 {
-	std::lock_guard<std::mutex>	lock(this->mutex);
+	std::lock_guard<std::mutex>	lock(this->thread.mutex);
 
 	if (this->queue.empty())
 		return (*this->puzzle.state);
@@ -252,31 +218,30 @@ const nPuzzle::State&	nPuzzle::Solver::getTopState(void) const
 
 void	nPuzzle::Solver::solve(void)
 {
-	this->ensureActiveWorker();
 	this->setCalculateAllHeuristics(false);
-	this->setWorkerState(WorkerState::RUNALL);
+	this->setWorkerState(ThreadWorker::State::RUNNING);
 }
 
 bool	nPuzzle::Solver::solveStep(bool calculateAllHeuristics)
 {
-	this->ensureActiveWorker();
 	this->setCalculateAllHeuristics(calculateAllHeuristics);
-	this->setWorkerState(WorkerState::RUNONE);
+	this->setWorkerState(ThreadWorker::State::RUNONCE);
 	return (this->isSolved());
 }
 
 void	nPuzzle::Solver::determineIsSolved(void)
 {
-	std::lock_guard<std::mutex>	lock(this->mutex);
+	std::lock_guard<std::mutex>	lock(this->thread.mutex);
 
 	this->solved = !this->queue.empty() && this->queue.top()->getHeuristic(this->heuristicIndex) == 0;
 	if (this->solved == true)
-		this->workerState = WorkerState::IDLE;
+		this->thread.setState(ThreadWorker::State::IDLE);
+		// this->workerState = WorkerState::IDLE;
 }
 
 bool	nPuzzle::Solver::isSolved(void)
 {
-	std::lock_guard<std::mutex>	lock(this->mutex);
+	std::lock_guard<std::mutex>	lock(this->thread.mutex);
 
 	return (this->solved);
 }
@@ -351,14 +316,14 @@ void	nPuzzle::Solver::determineSolvability(void)
 
 nPuzzle::Solvability	nPuzzle::Solver::getSolvability(void) const
 {
-	std::lock_guard<std::mutex>	lock(this->mutex);
+	std::lock_guard<std::mutex>	lock(this->thread.mutex);
 
 	return (this->solvability.load());
 }
 
 void	nPuzzle::Solver::setSolvability(nPuzzle::Solvability val)
 {
-	std::lock_guard<std::mutex>	lock(this->mutex);
+	std::lock_guard<std::mutex>	lock(this->thread.mutex);
 
 	this->solvability.store(val);
 }
@@ -366,7 +331,7 @@ void	nPuzzle::Solver::setSolvability(nPuzzle::Solvability val)
 std::vector<const nPuzzle::State*>	nPuzzle::Solver::getSolution(void) const
 {
 	std::vector<const nPuzzle::State*>	path;
-	std::lock_guard<std::mutex>	lock(this->mutex);
+	std::lock_guard<std::mutex>	lock(this->thread.mutex);
 
 	if (this->queue.empty())
 		return path;
@@ -388,8 +353,8 @@ std::vector<const nPuzzle::State*>	nPuzzle::Solver::getSolution(void) const
 
 void	nPuzzle::Solver::clearQueue(void)
 {
-	this->stopWorker();
-	std::lock_guard<std::mutex>	lock(this->mutex);
+	this->thread.setState(ThreadWorker::State::IDLE);
+	std::lock_guard<std::mutex>	lock(this->thread.mutex);
 
 	for (nPuzzle::State* state: this->owner)
 		delete state;
@@ -397,7 +362,6 @@ void	nPuzzle::Solver::clearQueue(void)
 	this->queue = {};
 	this->visited.clear();
 }
-
 
 /** ************************************************************************ **\
  * 

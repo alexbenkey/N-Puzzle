@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   displayNPuzzle.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
+/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/02 16:48:19 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/08/11 20:05:11 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/09/02 16:42:10 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@
 #include "heuristic.hpp"
 
 #include <iostream>	// std::stream
-#include <thread>	// std::thread
 
 static void	ConfigureTrace(void);
 static void	ProcessUserInput(int pressedKey, nPuzzle* puzzle, Display* display);

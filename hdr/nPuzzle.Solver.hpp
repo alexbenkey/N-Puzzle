@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   nPuzzle.Solver.hpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
+/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/29 17:35:11 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/08/10 20:10:45 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/09/02 16:38:20 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,24 +14,12 @@
 # define NPUZZLE_SOLVER_HPP
 
 # include "nPuzzle.hpp"
-
-# include <thread>	// std::thread
-# include <mutex>	// std::mutex
-# include <condition_variable>	// std::condition_variable
+# include "threadWorker.hpp"
 
 # include <queue>	// std::priority_queue
 # include <unordered_map>	// std::unordered_map
 # include <vector>	// std::vector
-# include <mutex>	// std::mutex
 # include <atomic>	// std::atomic
-
-enum WorkerState
-{
-	STOP,
-	IDLE,
-	RUNONE,
-	RUNALL,
-};
 
 #pragma region "Comparator functions for contain sorting"
 struct BoardPtrHash
@@ -60,24 +48,18 @@ class nPuzzle::Solver
 #warning not sure how this interacts with mutexes
 		std::atomic<nPuzzle::Solvability>	solvability{nPuzzle::Solvability::UNKNOWN};
 
-		std::thread				worker;
-		mutable std::mutex		mutex;
-		WorkerState				workerState;
-		std::condition_variable	workerCondition;
+		ThreadWorker	thread;
 
 		std::priority_queue<nPuzzle::State*, std::vector<nPuzzle::State*>, StateCompare>	queue;
 		std::unordered_map<const nPuzzle::Board*, nPuzzle::State*, BoardPtrHash, BoardPtrEqual>	visited;
 		std::vector<nPuzzle::State*>	owner;
 
-		void	setWorkerState(WorkerState state);
-		WorkerState	getWorkerState(void) const;
-		void	ensureActiveWorker(void);
-		void	stopWorker(void);
+		void	setWorkerState(ThreadWorker::State state);
+		ThreadWorker::State	getWorkerState(void) const;
 
 		void	setCalculateAllHeuristics(bool all);
 		bool	getCalculateAllHeuristics(void) const;
 
-		void	solveWorker(void);
 		void	solveStepWorker(void);
 		void	processState(nPuzzle::State* state);
 		void	addToQueue(nPuzzle::State* state);

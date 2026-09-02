@@ -269,5 +269,3 @@ git push --force-with-lease
    - Walking Distance (WD): Calculates the minimum moves required for tiles to reach their goals in separate 1D projections (rows and columns), accounting for tile conflicts. 
    - Inversion Distance: Uses the number of inversions in the tile sequence to estimate the minimum vertical and horizontal moves required.
 - comparison operators upgrade
-- thread for lazy lookup table on walking distance
-   - nPuzzle.Solver could also use threadWorker?
