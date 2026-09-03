@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Display.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
+/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/02 17:58:28 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/08/11 19:34:46 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/09/03 20:59:35 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,15 +55,6 @@ Display::Display(nPuzzle* puzzle):
 
 }
 
-// Display::Display(const Display &src)
-// {
-// 	*this = src;
-// 	std::cout	<< C_DGREEN	<< "Copy constructor "
-// 				<< C_GREEN	<< __func__
-// 				<< C_DGREEN	<< " called."
-// 				<< C_RESET	<< std::endl;
-// }
-
 /** ************************************************************************ **\
  * 
  * 	Deconstructors
@@ -100,17 +91,12 @@ void	Display::setPuzzle(nPuzzle* puzzle)
 	this->configureScreen();
 	this->configureSizes();
 	this->configurePositions();
-#if DEBUG >= DEBUG_TRACE
-	LOG_AS_TRACE();
-#endif
 }
 
 void	Display::configureMinimumSizes(void)
 {
-#if DEBUG >= DEBUG_TRACE
-	LOG_AS_TRACE("Configuring Minimum sizes");
-#elif DEBUG >= DEBUG_INFO
-	TraceLog(LOG_INFO, "\tConfiguring Minimum sizes");
+#if DEBUG >= DEBUG_INFO
+	LOG_AS_INFO("Configuring Minimum sizes");
 #endif
 	int	width;
 	int	height;
@@ -147,17 +133,12 @@ void	Display::configureMinimumFrameSizes()
 	this->Frame.height = std::min(this->Frame.height * this->tile.height, 
 								(float)GetMonitorHeight(GetCurrentMonitor()) - 2 * this->margin);
 	Display::logRectangle("Frame", this->Frame);
-#if DEBUG >= DEBUG_TRACE
-	LOG_AS_TRACE();
-#endif
 }
 
 void	Display::configureMaximumSizes(void)
 {
-#if DEBUG >= DEBUG_TRACE
-	LOG_AS_TRACE("Configuring Maximum sizes");
-#elif DEBUG >= DEBUG_INFO
-	TraceLog(LOG_INFO, "\tConfiguring Maximum sizes");
+#if DEBUG >= DEBUG_INFO
+	LOG_AS_INFO("Configuring Maximum sizes");
 #endif
 	int	monitor;
 	int	width;
@@ -176,17 +157,12 @@ void	Display::configureMaximumSizes(void)
 #endif
 	SetWindowMaxSize(width, height);
 
-#if DEBUG >= DEBUG_TRACE
-	LOG_AS_TRACE();
-#endif
 }
 
 void	Display::configureScreen(void)
 {
-#if DEBUG >= DEBUG_TRACE
+#if DEBUG >= DEBUG_INFO
 	LOG_AS_TRACE("Configuring Screen Size");
-#elif DEBUG >= DEBUG_INFO
-	TraceLog(LOG_INFO, "\tConfiguring Screen Size");
 #endif
 	int	width = (int)this->HUD->width() + (int)this->Frame.width + this->margin * 3;
 	int	height =(int)std::max(this->HUD->height(), this->Frame.height) + this->margin * 2;
@@ -194,23 +170,15 @@ void	Display::configureScreen(void)
 	TraceLog(LOG_INFO, "Setting Window: %4ix%-4i", width, height);
 	SetWindowSize(width, height);
 	SetWindowPosition(DEFAULT_MARGIN, DEFAULT_MARGIN + 100);
-#if DEBUG >= DEBUG_TRACE
-	LOG_AS_TRACE();
-#endif
 }
 
 void	Display::configureSizes(void)
 {
-#if DEBUG >= DEBUG_TRACE
+#if DEBUG >= DEBUG_INFO
 	LOG_AS_TRACE("Configuring Frame and Tile Sizes");
-#elif DEBUG >= DEBUG_INFO
-	TraceLog(LOG_INFO, "\tConfiguring Frame and Tile sizes");
 #endif
 	this->configureFrameSize();
 	this->configureTileSize();
-#if DEBUG >= DEBUG_TRACE
-	LOG_AS_TRACE();
-#endif
 }
 
 void	Display::configureFrameSize(void)
@@ -221,9 +189,6 @@ void	Display::configureFrameSize(void)
 	this->Frame.width = (float)GetScreenWidth() - this->HUD->width() - 3 * (float)this->margin;
 	this->Frame.height = GetScreenHeight() - 2 * (float)this->margin;
 	Display::logRectangle("Frame", this->Frame);
-#if DEBUG >= DEBUG_TRACE
-	LOG_AS_TRACE();
-#endif
 }
 
 void	Display::configureTileSize(void)
@@ -245,9 +210,6 @@ void	Display::configureTileSize(void)
 	this->tile.width = Frame.width / this->tile.width;
 	this->tile.height = Frame.height / this->tile.height;
 	Display::logRectangle("tile", this->tile);
-#if DEBUG >= DEBUG_TRACE
-	LOG_AS_TRACE();
-#endif
 }
 
 bool	Display::setFontSize(const float size, bool updateSizes, bool includeHUD)
@@ -267,9 +229,6 @@ bool	Display::setFontSize(const float size, bool updateSizes, bool includeHUD)
 	if (includeHUD)
 		this->HUD->setFontsize(size, updateSizes);
 	return (true);
-#if DEBUG >= DEBUG_TRACE
-	LOG_AS_TRACE();
-#endif
 }
 
 bool	Display::setMargin(const int margin, bool updateSizes, bool includeHUD)
@@ -288,23 +247,15 @@ bool	Display::setMargin(const int margin, bool updateSizes, bool includeHUD)
 	if (includeHUD)
 		this->HUD->setMargin(margin, updateSizes);
 	return (true);
-#if DEBUG >= DEBUG_TRACE
-	LOG_AS_TRACE();
-#endif
 }
 
 void	Display::configurePositions(void)
 {
-#if DEBUG >= DEBUG_TRACE
-	LOG_AS_TRACE("Configuring Positions");
-#elif DEBUG >= DEBUG_INFO
-	TraceLog(LOG_INFO, "\tConfiguring Positions");
+#if DEBUG >= DEBUG_INFO
+	LOG_AS_INFO("Configuring Positions");
 #endif
 	this->HUD->configurePositions();
 	this->configureFramePosition();
-#if DEBUG >= DEBUG_TRACE
-	LOG_AS_TRACE();
-#endif
 }
 
 void	Display::configureFramePosition(void)
@@ -318,9 +269,6 @@ void	Display::configureFramePosition(void)
 	this->tile.x = this->Frame.x;
 	this->tile.y = this->Frame.y;
 	Display::logRectangle("tile", this->tile);
-#if DEBUG >= DEBUG_TRACE
-	LOG_AS_TRACE();
-#endif
 }
 
 void	Display::reconfigure(void)
@@ -332,9 +280,6 @@ void	Display::reconfigure(void)
 	this->configureMaximumSizes();
 	this->configureSizes();
 	this->configurePositions();
-#if DEBUG >= DEBUG_TRACE
-	LOG_AS_TRACE();
-#endif
 }
 
 void	Display::logRectangle(const char* name, const Rectangle& rect)
@@ -421,8 +366,11 @@ TRACE_POSITION();
 				DrawText(std::to_string(val).c_str(), this->tile.x + xOffset, this->tile.y + yOffset, 20, ORANGE);
 			}
 		}
+}
 
-	TRACE_POSITION();
+bool	Display::isPuzzleSolved(void) const
+{
+	return this->puzzle != nullptr && this->puzzle->isSolved();
 }
 
 void Display::startSolutionAnimation(void)
@@ -451,7 +399,7 @@ void Display::renderSolutionAnimation(void)
 
 	if (this->solutionPlaying && (currentTime - this->lastSolutionStep >= this->solutionStepDelay))
 	{
-		if (this->solutionIndex + 1 < this->solutionPath.size())
+		if (this->solutionIndex + 1 < (int32_t)this->solutionPath.size())
 		{
 			++this->solutionIndex;
 			this->lastSolutionStep = currentTime;

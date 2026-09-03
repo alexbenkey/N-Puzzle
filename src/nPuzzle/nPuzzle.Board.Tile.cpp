@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   nPuzzle.Board.Tile.cpp                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
+/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/23 17:58:21 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/29 21:11:24 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/09/03 20:45:21 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ void			nPuzzle::Board::Tile::setVal(const int32_t val)
 	this->value = val;
 }
 
-const int32_t	nPuzzle::Board::Tile::getVal(void) const
+int32_t	nPuzzle::Board::Tile::getVal(void) const
 {
 	return (this->value);
 }
@@ -72,7 +72,7 @@ void			nPuzzle::Board::Tile::setX(const int32_t x)
 	this->x = x;
 }
 
-const int32_t	nPuzzle::Board::Tile::getX(void) const
+int32_t	nPuzzle::Board::Tile::getX(void) const
 {
 	return (this->x);
 }
@@ -82,7 +82,7 @@ void			nPuzzle::Board::Tile::setY(const int32_t y)
 	this->y = y;
 }
 
-const int32_t	nPuzzle::Board::Tile::getY(void) const
+int32_t	nPuzzle::Board::Tile::getY(void) const
 {
 	return (this->y);
 }
@@ -92,6 +92,7 @@ void	nPuzzle::Board::Tile::swapCoords(Tile& other)
 	std::swap(this->x, other.x);
 	std::swap(this->y, other.y);
 }
+
 /** ************************************************************************ **\
  * 
  * 	Operators

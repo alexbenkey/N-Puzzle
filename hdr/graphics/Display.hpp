@@ -56,6 +56,12 @@ class Display
 		float	fontHeight;
 		int		margin;
 
+		std::vector<const nPuzzle::State*> solutionPath;
+		int32_t solutionIndex;
+		double 	lastSolutionStep;
+		double 	solutionStepDelay;
+		bool	solutionPlaying;
+
 		// Sizes
 		void	configureMinimumSizes(void);
 		void	configureMaximumSizes(void);
@@ -76,18 +82,8 @@ class Display
 		void	renderBoard(const nPuzzle::Board& board);
 		void	renderTiles(const nPuzzle::Board& board);
 
-		// Solution
-		std::vector<const nPuzzle::State*> solutionPath;
-		int32_t solutionIndex;
-		double 	lastSolutionStep;
-		double 	solutionStepDelay;
-		bool	solutionPlaying;
-
-	protected:
-
 	public:
 		Display(nPuzzle* puzzle);
-		// Display(const Display &src);
 		~Display(void);
 
 		void	setPuzzle(nPuzzle* puzzle);
@@ -97,6 +93,7 @@ class Display
 		void	reconfigure(void);
 		bool	setFontSize(const float size, bool updateSizes = true, bool includeHUD = true);
 		bool	setMargin(const int margin, bool updateSizes = true, bool includeHUD = true);
+
 		// Rendering
 		void	render(void);
 		void	renderHUD(bool shiftPressed = false);
@@ -105,12 +102,11 @@ class Display
 		void	renderAsQueueState(void);
 		void	renderAsTargetState(void);
 
+		// Solution animation
+		bool	isPuzzleSolved(void) const;
 		void 	startSolutionAnimation(void);
 		void 	resetSolutionAnimation(void);
 		void 	renderSolutionAnimation(void);
-
-		bool	isPuzzleSolved(void) const{return this->puzzle != nullptr && this->puzzle->isSolved();}
-		// Display	&operator=(const Display &src);
 };
 
 #endif

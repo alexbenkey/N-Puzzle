@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Display.HUD.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
+/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/23 21:26:59 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/08/11 18:59:22 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/09/03 20:29:05 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,12 +31,14 @@ struct Display::HUD
 			Rectangle	Left;
 			Rectangle	Right;
 		};
+
 		Rectangle		Frame;
 		DoubleRectangle	Data;
 		DoubleRectangle	Solver;
 		DoubleRectangle	Heuristics;
 		DoubleRectangle	Controls;
 		Rectangle		Movement;
+
 		// Positions
 		void	configureFramePosition(void);
 		void	configureDataPosition(void);
@@ -44,11 +46,12 @@ struct Display::HUD
 		void	configureHeuristicsPosition(void);
 		void	configureControlsPosition(void);
 		void	configureMovementPosition(void);
+
 		// Render
 		void	renderFrame(void) const;
-		void	renderData(nPuzzle* puzzle, nPuzzle::State* state) const;
+		void	renderData(nPuzzle* puzzle, const nPuzzle::State* state) const;
 		void	renderSolver(nPuzzle* puzzle, bool alternative = false) const;
-		void	renderHeuristics(nPuzzle::State* state, int32_t h, bool alternative = false) const;
+		void	renderHeuristics(const nPuzzle::State* state, int32_t h, bool alternative = false) const;
 		void	renderControls(bool alternative = false) const;
 		void	renderMovement(void) const;
 
@@ -61,10 +64,11 @@ struct Display::HUD
 		void	setMargin(const int& margin, bool updateSizes = true);
 		void	setFontsize(const float& fontSize, bool updateSizes = true);
 
-		float	width(void) const	{ return (this->Frame.width); }
-		float	height(void) const	{ return (this->Frame.height); }
-		float	x(void) const		{ return (this->Frame.x); }
-		float	y(void) const		{ return (this->Frame.y); }
+		float	width(void) const;
+		float	height(void) const;
+		float	x(void) const;
+		float	y(void) const;
+
 		// Sizes
 		void	configureSizes(bool updatePositions = false);
 		void	configureDataSize(bool updateFrame = true);
@@ -73,10 +77,12 @@ struct Display::HUD
 		void	configureControlSize(bool updateFrame = true);
 		void	configureMovementSize(bool updateFrame = true);
 		void	configureFrameSize(bool updatePositions = true);
+
 		// Positions
 		void	configurePositions(void);
+
 		// Render
-		void	render(nPuzzle* puzzle, nPuzzle::State* state, bool alternative = false) const;
+		void	render(nPuzzle* puzzle, const nPuzzle::State* state, bool alternative = false) const;
 };
 
 #endif

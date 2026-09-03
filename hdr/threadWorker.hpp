@@ -6,7 +6,7 @@
 /*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/20 14:31:13 by othello           #+#    #+#             */
-/*   Updated: 2026/08/20 18:53:18 by othello          ###   ########.fr       */
+/*   Updated: 2026/09/03 21:03:24 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,10 +39,10 @@ class ThreadWorker
 
 	private:
 		std::thread				thread;
+		std::function<void()>	function;
 		mutable std::mutex		internalMutex;
 		ThreadWorker::State		state;
 		std::condition_variable	condition;
-		std::function<void()>	function;
 };
 
 #endif

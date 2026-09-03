@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   nPuzzle.Board.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
+/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/23 17:58:21 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/08/10 15:51:12 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/09/03 20:39:25 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,17 +87,17 @@ void	nPuzzle::Board::setSize(const int32_t w, const int32_t h)
 	this->TilesByVal.resize(this->size);
 }
 
-const int32_t	nPuzzle::Board::getWidth(void) const
+int32_t	nPuzzle::Board::getWidth(void) const
 {
 	return (this->width);
 }
 
-const int32_t	nPuzzle::Board::getHeight(void) const
+int32_t	nPuzzle::Board::getHeight(void) const
 {
 	return (this->height);
 }
 
-const int32_t	nPuzzle::Board::getSize(void) const
+int32_t	nPuzzle::Board::getSize(void) const
 {
 	return (this->size);
 }
@@ -251,52 +251,6 @@ std::ostream&	operator<<(std::ostream& os, const nPuzzle::Board& board)
 		else
 			os << ' ';
 	}
-	// os << "TilesByVal:\n";
-
-	// for (int32_t i = 0; i < board.size; i++)
-	// {
-	// 	const auto& tile = board.TilesByVal.at(i);
-
-	// 	os << i << ": ";
-
-	// 	if (tile)
-	// 	{
-	// 		os << tile->getVal()
-	// 		<< " (" << tile->getX()
-	// 		<< ", " << tile->getY()
-	// 		<< ")";
-	// 	}
-	// 	else
-	// 	{
-	// 		os << "nullptr";
-	// 	}
-
-	// 	os << '\n';
-	// }
-
-
-	// os << "\nTilesByPos:\n";
-
-	// for (int32_t i = 0; i < board.size; i++)
-	// {
-	// 	nPuzzle::Board::Tile* tile = board.TilesByPos.at(i);
-
-	// 	os << i << ": ";
-
-	// 	if (tile)
-	// 	{
-	// 		os << tile->getVal()
-	// 		<< " (" << tile->getX()
-	// 		<< ", " << tile->getY()
-	// 		<< ")";
-	// 	}
-	// 	else
-	// 	{
-	// 		os << "nullptr";
-	// 	}
-
-	// 	os << '\n';
-	// }
 
 	return os;
 }

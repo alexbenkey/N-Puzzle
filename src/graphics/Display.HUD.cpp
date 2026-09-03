@@ -6,7 +6,7 @@
 /*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/09 13:44:29 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/08/21 19:16:09 by othello          ###   ########.fr       */
+/*   Updated: 2026/09/03 21:01:22 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,6 @@ TRACE_POSITION();
 	if (updateSizes)
 		this->configureSizes();
 
-TRACE_POSITION();
 }
 
 void	Display::HUD::setFontsize(const float& fontSize, bool updateSizes)
@@ -98,8 +97,26 @@ TRACE_POSITION();
 		this->fontHeight = this->fontSize;
 	if (updateSizes)
 		this->configureSizes();
+}
 
-TRACE_POSITION();
+float	Display::HUD::width(void) const
+{
+	return (this->Frame.width);
+}
+
+float	Display::HUD::height(void) const
+{
+	return (this->Frame.height);
+}
+
+float	Display::HUD::x(void) const
+{
+	return (this->Frame.x);
+}
+
+float	Display::HUD::y(void) const
+{
+	return (this->Frame.y);
 }
 
 void	Display::HUD::configureSizes(bool updatePositions)
@@ -112,7 +129,6 @@ TRACE_POSITION();
 	this->configureSolverSize(false);	// later cause variable width
 	this->configureFrameSize(updatePositions);
 
-TRACE_POSITION();
 }
 
 void	Display::HUD::configureDataSize(bool updateFrame)
@@ -132,7 +148,6 @@ TRACE_POSITION();
 	if (updateFrame)
 		this->configureFrameSize();
 
-TRACE_POSITION();
 }
 
 void	Display::HUD::configureSolverSize(bool updateFrame)
@@ -155,7 +170,6 @@ TRACE_POSITION();
 	if (updateFrame)
 		this->configureFrameSize();
 
-TRACE_POSITION();
 }
 
 void	Display::HUD::configureHeuristicsSize(bool updateFrame)
@@ -180,7 +194,6 @@ TRACE_POSITION();
 	if (updateFrame)
 		this->configureFrameSize();
 
-TRACE_POSITION();
 }
 
 void	Display::HUD::configureControlSize(bool updateFrame)
@@ -205,7 +218,6 @@ TRACE_POSITION();
 	if (updateFrame)
 		this->configureFrameSize();
 
-TRACE_POSITION();
 }
 
 void	Display::HUD::configureMovementSize(bool updateFrame)
@@ -217,7 +229,6 @@ TRACE_POSITION();
 	if (updateFrame)
 		this->configureFrameSize();
 
-TRACE_POSITION();
 }
 
 void	Display::HUD::configureFrameSize(bool updatePositions)
@@ -235,7 +246,6 @@ TRACE_POSITION();
 	if (updatePositions)
 		this->configurePositions();
 
-TRACE_POSITION();
 }
 
 void	Display::HUD::configurePositions(void)
@@ -248,7 +258,6 @@ TRACE_POSITION();
 	this->configureControlsPosition();
 	this->configureMovementPosition();
 
-TRACE_POSITION();
 }
 
 void	Display::HUD::configureFramePosition(void)
@@ -258,7 +267,6 @@ TRACE_POSITION();
 	this->Frame.y = this->margin;
 	Display::logRectangle("HUD.Frame", this->Frame);
 
-TRACE_POSITION();
 }
 
 void	Display::HUD::configureDataPosition(void)
@@ -276,7 +284,6 @@ TRACE_POSITION();
 	this->Data.Right.y = this->Data.Left.y;
 	Display::logRectangle("HUD.Data.Right", this->Data.Right);
 
-TRACE_POSITION();
 }
 
 void	Display::HUD::configureSolverPosition(void)
@@ -294,7 +301,6 @@ TRACE_POSITION();
 	this->Solver.Right.y = this->Solver.Left.y;
 	Display::logRectangle("HUD.Solver.Right", this->Solver.Right);
 
-TRACE_POSITION();
 }
 
 void	Display::HUD::configureHeuristicsPosition(void)
@@ -310,7 +316,6 @@ TRACE_POSITION();
 	this->Heuristics.Right.y = this->Heuristics.Left.y;
 	Display::logRectangle("HUD.Heuristics.Right", this->Heuristics.Right);
 
-TRACE_POSITION();
 }
 
 void	Display::HUD::configureControlsPosition(void)
@@ -328,7 +333,6 @@ TRACE_POSITION();
 	this->Controls.Right.y = this->Controls.Left.y;
 	Display::logRectangle("HUD.Controls.Right", this->Controls.Right);
 
-TRACE_POSITION();
 }
 
 void	Display::HUD::configureMovementPosition(void)
@@ -338,10 +342,9 @@ TRACE_POSITION();
 	this->Movement.y = this->Controls.Frame.y + this->Controls.Frame.height + this->margin;
 	Display::logRectangle("HUD.Movement", this->Movement);
 
-TRACE_POSITION();
 }
 
-void	Display::HUD::render(nPuzzle* puzzle, nPuzzle::State* state, bool alternative) const
+void	Display::HUD::render(nPuzzle* puzzle, const nPuzzle::State* state, bool alternative) const
 {
 TRACE_POSITION();
 	this->renderFrame();
@@ -351,18 +354,15 @@ TRACE_POSITION();
 	this->renderControls(alternative);
 	if (!alternative)
 		this->renderMovement();
-
-TRACE_POSITION();
 }
 
 void	Display::HUD::renderFrame(void) const
 {
-	DrawRectangleRec(this->Frame, Color{23,23,23,255});
-
 TRACE_POSITION();
+	DrawRectangleRec(this->Frame, Color{23,23,23,255});
 }
 
-void	Display::HUD::renderData(nPuzzle* puzzle, nPuzzle::State* state) const
+void	Display::HUD::renderData(nPuzzle* puzzle, const nPuzzle::State* state) const
 {
 TRACE_POSITION();
 #if DEBUG >= DEBUG_DEBUG
@@ -370,7 +370,6 @@ TRACE_POSITION();
 #endif
 	const char*		buffer1;
 	const char*		buffer2;
-	static int32_t	oldPercentage = 0;
 
 	DrawText("nPuzzle", this->Data.Frame.x, this->Data.Frame.y, this->fontSize, RED);
 	for (size_t i = 0; ; i++)
@@ -414,8 +413,6 @@ TRACE_POSITION();
 	}
 	endLoop:
 	return;
-
-TRACE_POSITION();
 }
 
 void	Display::HUD::renderSolver(nPuzzle* puzzle, bool alternative) const
@@ -493,14 +490,23 @@ TRACE_POSITION();
 	// Movement
 	if (alternative)
 	{
-		int	posY = this->Solver.Frame.y + this->Solver.Frame.height - this->fontHeight;
+		posY = this->Solver.Frame.y + this->Solver.Frame.height - this->fontHeight;
 		this->DrawArrow(this->Solver.Frame.x, posY, this->fontHeight, 2);
 		this->DrawArrow(this->Solver.Frame.x + this->fontHeight, posY, this->fontHeight, 3);
 		DrawText(" Change Mode", this->Solver.Frame.x + this->fontHeight * 2, posY, this->fontSize, WHITE);
 	}
+	// else if (start != nullptr)
+	// {
+	// 	std::chrono::steady_clock::time_point	now = std::chrono::steady_clock::now();
+	// 	long long	ms = std::chrono::duration_cast<std::chrono::milliseconds>(now - *start).count();
+
+	// 	buffer = TextFormat("%02lld:%02lld:%02lld.%03lld\n", ms / 3600000, (ms / 60000) % 60, (ms / 1000) % 60, ms % 1000);
+	// 	posY = this->Solver.Frame.y + this->Solver.Frame.height - this->fontHeight;
+	// 	DrawText(buffer, this->Solver.Left.x, posY, this->fontSize, WHITE);
+	// }
 }
 
-void	Display::HUD::renderHeuristics(nPuzzle::State* state, int32_t h, bool alternative) const
+void	Display::HUD::renderHeuristics(const nPuzzle::State* state, int32_t h, bool alternative) const
 {
 TRACE_POSITION();
 #if DEBUG >= DEBUG_DEBUG
@@ -523,7 +529,8 @@ TRACE_POSITION();
 				if (h < 0)
 					buffer = TextFormat(" %4s", "err");
 				else
-					buffer = TextFormat(" %4i", h);	break;
+					buffer = TextFormat(" %4i", h);
+				break;
 		}
 		DrawText(buffer, this->Heuristics.Right.x, posY, this->fontSize, (line == h) ? selected : unselected);
 	}
@@ -534,7 +541,6 @@ TRACE_POSITION();
 		DrawArrow(this->Heuristics.Frame.x + this->fontHeight, posY, this->fontHeight, 1);
 		DrawText(" Change heuristic", this->Heuristics.Frame.x + this->fontHeight * 2, posY, this->fontSize, WHITE);
 	}
-TRACE_POSITION();
 }
 
 void	Display::HUD::renderControls(bool alternative) const
@@ -584,7 +590,6 @@ TRACE_POSITION();
 	// Arrow RIGHT
 	posX += this->Movement.width * 2 / 3;
 	this->DrawArrow(posX, posY, this->Movement.width / 3, 3);
-TRACE_POSITION();
 }
 
 void	Display::HUD::DrawArrow(int32_t x, int32_t y, int32_t size, int32_t dir) const

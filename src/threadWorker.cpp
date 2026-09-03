@@ -6,7 +6,7 @@
 /*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/20 16:01:17 by othello           #+#    #+#             */
-/*   Updated: 2026/09/02 18:25:40 by othello          ###   ########.fr       */
+/*   Updated: 2026/09/03 21:03:12 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,9 +23,9 @@
 \* ************************************************************************** */
 
 ThreadWorker::ThreadWorker(std::function<void()> f):
+			thread(&ThreadWorker::run, this),
 			function(std::move(f)),
-			state(State::IDLE),
-			thread(&ThreadWorker::run, this)
+			state(State::IDLE)
 {
 #if DEBUG >= DEBUG_TRACE
 	std::cout	<< C_DGREEN	<< "Default constructor "

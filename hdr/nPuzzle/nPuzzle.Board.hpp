@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   nPuzzle.Board.hpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
+/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/23 16:27:40 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/08/04 15:40:37 by avon-ben         ###   ########.fr       */
+/*   Updated: 2026/09/03 20:39:10 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,9 +44,9 @@ class nPuzzle::Board
 		~Board();
 
 		void	setSize(const int32_t w, const int32_t h);
-		const int32_t	getWidth(void) const;
-		const int32_t	getHeight(void) const;
-		const int32_t	getSize(void) const;
+		int32_t	getWidth(void) const;
+		int32_t	getHeight(void) const;
+		int32_t	getSize(void) const;
 
 		const Tile&	getTile(const int32_t value) const;
 		const Tile&	getTile(const int32_t x, const int32_t y) const;

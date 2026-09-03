@@ -6,7 +6,7 @@
 /*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 16:13:50 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/09/02 17:35:21 by othello          ###   ########.fr       */
+/*   Updated: 2026/09/03 20:42:01 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,7 +162,7 @@ void	nPuzzle::parse(std::istream& __is)
 	std::vector<int32_t>	numbers;
 
 	// Clearing current Content
-#warning clearing before parsing needs to be implemented
+	this->clearAll();
 
 	// Reading upto puzzle size
 	while (std::getline(__is, line))
@@ -225,7 +225,7 @@ bool	nPuzzle::validLine(const std::string &line) const
 
 std::vector<int32_t>	nPuzzle::convertLineToNumbers(const std::string& line)
 {
-	std::istringstream	iss(line);
+	std::istringstream		iss(line);
 	int32_t					x;
 	std::vector<int32_t>	numbers;
 
@@ -245,19 +245,113 @@ void	nPuzzle::setRow(int32_t row, const std::vector<int>& numbers)
 		this->state->addTile(numbers[x], x, row);
 }
 
+void	nPuzzle::storeStartState(void)
+{
+	if (this->state == nullptr)
+		throw std::runtime_error("Failed to set Start state. No State present");
+	this->clearState(&this->start);
+	this->start = new nPuzzle::State(*this->state);
+}
+
+int32_t	nPuzzle::getWidth(void) const
+{
+	return this->width;
+}
+
+int32_t	nPuzzle::getHeight(void) const
+{
+	return this->height;
+}
+
+int32_t	nPuzzle::getSize(void) const
+{
+	return this->size;
+}
+
+const nPuzzle::State&	nPuzzle::getCurrentState() const
+{
+	return (*this->state);
+}
+
+const nPuzzle::Target&	nPuzzle::getTarget() const
+{
+	return (*this->target);
+}
+
+const nPuzzle::State&	nPuzzle::getStartState() const
+{
+	return (*this->start);
+}
+
 const nPuzzle::State&	nPuzzle::getQueueState(void)
 {
 	return (this->solver->getTopState());
 }
 
-void	nPuzzle::incrementHeuristicIndex(void)
+int32_t	nPuzzle::getQueueSize(void) const
 {
-	this->setHeuristicIndex(this->heuristicIndex + 1);
+	return (this->solver->getQueueSize());
 }
 
-void	nPuzzle::decrementHeuristicIndex(void)
+bool	nPuzzle::move(nPuzzle::Direction direction)
 {
-	this->setHeuristicIndex(this->heuristicIndex - 1);
+	bool	validMove;
+
+	validMove = this->state->move(direction);
+	if (validMove)
+	{
+		this->clearSolver();
+		this->state->calculateAllHeuristics(this->target->getBoard());
+	}
+	return (validMove);
+}
+
+bool	nPuzzle::moveUp(void)
+{
+	return (this->move(nPuzzle::Direction::UP));
+}
+
+bool	nPuzzle::moveDown(void)
+{
+	return (this->move(nPuzzle::Direction::DOWN));
+}
+
+bool	nPuzzle::moveLeft(void)
+{
+	return (this->move(nPuzzle::Direction::LEFT));
+}
+
+bool	nPuzzle::moveRight(void)
+{
+	return (this->move(nPuzzle::Direction::RIGHT));
+}
+
+void	nPuzzle::setSearchMode(nPuzzle::searchMode mode)
+{
+	if (mode < nPuzzle::searchMode::GREEDY)
+		mode = nPuzzle::searchMode::GREEDY;
+	if (mode > nPuzzle::searchMode::UNIFORM)
+		mode = nPuzzle::searchMode::UNIFORM;
+	if (this->mode == mode)
+		return ;
+
+	this->clearSolver();
+	this->mode = mode;
+}
+
+nPuzzle::searchMode	nPuzzle::getSearchMode(void)
+{
+	return this->mode;
+}
+
+void	nPuzzle::incrementSearchMode(void)
+{
+	this->setSearchMode(static_cast<nPuzzle::searchMode>(static_cast<int32_t>(this->mode) + 1));
+}
+
+void	nPuzzle::decrementSearchMode(void)
+{
+	this->setSearchMode(static_cast<nPuzzle::searchMode>(static_cast<int32_t>(this->mode) - 1));
 }
 
 void	nPuzzle::setHeuristicIndex(int32_t index)
@@ -280,90 +374,14 @@ int32_t	nPuzzle::getHeuristicIndex(void) const
 	return (this->heuristicIndex);
 }
 
-int32_t	nPuzzle::getQueueSize(void) const
+void	nPuzzle::incrementHeuristicIndex(void)
 {
-	return (this->solver->getQueueSize());
+	this->setHeuristicIndex(this->heuristicIndex + 1);
 }
 
-void	nPuzzle::storeStartState(void)
+void	nPuzzle::decrementHeuristicIndex(void)
 {
-	if (this->state == nullptr)
-		throw std::runtime_error("Failed to set Start state. No State present");
-	this->clearState(&this->start);
-	this->start = new nPuzzle::State(*this->state);
-}
-
-bool	nPuzzle::move(nPuzzle::Direction direction, int32_t h)
-{
-	bool	validMove;
-
-	validMove = this->state->move(direction);
-	if (validMove)
-	{
-		this->clearSolver();
-		this->state->calculateAllHeuristics(this->target->getBoard());
-	}
-	return (validMove);
-}
-
-bool	nPuzzle::moveUp(int32_t h)
-{
-	return (this->move(nPuzzle::Direction::UP, h));
-}
-
-bool	nPuzzle::moveDown(int32_t h)
-{
-	return (this->move(nPuzzle::Direction::DOWN, h));
-}
-
-bool	nPuzzle::moveLeft(int32_t h)
-{
-	return (this->move(nPuzzle::Direction::LEFT, h));
-}
-
-bool	nPuzzle::moveRight(int32_t h)
-{
-	return (this->move(nPuzzle::Direction::RIGHT, h));
-}
-
-bool	nPuzzle::isSolved(void) const
-{
-	return (this->solver->isSolved());
-}
-
-void	nPuzzle::solve()
-{
-TRACE_POSITION();
-	this->solver->solve();
-}
-
-bool	nPuzzle::solveStep(bool allHeuristics)
-{
-TRACE_POSITION();
-	return (this->solver->solveStep(allHeuristics));
-}
-
-void	nPuzzle::incrementSearchMode(void)
-{
-	this->setSearchMode(static_cast<nPuzzle::searchMode>(static_cast<int32_t>(this->mode) + 1));
-}
-
-void	nPuzzle::decrementSearchMode(void)
-{
-	this->setSearchMode(static_cast<nPuzzle::searchMode>(static_cast<int32_t>(this->mode) - 1));
-}
-
-void	nPuzzle::setSearchMode(nPuzzle::searchMode mode)
-{
-	if (mode < nPuzzle::searchMode::GREEDY)
-		mode = nPuzzle::searchMode::GREEDY;
-	if (mode > nPuzzle::searchMode::UNIFORM)
-		mode = nPuzzle::searchMode::UNIFORM;
-	if (this->mode == mode)
-		return ;
-
-	this->clearSolver();
-	this->mode = mode;
+	this->setHeuristicIndex(this->heuristicIndex - 1);
 }
 
 int32_t	nPuzzle::getBestSolverHeuristic(void) const
@@ -378,6 +396,36 @@ nPuzzle::Solvability	nPuzzle::getSolvability(void) const
 	return this->solver->getSolvability();
 }
 
+void	nPuzzle::solve()
+{
+TRACE_POSITION();
+	this->solver->solve();
+}
+
+bool	nPuzzle::solveStep(bool allHeuristics)
+{
+TRACE_POSITION();
+	return (this->solver->solveStep(allHeuristics));
+}
+
+bool	nPuzzle::isSolved(void) const
+{
+	return (this->solver->isSolved());
+}
+
+std::vector<const nPuzzle::State*>	nPuzzle::getSolution(void) const
+{
+	return this->solver->getSolution();
+}
+
+void	nPuzzle::resetToStart(void)
+{
+	this->clearSolver();
+	*this->state = *this->start;
+	this->start->clearPendingHeuristics();
+	this->start->calculateAllHeuristics(this->target->getBoard());
+}
+
 void	nPuzzle::printPuzzle(void)
 {
 	std::cerr	<< *this->state	<< std::flush;
@@ -389,53 +437,10 @@ void	nPuzzle::printTarget(void)
 				<< *this->target	<< std::flush;
 }
 
-void	nPuzzle::printQueue(void)
-{
-	// this->solver->printQueueStatus();
-}
-
-std::vector<const nPuzzle::State*>	nPuzzle::getSolution(void) const
-{
-	return this->solver->getSolution();
-}
-
-// void	nPuzzle::printEmptyTilePos(void)
+// void	nPuzzle::printQueue(void)
 // {
-// 	this->state->printTilePos( this->state->getTile(0));
+// 	// this->solver->printQueueStatus();
 // }
-
-// void	nPuzzle::printAllTiles(const nPuzzle::State& state) const
-// {
-// 	for (int32_t x = 0, width = state.getPuzzleWidth(); x < width; ++x)
-// 	{
-// 		for (int32_t y = 0, height = state.getPuzzleHeight(); y < height; ++y)
-// 		{
-// 			nPuzzle::Board::Tile tile = state.getTile(x, y);
-// 			std::printf("%2i [%2i][%2i] ", tile.getVal(), tile.getxPos(), tile.getyPos());
-// 			state.printTilePos(tile);
-// 		}
-// 	}
-// 	std::cout	<< std::endl;
-// }
-
-// void	nPuzzle::printAllTilesFlex(nPuzzle::State& state)
-// {
-// 	for (int32_t value = 1, size = state.getPuzzleSize(); value < size; ++value)
-// 	{
-// 		nPuzzle::Board::Tile tile = state.getTile(value);
-// 		std::printf("%2i [%2i][%2i] ", tile.getVal(), tile.getxPos(), tile.getyPos());
-// 		state.printTilePos(tile);
-// 	}
-// 	std::cout	<< std::endl;
-// }
-
-void	nPuzzle::resetToStart(void)
-{
-	this->clearSolver();
-	*this->state = *this->start;
-	this->start->clearPendingHeuristics();
-	this->start->calculateAllHeuristics(this->target->getBoard());
-}
 
 /** ************************************************************************ **\
  * 

@@ -6,7 +6,7 @@
 /*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/23 14:38:54 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/09/02 18:23:07 by othello          ###   ########.fr       */
+/*   Updated: 2026/09/03 20:54:21 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -217,8 +217,6 @@ const nPuzzle::State*	nPuzzle::State::getPrevious(void) const
 
 bool	nPuzzle::State::operator<(const State &rhs) const noexcept
 {
-	#warning it is now required to set the particular used heuristic in the state class.
-
 	int32_t	lhsHeuristic = 0;
 	int32_t	rhsHeuristic = 0;
 	int32_t	lhsCost = 0;
@@ -247,6 +245,9 @@ bool	nPuzzle::State::operator<(const State &rhs) const noexcept
 			lhsCost = this->cost;
 			rhsCost = rhs.cost;
 			break ;
+		default:
+			std::cerr	<< "ERROR: "	<< __func__	<< " Search Mode index went out of bounds"	<< std::endl;
+			break;
 	}
 
 	lhsScore = lhsCost + lhsHeuristic;
