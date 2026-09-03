@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    run.sh                                             :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+         #
+#    By: othello <othello@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/06/10 18:24:25 by ohengelm          #+#    #+#              #
-#    Updated: 2026/07/24 14:38:02 by ohengelm         ###   ########.fr        #
+#    Updated: 2026/09/03 21:05:03 by othello          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -147,5 +147,5 @@ if [ -z "${size}" ]; then
 fi
 
 clear
-make BUILD=debug || exit 1
+make BUILD=release || exit 1
 python3 assets/npuzzle-gen.py ${solvable}${unsolvable}${iterations}${size} | ./npuzzle

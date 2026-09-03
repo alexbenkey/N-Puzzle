@@ -7,7 +7,8 @@
 NAME :=	npuzzle
 
 # Preprocessor
-INCLUDES :=	-Ihdr	-Iassets/raylib/src/
+INCLUDES :=	$(shell find hdr -type d -printf '-I%p ')
+INCLUDES +=	-Iassets/raylib/src/
 DEFINES ?=	
 CPPFLAGS ?=	
 CPPFLAGS +=	$(INCLUDES) $(DEFINES) -DDEBUG=$(DEBUG)
@@ -15,6 +16,7 @@ CPPFLAGS +=	$(INCLUDES) $(DEFINES) -DDEBUG=$(DEBUG)
 # WARNFLAGS :=	-Wall -Wextra -Werror
 # WARNFLAGS +=	-Wno-unused-result
 # WARNFLAGS +=	-Wno-unused-variable
+# WARNFLAGS +=	-Wno-error=cpp
 
 # C++ Compiler
 CXX ?=		c++
