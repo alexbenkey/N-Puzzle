@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   nPuzzle.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
+/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 16:13:50 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/08/06 20:08:43 by avon-ben         ###   ########.fr       */
+/*   Updated: 2026/09/03 20:42:01 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,7 +162,7 @@ void	nPuzzle::parse(std::istream& __is)
 	std::vector<int32_t>	numbers;
 
 	// Clearing current Content
-#warning clearing before parsing needs to be implemented
+	this->clearAll();
 
 	// Reading upto puzzle size
 	while (std::getline(__is, line))
@@ -184,7 +184,7 @@ void	nPuzzle::parse(std::istream& __is)
 		throw std::runtime_error("Invalid puzzle size line: expected 1 or 2 positive integers");
 	this->height = numbers[size - 1];
 	this->size = this->width * this->height;
-	this->state = new nPuzzle::State(this->width, this->height);
+	this->state = new nPuzzle::State(*this);
 	this->target = new nPuzzle::Target();
 	this->target->setSize(this->width, this->height);
 
@@ -196,8 +196,9 @@ void	nPuzzle::parse(std::istream& __is)
 		numbers = nPuzzle::convertLineToNumbers(line);
 		this->setRow(row, numbers);
 	}
-	this->calculateHeuristic();
+	this->state->calculateAllHeuristics(this->target->getBoard());
 	this->storeStartState();
+	this->solver->determineSolvability();
 }
 
 bool	nPuzzle::emptyLine(const std::string &line) const
@@ -224,7 +225,7 @@ bool	nPuzzle::validLine(const std::string &line) const
 
 std::vector<int32_t>	nPuzzle::convertLineToNumbers(const std::string& line)
 {
-	std::istringstream	iss(line);
+	std::istringstream		iss(line);
 	int32_t					x;
 	std::vector<int32_t>	numbers;
 
@@ -244,43 +245,6 @@ void	nPuzzle::setRow(int32_t row, const std::vector<int>& numbers)
 		this->state->addTile(numbers[x], x, row);
 }
 
-const nPuzzle::State&	nPuzzle::getQueueState(void)
-{
-	return (this->solver->getTopState());
-}
-
-void	nPuzzle::incrementHeuristic(void)
-{
-	++this->heuristicIndex;
-	this->maintainValidHeuristic();
-}
-
-void	nPuzzle::decrementHeuristic(void)
-{
-	--this->heuristicIndex;
-	this->maintainValidHeuristic();
-}
-
-void	nPuzzle::maintainValidHeuristic(void)
-{
-	if (this->heuristicIndex < 0)
-		this->heuristicIndex = 0;
-	else if (this->heuristicIndex >= heuristic::size)
-		this->heuristicIndex = heuristic::size - 1;
-	this->solver->setHeuristic(this->heuristicIndex);
-	std::cerr	<< "Heuristic set to "	<< this->heuristicIndex	<< ' '	<< heuristic::function[this->heuristicIndex].name	<< std::endl;
-}
-
-int32_t	nPuzzle::getHeuristicIndex(void) const
-{
-	return (this->heuristicIndex);
-}
-
-int32_t	nPuzzle::getQueueSize(void) const
-{
-	return (this->solver->getQueueSize());
-}
-
 void	nPuzzle::storeStartState(void)
 {
 	if (this->state == nullptr)
@@ -289,7 +253,47 @@ void	nPuzzle::storeStartState(void)
 	this->start = new nPuzzle::State(*this->state);
 }
 
-bool	nPuzzle::move(nPuzzle::Direction direction, int32_t h)
+int32_t	nPuzzle::getWidth(void) const
+{
+	return this->width;
+}
+
+int32_t	nPuzzle::getHeight(void) const
+{
+	return this->height;
+}
+
+int32_t	nPuzzle::getSize(void) const
+{
+	return this->size;
+}
+
+const nPuzzle::State&	nPuzzle::getCurrentState() const
+{
+	return (*this->state);
+}
+
+const nPuzzle::Target&	nPuzzle::getTarget() const
+{
+	return (*this->target);
+}
+
+const nPuzzle::State&	nPuzzle::getStartState() const
+{
+	return (*this->start);
+}
+
+const nPuzzle::State&	nPuzzle::getQueueState(void)
+{
+	return (this->solver->getTopState());
+}
+
+int32_t	nPuzzle::getQueueSize(void) const
+{
+	return (this->solver->getQueueSize());
+}
+
+bool	nPuzzle::move(nPuzzle::Direction direction)
 {
 	bool	validMove;
 
@@ -297,37 +301,99 @@ bool	nPuzzle::move(nPuzzle::Direction direction, int32_t h)
 	if (validMove)
 	{
 		this->clearSolver();
-		if (h != -1)
-			this->calculateHeuristic(h);
-		else
-			this->calculateHeuristic();
+		this->state->calculateAllHeuristics(this->target->getBoard());
 	}
 	return (validMove);
 }
 
-bool	nPuzzle::moveUp(int32_t h)
+bool	nPuzzle::moveUp(void)
 {
-	return(this->move(nPuzzle::Direction::UP, h));
+	return (this->move(nPuzzle::Direction::UP));
 }
 
-bool	nPuzzle::moveDown(int32_t h)
+bool	nPuzzle::moveDown(void)
 {
-	return(this->move(nPuzzle::Direction::DOWN, h));
+	return (this->move(nPuzzle::Direction::DOWN));
 }
 
-bool	nPuzzle::moveLeft(int32_t h)
+bool	nPuzzle::moveLeft(void)
 {
-	return(this->move(nPuzzle::Direction::LEFT, h));
+	return (this->move(nPuzzle::Direction::LEFT));
 }
 
-bool	nPuzzle::moveRight(int32_t h)
+bool	nPuzzle::moveRight(void)
 {
-	return(this->move(nPuzzle::Direction::RIGHT, h));
+	return (this->move(nPuzzle::Direction::RIGHT));
 }
 
-bool	nPuzzle::isSolved(void) const
+void	nPuzzle::setSearchMode(nPuzzle::searchMode mode)
 {
-	return (this->solver->isSolved());
+	if (mode < nPuzzle::searchMode::GREEDY)
+		mode = nPuzzle::searchMode::GREEDY;
+	if (mode > nPuzzle::searchMode::UNIFORM)
+		mode = nPuzzle::searchMode::UNIFORM;
+	if (this->mode == mode)
+		return ;
+
+	this->clearSolver();
+	this->mode = mode;
+}
+
+nPuzzle::searchMode	nPuzzle::getSearchMode(void)
+{
+	return this->mode;
+}
+
+void	nPuzzle::incrementSearchMode(void)
+{
+	this->setSearchMode(static_cast<nPuzzle::searchMode>(static_cast<int32_t>(this->mode) + 1));
+}
+
+void	nPuzzle::decrementSearchMode(void)
+{
+	this->setSearchMode(static_cast<nPuzzle::searchMode>(static_cast<int32_t>(this->mode) - 1));
+}
+
+void	nPuzzle::setHeuristicIndex(int32_t index)
+{
+	if (index < 0)
+		index = 0;
+	else if (index >= heuristic::size)
+		index = heuristic::size - 1;
+	if (index == this->heuristicIndex)
+		return ;
+	this->heuristicIndex = index;
+#if DEBUG >= DEBUG_INFO
+	std::fprintf(stderr, "Heuristic set to [%2i]%s\n", this->heuristicIndex, heuristic::function[this->heuristicIndex].name);
+#endif
+	this->clearSolver();
+}
+
+int32_t	nPuzzle::getHeuristicIndex(void) const
+{
+	return (this->heuristicIndex);
+}
+
+void	nPuzzle::incrementHeuristicIndex(void)
+{
+	this->setHeuristicIndex(this->heuristicIndex + 1);
+}
+
+void	nPuzzle::decrementHeuristicIndex(void)
+{
+	this->setHeuristicIndex(this->heuristicIndex - 1);
+}
+
+int32_t	nPuzzle::getBestSolverHeuristic(void) const
+{
+	return (this->solver->getTopHeuristic());
+}
+
+nPuzzle::Solvability	nPuzzle::getSolvability(void) const
+{
+	if (this->solver == nullptr)
+		return nPuzzle::Solvability::UNKNOWN;
+	return this->solver->getSolvability();
 }
 
 void	nPuzzle::solve()
@@ -342,55 +408,22 @@ TRACE_POSITION();
 	return (this->solver->solveStep(allHeuristics));
 }
 
-void	nPuzzle::setSearchMode(nPuzzle::searchMode mode)
+bool	nPuzzle::isSolved(void) const
 {
-	if (this->mode == mode)
-		return;
+	return (this->solver->isSolved());
+}
 
-	std::cout << "setting searchMode to: " ;
-	switch(mode){
-		case (nPuzzle::searchMode::ASTAR):
-			std::cout << "ASTAR" << std::endl;
-			break; 
-		case (nPuzzle::searchMode::GREEDY):
-			std::cout << "GREEDY" << std::endl;
-			break; 
-		case (nPuzzle::searchMode::UNIFORM):
-			std::cout << "UNIFORM" << std::endl;
-			break; 
-	}
+std::vector<const nPuzzle::State*>	nPuzzle::getSolution(void) const
+{
+	return this->solver->getSolution();
+}
+
+void	nPuzzle::resetToStart(void)
+{
 	this->clearSolver();
-	this->mode = mode;
-
-	if (this->state != nullptr)
-		this->state->setSearchMode(mode);
-
-	if (this->start != nullptr)
-		this->state->setSearchMode(mode);
-}
-
-
-int32_t	nPuzzle::getBestSolverHeuristic(void) const
-{
-	return (this->solver->getTopHeuristic());
-}
-
-nPuzzle::Solvability nPuzzle::getSolvability(void) const
-{
-	if (this->solver == nullptr)
-		return nPuzzle::Solvability::UNKNOWN;
-	return this->solver->getSolvability();
-}
-
-void	nPuzzle::calculateHeuristic(void)
-{
-	for (int32_t h = 0; h < heuristic::size; ++h)
-		this->state->calculateHeuristic(h, this->target->getBoard());
-}
-
-void	nPuzzle::calculateHeuristic(int32_t h)
-{
-	this->state->calculateHeuristic(h, this->target->getBoard());
+	*this->state = *this->start;
+	this->start->clearPendingHeuristics();
+	this->start->calculateAllHeuristics(this->target->getBoard());
 }
 
 void	nPuzzle::printPuzzle(void)
@@ -404,51 +437,10 @@ void	nPuzzle::printTarget(void)
 				<< *this->target	<< std::flush;
 }
 
-void	nPuzzle::printQueue(void)
-{
-	this->solver->printQueueStatus();
-}
-
-std::vector<const nPuzzle::State*> nPuzzle::getSolution(void) const
-{
-	return this->solver->getSolution();
-}
-
-// void	nPuzzle::printEmptyTilePos(void)
+// void	nPuzzle::printQueue(void)
 // {
-// 	this->state->printTilePos( this->state->getTile(0));
+// 	// this->solver->printQueueStatus();
 // }
-
-// void	nPuzzle::printAllTiles(const nPuzzle::State& state) const
-// {
-// 	for (int32_t x = 0, width = state.getPuzzleWidth(); x < width; ++x)
-// 	{
-// 		for (int32_t y = 0, height = state.getPuzzleHeight(); y < height; ++y)
-// 		{
-// 			nPuzzle::Board::Tile tile = state.getTile(x, y);
-// 			std::printf("%2i [%2i][%2i] ", tile.getVal(), tile.getxPos(), tile.getyPos());
-// 			state.printTilePos(tile);
-// 		}
-// 	}
-// 	std::cout	<< std::endl;
-// }
-
-// void	nPuzzle::printAllTilesFlex(nPuzzle::State& state)
-// {
-// 	for (int32_t value = 1, size = state.getPuzzleSize(); value < size; ++value)
-// 	{
-// 		nPuzzle::Board::Tile tile = state.getTile(value);
-// 		std::printf("%2i [%2i][%2i] ", tile.getVal(), tile.getxPos(), tile.getyPos());
-// 		state.printTilePos(tile);
-// 	}
-// 	std::cout	<< std::endl;
-// }
-
-void	nPuzzle::resetToStart(void)
-{
-	this->clearSolver();
-	*this->state = *this->start;
-}
 
 /** ************************************************************************ **\
  * 

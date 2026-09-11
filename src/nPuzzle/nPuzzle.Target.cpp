@@ -17,22 +17,11 @@
 
 #include <iostream>	// std::stream
 
-// /** ************************************************************************ **\
-//  * 
-//  * 	Constructors
-//  * 
-// \* ************************************************************************** */
-
-// nPuzzle::Target::Target(void)
-// {
-// #if DEBUG >= DEBUG_TRACE
-// 	std::cout	<< C_DGREEN	<< "Default constructor "
-// 				<< C_GREEN	<< __func__
-// 				<< C_DGREEN	<< " called."
-// 				<< C_RESET	<< std::endl;
-// #endif
-// 	this->setTargetTiles();
-// }
+/** ************************************************************************ **\
+ * 
+ * 	Constructors
+ * 
+\* ************************************************************************** */
 
 nPuzzle::Target::Target(void)
 {
@@ -57,32 +46,36 @@ nPuzzle::Target::Target(const int32_t width, const int32_t height)
 
 nPuzzle::Target::Target(const nPuzzle::Target &src)
 {
+#if DEBUG >= DEBUG_TRACE
 	std::cout	<< C_DGREEN	<< "Copy constructor "
 				<< C_GREEN	<< __func__
 				<< C_DGREEN	<< " called."
 				<< C_RESET	<< std::endl;
+#endif
 	*this = src;
 }
 
-// /** ************************************************************************ **\
-//  * 
-//  * 	Deconstructors
-//  * 
-// \* ************************************************************************** */
+/** ************************************************************************ **\
+ * 
+ * 	Deconstructors
+ * 
+\* ************************************************************************** */
 
-// // nPuzzle::Target::~nPuzzle::Target(void)
-// // {
-// // 	std::cout	<< C_RED	<< "Deconstructor "
-// // 				<< C_RED	<< __func__
-// // 				<< C_DRED	<< " called"
-// // 				<< C_RESET	<< std::endl;
-// // }
+nPuzzle::Target::~Target(void)
+{
+#if DEBUG >= DEBUG_TRACE
+	std::cout	<< C_RED	<< "Deconstructor "
+				<< C_RED	<< __func__
+				<< C_DRED	<< " called"
+				<< C_RESET	<< std::endl;
+#endif
+}
 
-// /** ************************************************************************ **\
-//  * 
-//  * 	Member Functions
-//  * 
-// \* ************************************************************************** */
+/** ************************************************************************ **\
+ * 
+ * 	Member Functions
+ * 
+\* ************************************************************************** */
 
 void	nPuzzle::Target::setSize(const int32_t w, const int32_t h)
 {
@@ -136,11 +129,11 @@ const nPuzzle::Board&	nPuzzle::Target::getBoard(void) const
 	return (this->board);
 }
 
-// /** ************************************************************************ **\
-//  * 
-//  * 	Operators
-//  * 
-// \* ************************************************************************** */
+/** ************************************************************************ **\
+ * 
+ * 	Operators
+ * 
+\* ************************************************************************** */
 
 nPuzzle::Target	&nPuzzle::Target::operator=(const nPuzzle::Target &src)
 {

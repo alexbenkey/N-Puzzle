@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   nPuzzle.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
+/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/23 14:41:42 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/08/06 19:33:24 by avon-ben         ###   ########.fr       */
+/*   Updated: 2026/09/03 20:41:47 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,10 +27,10 @@ class nPuzzle
 		class	Solver;
 # pragma endregion "Nested Objects"
 
-# pragma region	"Enum Classes"
+# pragma region "Enum Classes"
 		enum class Direction
-		{ 
-			UP, 
+		{
+			UP,
 			RIGHT,
 			DOWN,
 			LEFT
@@ -38,9 +38,10 @@ class nPuzzle
 
 		enum class searchMode
 		{
-			ASTAR,
 			GREEDY,
-			UNIFORM
+			ASTAR,
+			UNIFORM,
+			size
 		};
 
 		enum class Solvability
@@ -61,19 +62,21 @@ class nPuzzle
 		nPuzzle::Target*	target;
 		nPuzzle::Solver*	solver;
 
-		nPuzzle::searchMode mode = nPuzzle::searchMode::ASTAR;
-		int32_t		heuristicIndex = 1;
+		nPuzzle::searchMode	mode = nPuzzle::searchMode::ASTAR;
+		int32_t				heuristicIndex = 1;
 
 		// Construction
 		void	setVariables(const int32_t width, const int32_t height);
+
 		// Parsing
 		bool	emptyLine(const std::string& line) const;
 		bool	validLine(const std::string& line) const;
 		static std::vector<int>	convertLineToNumbers(const std::string& line);
 		void	setRow(int32_t row, const std::vector<int>& numbers);
+		void	storeStartState(void);
 
 		// Movement
-		bool	move(nPuzzle::Direction direction, int32_t h);
+		bool	move(nPuzzle::Direction direction);
 
 		// Deletion
 		void	clearAll(void);
@@ -82,10 +85,13 @@ class nPuzzle
 		void			clearState(nPuzzle::State** state);
 		void			clearTarget(void);
 
-	protected:
+		// Debug
+		void	printPuzzle(void);
+		void	printTarget(void);
+		// void	printQueue(void);
+		// void	printQueueStatus(const nPuzzle::State& queue, int32_t h);
 
 	public:
-
 		nPuzzle(void);
 		nPuzzle(std::istream& __is);
 		nPuzzle(const int32_t widthAndHeight);
@@ -93,51 +99,49 @@ class nPuzzle
 		nPuzzle(const nPuzzle &src);
 		~nPuzzle(void);
 
+		// Parsing
 		void	parse(std::istream& __is);
-		void	resetToStart(void);
 
-		nPuzzle::Solvability getSolvability(void) const;
-
-		nPuzzle::State&		getCurrentState()	{ return (*this->state); }
-		nPuzzle::Target&	getTarget() const { return (*this->target); }
-		nPuzzle::State&		getStartState()		{ return (*this->start); }
+		// Getters
+		int32_t	getWidth(void) const;
+		int32_t	getHeight(void) const;
+		int32_t	getSize(void) const;
+		const nPuzzle::State&	getCurrentState() const;
+		const nPuzzle::Target&	getTarget() const;
+		const nPuzzle::State&	getStartState()	const;
 		const nPuzzle::State&	getQueueState(void);
-		void	incrementHeuristic(void);
-		void	decrementHeuristic(void);
-		void	maintainValidHeuristic(void);
-		int32_t	getHeuristicIndex(void) const;
 		int32_t	getQueueSize(void) const;
 
-		void	storeStartState(void);
+		// Movement
+		bool	moveUp(void);
+		bool	moveDown(void);
+		bool	moveLeft(void);
+		bool	moveRight(void);
 
+		// Search Mode
 		void	setSearchMode(nPuzzle::searchMode mode);
-		nPuzzle::searchMode getSearchMode(void) {return this->mode; }
+		nPuzzle::searchMode	getSearchMode(void);
+		void	incrementSearchMode(void);
+		void	decrementSearchMode(void);
 
-		void	printPuzzle(void);
-		void	printTarget(void);
-		void	printQueue(void);
-		void	printQueueStatus(const nPuzzle::State& queue, int32_t h);
-		std::vector<const nPuzzle::State*> getSolution(void) const;
-		// void	printEmptyTilePos(void);
-		// void	printAllTiles(const nPuzzle::State& state) const;
-		// void	printAllTilesFlex(nPuzzle::State& state);
+		// Heuristics
+		void	setHeuristicIndex(int32_t index);
+		int32_t	getHeuristicIndex(void) const;
+		void	incrementHeuristicIndex(void);
+		void	decrementHeuristicIndex(void);
+		int32_t	getBestSolverHeuristic(void) const;
 
-		int32_t getWidth(void) const { return this->width; }
-		int32_t getHeight(void) const { return this->height; }
-		int32_t getSize(void) const { return this->size; }
-
-		bool	moveUp(int32_t h = -1);
-		bool	moveDown(int32_t h = -1);
-		bool	moveLeft(int32_t h = -1);
-		bool	moveRight(int32_t h = -1);
-	
+		// Solving
+		nPuzzle::Solvability	getSolvability(void) const;
 		void	solve(void);
 		bool	solveStep(bool allHeuristics = false);
-		int32_t	getBestSolverHeuristic(void) const;
 		bool	isSolved(void) const;
-		void	calculateHeuristic(void);
-		void	calculateHeuristic(int32_t h);
+		std::vector<const nPuzzle::State*>	getSolution(void) const;
 
+		// Reset
+		void	resetToStart(void);
+
+		// Operator overload
 		nPuzzle	&operator=(const nPuzzle &src);
 };
 

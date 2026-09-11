@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   nPuzzle.Target.hpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
+/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/23 14:45:10 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/24 14:38:45 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/09/03 19:17:49 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,14 +20,14 @@ class nPuzzle::Target
 {
 	private:
 		Board	board;
-		void	setTargetTiles(void);
 
-	protected:
+		void	setTargetTiles(void);
 
 	public:
 		Target(void);
 		Target(const int32_t width, const int32_t height);
 		Target(const Target& src);
+		~Target(void);
 
 		void	setSize(const int32_t w, const int32_t h);
 

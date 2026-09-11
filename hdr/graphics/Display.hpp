@@ -16,12 +16,12 @@
 # include "Errors.hpp"
 # include <cstring>	// strrchr
 # define LOG_LINE(level, format, ...) \
-    TraceLog(level, \
-        C_DGRAY "%s" C_RESET ":" C_DORANGE "%s" C_RESET "[" C_ORANGE "%i" C_RESET "] " format, \
-        strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__, \
-        __func__, \
-        __LINE__, \
-        ##__VA_ARGS__)
+	TraceLog(level, \
+		C_DGRAY "%s" C_RESET ":" C_DORANGE "%s" C_RESET "[" C_ORANGE "%i" C_RESET "] " format, \
+		strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__, \
+		__func__, \
+		__LINE__, \
+		##__VA_ARGS__)
 
 # define LOG_AS_TRACE(format, ...) LOG_LINE(LOG_TRACE, format, ##__VA_ARGS__)
 # define LOG_AS_DEBUG(format, ...) LOG_LINE(LOG_DEBUG, format, ##__VA_ARGS__)
@@ -56,7 +56,11 @@ class Display
 		float	fontHeight;
 		int		margin;
 
-		static std::unordered_map<char, std::string>	hotkeyList;
+		std::vector<const nPuzzle::State*> solutionPath;
+		int32_t solutionIndex;
+		double 	lastSolutionStep;
+		double 	solutionStepDelay;
+		bool	solutionPlaying;
 
 		// Sizes
 		void	configureMinimumSizes(void);
@@ -78,19 +82,8 @@ class Display
 		void	renderBoard(const nPuzzle::Board& board);
 		void	renderTiles(const nPuzzle::Board& board);
 
-		// Solution
-		std::vector<const nPuzzle::State*> solutionPath;
-		int32_t solutionIndex;
-		double 	lastSolutionStep;
-		double 	solutionStepDelay;
-		bool	solutionPlaying;
-
-
-	protected:
-
 	public:
 		Display(nPuzzle* puzzle);
-		// Display(const Display &src);
 		~Display(void);
 
 		void	setPuzzle(nPuzzle* puzzle);
@@ -100,19 +93,20 @@ class Display
 		void	reconfigure(void);
 		bool	setFontSize(const float size, bool updateSizes = true, bool includeHUD = true);
 		bool	setMargin(const int margin, bool updateSizes = true, bool includeHUD = true);
+
 		// Rendering
 		void	render(void);
+		void	renderHUD(bool shiftPressed = false);
 		void	renderAsStartState(void);
 		void	renderAsCurrentState(void);
 		void	renderAsQueueState(void);
 		void	renderAsTargetState(void);
 
+		// Solution animation
+		bool	isPuzzleSolved(void) const;
 		void 	startSolutionAnimation(void);
 		void 	resetSolutionAnimation(void);
-		void 	renderSolutionAnimation(void); 
-
-		bool	isPuzzleSolved(void) const{return this->puzzle != nullptr && this->puzzle->isSolved();}
-		// Display	&operator=(const Display &src);
+		void 	renderSolutionAnimation(void);
 };
 
 #endif

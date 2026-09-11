@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   displayNPuzzle.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
+/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/02 16:48:19 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/08/06 19:22:46 by avon-ben         ###   ########.fr       */
+/*   Updated: 2026/09/02 16:42:10 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,10 @@
 #include "heuristic.hpp"
 
 #include <iostream>	// std::stream
-#include <thread>	// std::thread
 
 static void	ConfigureTrace(void);
 static void	ProcessUserInput(int pressedKey, nPuzzle* puzzle, Display* display);
+static void	ProcessUserInputShift(int pressedKey, nPuzzle* puzzle, Display* display);
 static void	RenderFrame(Display& graphics);
 
 void	displayNPuzzle(nPuzzle* puzzle)
@@ -33,7 +33,10 @@ void	displayNPuzzle(nPuzzle* puzzle)
 	{
 		while (!WindowShouldClose())
 		{
-			ProcessUserInput(GetKeyPressed(), puzzle, &graphics);
+			if (IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT))
+				ProcessUserInputShift(GetKeyPressed(), puzzle, &graphics);
+			else
+				ProcessUserInput(GetKeyPressed(), puzzle, &graphics);
 			if (IsWindowResized())
 				graphics.configureSizes();
 			RenderFrame(graphics);
@@ -71,49 +74,38 @@ static void	ProcessUserInput(int pressedKey, nPuzzle* puzzle, Display* display)
 {
 	switch (pressedKey)
 	{
-		case KEY_RIGHT:
-				puzzle->moveRight();
+		case KEY_RIGHT:	puzzle->moveRight();	break;
+		case KEY_LEFT:	puzzle->moveLeft();	break;
+		case KEY_DOWN:	puzzle->moveDown();	break;
+		case KEY_UP:	puzzle->moveUp();	break;
+		case KEY_SPACE:	puzzle->solveStep();	break;
+		case KEY_ENTER:
+		{
+			display->resetSolutionAnimation();
+			puzzle->solve();
+		}
 			break;
-		case KEY_LEFT:
-				puzzle->moveLeft();
-			break;
-		case KEY_DOWN:
-			if (IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT))
-				puzzle->incrementHeuristic();
-			else
-				puzzle->moveDown();
-			break;
-		case KEY_UP:
-			if (IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT))
-				puzzle->decrementHeuristic();
-			else
-				puzzle->moveUp();
-			break;
-		case KEY_T:	puzzle->printTarget();	break;
-		case KEY_S:	puzzle->printPuzzle();	break;
-		case KEY_Q:	puzzle->printQueue();	break;
-		case KEY_A:	puzzle->setSearchMode(nPuzzle::searchMode::ASTAR);	break;
-		case KEY_G: puzzle->setSearchMode(nPuzzle::searchMode::GREEDY); break;
-		case KEY_U: puzzle->setSearchMode(nPuzzle::searchMode::UNIFORM); break;
-		case KEY_R: 
-			if (IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT))
-			{
-				display->resetSolutionAnimation();
-				puzzle->resetToStart();
-			}
-			else
-				TraceLog(LOG_WARNING, "Press uppercase R to reset.");
-			break;
-		case KEY_SPACE:
-std::cerr	<< C_DGRAY	<< __FILE__	<<"::"	<< C_RESET	<< __func__	<< __LINE__	<< std::endl;
-			puzzle->solveStep();
-std::cerr	<< C_DGRAY	<< __FILE__	<<"::"	<< C_RESET	<< __func__	<< __LINE__	<< std::endl;
+		default:	break;
+	}
+}
+
+static void	ProcessUserInputShift(int pressedKey, nPuzzle* puzzle, Display* display)
+{
+	switch (pressedKey)
+	{
+#warning when changing search mode or heuristic while solution is playing either 'Segmentation fault (core dumped)' or 'vector::_M_range_check: __n (which is 1666318464) >= this->size() (which is 16)'
+		case KEY_RIGHT:	puzzle->incrementSearchMode();	break;
+		case KEY_LEFT:	puzzle->decrementSearchMode();	break;
+		case KEY_DOWN:	puzzle->incrementHeuristicIndex();	break;
+		case KEY_UP:	puzzle->decrementHeuristicIndex();	break;
+		case KEY_R:
+			display->resetSolutionAnimation();
+			puzzle->resetToStart();
 			break;
 		case KEY_ENTER:
 		{
 			display->resetSolutionAnimation();
-			std::thread	solveThread(&nPuzzle::solve, puzzle);
-			solveThread.detach();
+			puzzle->solve();
 		}
 			break;
 		default:	break;
@@ -125,6 +117,9 @@ static void	RenderFrame(Display& graphics)
 	try
 	{
 		BeginDrawing();
+		// render HUD
+		graphics.renderHUD(IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT));
+		// render puzzle
 		if (IsKeyDown(KEY_Q))
 			graphics.renderAsQueueState();
 		else if (IsKeyDown(KEY_S))

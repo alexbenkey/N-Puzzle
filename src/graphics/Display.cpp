@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Display.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
+/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/02 17:58:28 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/07/30 15:04:59 by avon-ben         ###   ########.fr       */
+/*   Updated: 2026/09/03 20:59:35 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,24 +20,17 @@
 
 #include <iostream>	// std::stream
 
-std::unordered_map<char, std::string> Display::hotkeyList = {
-	{ 'R', "Reset to Start" },
-	{ 'q', "Display Queue" },
-	{ 't', "Display Target" },
-	{ 's', "Display Start" },
-};
-
 /** ************************************************************************ **\
  * 
  * 	Constructors
  * 
 \* ************************************************************************** */
 
-Display::Display(nPuzzle* puzzle): 
-	puzzle(puzzle), 
-	solutionIndex(0), 
-	lastSolutionStep(0.0), 
-	solutionStepDelay(0.30), 
+Display::Display(nPuzzle* puzzle):
+	puzzle(puzzle),
+	solutionIndex(0),
+	lastSolutionStep(0.0),
+	solutionStepDelay(0.30),
 	solutionPlaying(false)
 {
 #if DEBUG >= DEBUG_TRACE
@@ -61,15 +54,6 @@ Display::Display(nPuzzle* puzzle):
 	this->setPuzzle(this->puzzle);
 
 }
-
-// Display::Display(const Display &src)
-// {
-// 	*this = src;
-// 	std::cout	<< C_DGREEN	<< "Copy constructor "
-// 				<< C_GREEN	<< __func__
-// 				<< C_DGREEN	<< " called."
-// 				<< C_RESET	<< std::endl;
-// }
 
 /** ************************************************************************ **\
  * 
@@ -107,17 +91,12 @@ void	Display::setPuzzle(nPuzzle* puzzle)
 	this->configureScreen();
 	this->configureSizes();
 	this->configurePositions();
-#if DEBUG >= DEBUG_TRACE
-	LOG_AS_TRACE();
-#endif
 }
 
 void	Display::configureMinimumSizes(void)
 {
-#if DEBUG >= DEBUG_TRACE
-	LOG_AS_TRACE("Configuring Minimum sizes");
-#elif DEBUG >= DEBUG_INFO
-	TraceLog(LOG_INFO, "\tConfiguring Minimum sizes");
+#if DEBUG >= DEBUG_INFO
+	LOG_AS_INFO("Configuring Minimum sizes");
 #endif
 	int	width;
 	int	height;
@@ -154,17 +133,12 @@ void	Display::configureMinimumFrameSizes()
 	this->Frame.height = std::min(this->Frame.height * this->tile.height, 
 								(float)GetMonitorHeight(GetCurrentMonitor()) - 2 * this->margin);
 	Display::logRectangle("Frame", this->Frame);
-#if DEBUG >= DEBUG_TRACE
-	LOG_AS_TRACE();
-#endif
 }
 
 void	Display::configureMaximumSizes(void)
 {
-#if DEBUG >= DEBUG_TRACE
-	LOG_AS_TRACE("Configuring Maximum sizes");
-#elif DEBUG >= DEBUG_INFO
-	TraceLog(LOG_INFO, "\tConfiguring Maximum sizes");
+#if DEBUG >= DEBUG_INFO
+	LOG_AS_INFO("Configuring Maximum sizes");
 #endif
 	int	monitor;
 	int	width;
@@ -183,41 +157,28 @@ void	Display::configureMaximumSizes(void)
 #endif
 	SetWindowMaxSize(width, height);
 
-#if DEBUG >= DEBUG_TRACE
-	LOG_AS_TRACE();
-#endif
 }
 
 void	Display::configureScreen(void)
 {
-#if DEBUG >= DEBUG_TRACE
+#if DEBUG >= DEBUG_INFO
 	LOG_AS_TRACE("Configuring Screen Size");
-#elif DEBUG >= DEBUG_INFO
-	TraceLog(LOG_INFO, "\tConfiguring Screen Size");
 #endif
 	int	width = (int)this->HUD->width() + (int)this->Frame.width + this->margin * 3;
 	int	height =(int)std::max(this->HUD->height(), this->Frame.height) + this->margin * 2;
-	
+
 	TraceLog(LOG_INFO, "Setting Window: %4ix%-4i", width, height);
 	SetWindowSize(width, height);
 	SetWindowPosition(DEFAULT_MARGIN, DEFAULT_MARGIN + 100);
-#if DEBUG >= DEBUG_TRACE
-	LOG_AS_TRACE();
-#endif
 }
 
 void	Display::configureSizes(void)
 {
-#if DEBUG >= DEBUG_TRACE
+#if DEBUG >= DEBUG_INFO
 	LOG_AS_TRACE("Configuring Frame and Tile Sizes");
-#elif DEBUG >= DEBUG_INFO
-	TraceLog(LOG_INFO, "\tConfiguring Frame and Tile sizes");
 #endif
 	this->configureFrameSize();
 	this->configureTileSize();
-#if DEBUG >= DEBUG_TRACE
-	LOG_AS_TRACE();
-#endif
 }
 
 void	Display::configureFrameSize(void)
@@ -228,9 +189,6 @@ void	Display::configureFrameSize(void)
 	this->Frame.width = (float)GetScreenWidth() - this->HUD->width() - 3 * (float)this->margin;
 	this->Frame.height = GetScreenHeight() - 2 * (float)this->margin;
 	Display::logRectangle("Frame", this->Frame);
-#if DEBUG >= DEBUG_TRACE
-	LOG_AS_TRACE();
-#endif
 }
 
 void	Display::configureTileSize(void)
@@ -252,9 +210,6 @@ void	Display::configureTileSize(void)
 	this->tile.width = Frame.width / this->tile.width;
 	this->tile.height = Frame.height / this->tile.height;
 	Display::logRectangle("tile", this->tile);
-#if DEBUG >= DEBUG_TRACE
-	LOG_AS_TRACE();
-#endif
 }
 
 bool	Display::setFontSize(const float size, bool updateSizes, bool includeHUD)
@@ -274,9 +229,6 @@ bool	Display::setFontSize(const float size, bool updateSizes, bool includeHUD)
 	if (includeHUD)
 		this->HUD->setFontsize(size, updateSizes);
 	return (true);
-#if DEBUG >= DEBUG_TRACE
-	LOG_AS_TRACE();
-#endif
 }
 
 bool	Display::setMargin(const int margin, bool updateSizes, bool includeHUD)
@@ -295,23 +247,15 @@ bool	Display::setMargin(const int margin, bool updateSizes, bool includeHUD)
 	if (includeHUD)
 		this->HUD->setMargin(margin, updateSizes);
 	return (true);
-#if DEBUG >= DEBUG_TRACE
-	LOG_AS_TRACE();
-#endif
 }
 
 void	Display::configurePositions(void)
 {
-#if DEBUG >= DEBUG_TRACE
-	LOG_AS_TRACE("Configuring Positions");
-#elif DEBUG >= DEBUG_INFO
-	TraceLog(LOG_INFO, "\tConfiguring Positions");
+#if DEBUG >= DEBUG_INFO
+	LOG_AS_INFO("Configuring Positions");
 #endif
 	this->HUD->configurePositions();
 	this->configureFramePosition();
-#if DEBUG >= DEBUG_TRACE
-	LOG_AS_TRACE();
-#endif
 }
 
 void	Display::configureFramePosition(void)
@@ -325,9 +269,6 @@ void	Display::configureFramePosition(void)
 	this->tile.x = this->Frame.x;
 	this->tile.y = this->Frame.y;
 	Display::logRectangle("tile", this->tile);
-#if DEBUG >= DEBUG_TRACE
-	LOG_AS_TRACE();
-#endif
 }
 
 void	Display::reconfigure(void)
@@ -339,9 +280,6 @@ void	Display::reconfigure(void)
 	this->configureMaximumSizes();
 	this->configureSizes();
 	this->configurePositions();
-#if DEBUG >= DEBUG_TRACE
-	LOG_AS_TRACE();
-#endif
 }
 
 void	Display::logRectangle(const char* name, const Rectangle& rect)
@@ -349,17 +287,23 @@ void	Display::logRectangle(const char* name, const Rectangle& rect)
 	TraceLog(TraceLogLevel::LOG_INFO, "%-12s x %4.0f y %4.0f w %4.0f h %4.0f", name, rect.x, rect.y, rect.width, rect.height);
 }
 
-
 void	Display::render(void)
 {
+	this->renderHUD();
 	this->renderAsCurrentState();
+}
+
+void	Display::renderHUD(bool shiftPressed)
+{
+	if (!this->puzzle)
+		return ;
+	this->HUD->render(this->puzzle, &this->puzzle->getCurrentState(), shiftPressed);
 }
 
 void	Display::renderAsStartState(void)
 {
 	if (!this->puzzle)
 		return ;
-	this->HUD->render(this->puzzle, &this->puzzle->getCurrentState());
 	this->renderBoard(this->puzzle->getStartState().getBoard());
 }
 
@@ -367,7 +311,6 @@ void	Display::renderAsCurrentState(void)
 {
 	if (!this->puzzle)
 		return ;
-	this->HUD->render(this->puzzle, &this->puzzle->getCurrentState());
 	this->renderBoard(this->puzzle->getCurrentState().getBoard());
 }
 
@@ -375,7 +318,6 @@ void	Display::renderAsQueueState(void)
 {
 	if (!this->puzzle)
 		return ;
-	this->HUD->render(this->puzzle, &this->puzzle->getCurrentState());
 	this->renderBoard(this->puzzle->getQueueState().getBoard());
 }
 
@@ -383,29 +325,22 @@ void	Display::renderAsTargetState(void)
 {
 	if (!this->puzzle)
 		return ;
-	this->HUD->render(this->puzzle, &this->puzzle->getCurrentState());
 	this->renderBoard(this->puzzle->getTarget().getBoard());
 }
 
 void	Display::renderBoard(const nPuzzle::Board& board)
 {
-#if DEBUG >= DEBUG_ALL
-	LOG_AS_TRACE();
-#endif
+TRACE_POSITION();
 	// Background
 	ClearBackground(Color{127, 63, 23, 255});
 	// HUD
 	this->renderTiles(board);
-#if DEBUG >= DEBUG_ALL
-	LOG_AS_TRACE();
-#endif
+TRACE_POSITION();
 }
 
 void	Display::renderTiles(const nPuzzle::Board& board)
 {
-#if DEBUG >= DEBUG_ALL
-	LOG_AS_TRACE();
-#endif
+TRACE_POSITION();
 	Color	tileColor = {192, 192, 192, 255};
 	int	xOffset = (this->tile.width - 20) / 2;
 	int	yOffset = (this->tile.height - 20) / 2;
@@ -431,10 +366,11 @@ void	Display::renderTiles(const nPuzzle::Board& board)
 				DrawText(std::to_string(val).c_str(), this->tile.x + xOffset, this->tile.y + yOffset, 20, ORANGE);
 			}
 		}
+}
 
-#if DEBUG >= DEBUG_ALL
-	LOG_AS_TRACE();
-#endif
+bool	Display::isPuzzleSolved(void) const
+{
+	return this->puzzle != nullptr && this->puzzle->isSolved();
 }
 
 void Display::startSolutionAnimation(void)
@@ -449,7 +385,7 @@ void Display::renderSolutionAnimation(void)
 {
 	if (!this->puzzle)
 		return;
-	
+
 	if (this->solutionPath.empty())
 		this->startSolutionAnimation();
 
@@ -463,7 +399,7 @@ void Display::renderSolutionAnimation(void)
 
 	if (this->solutionPlaying && (currentTime - this->lastSolutionStep >= this->solutionStepDelay))
 	{
-		if (this->solutionIndex + 1 < this->solutionPath.size())
+		if (this->solutionIndex + 1 < (int32_t)this->solutionPath.size())
 		{
 			++this->solutionIndex;
 			this->lastSolutionStep = currentTime;

@@ -7,7 +7,8 @@
 NAME :=	npuzzle
 
 # Preprocessor
-INCLUDES :=	-Ihdr	-Iassets/raylib/src/
+INCLUDES :=	$(shell find hdr -type d -printf '-I%p ')
+INCLUDES +=	-Iassets/raylib/src/
 DEFINES ?=	
 CPPFLAGS ?=	
 CPPFLAGS +=	$(INCLUDES) $(DEFINES) -DDEBUG=$(DEBUG)
@@ -15,6 +16,7 @@ CPPFLAGS +=	$(INCLUDES) $(DEFINES) -DDEBUG=$(DEBUG)
 # WARNFLAGS :=	-Wall -Wextra -Werror
 # WARNFLAGS +=	-Wno-unused-result
 # WARNFLAGS +=	-Wno-unused-variable
+# WARNFLAGS +=	-Wno-error=cpp
 
 # C++ Compiler
 CXX ?=		c++
@@ -100,10 +102,14 @@ SRC_NMSPC :=	heuristic.cpp
 DIR_GRAPHIC :=	$(SRC_DIR)graphics/
 SRC_GRAPHIC :=	displayNPuzzle.cpp	Display.cpp	Display.HUD.cpp
 
+DIR_UTIL :=		$(SRC_DIR)
+SRC_UTIL :=		threadWorker.cpp
+
 SRC_$(NAME) :=	$(SRC_MAIN:%=$(SRC_DIR)%) \
 				$(SRC_CLASS:%.cpp=$(DIR_CLASS)%.cpp)\
 				$(SRC_NMSPC:%.cpp=$(DIR_NMSPC)%.cpp)\
-				$(SRC_GRAPHIC:%.cpp=$(DIR_GRAPHIC)%.cpp)
+				$(SRC_GRAPHIC:%.cpp=$(DIR_GRAPHIC)%.cpp)\
+				$(SRC_UTIL:%.cpp=$(DIR_UTIL)%.cpp)
 
 OBJ_$(NAME) :=	$(SRC_$(NAME):$(SRC_DIR)%.cpp=$(OBJ_DIR)%.o)
 DEP_$(NAME) :=	$(SRC_$(NAME):$(SRC_DIR)%.cpp=$(DEP_DIR)%.d)

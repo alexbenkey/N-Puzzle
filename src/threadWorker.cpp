@@ -1,18 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   nPuzzle.Board.Tile.cpp                             :+:      :+:    :+:   */
+/*   threadWorker.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/07/23 17:58:21 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/09/03 20:45:21 by othello          ###   ########.fr       */
+/*   Created: 2026/08/20 16:01:17 by othello           #+#    #+#             */
+/*   Updated: 2026/09/11 20:52:21 by othello          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "nPuzzle.Board.Tile.hpp"
-#include "colors.hpp"
+#include "threadWorker.hpp"
 #include "Errors.hpp"
+#include "colors.hpp"
 
 #include <iostream>	// std::stream
 
@@ -22,10 +22,10 @@
  * 
 \* ************************************************************************** */
 
-nPuzzle::Board::Tile::Tile(const int32_t value, const int32_t x, const int32_t y):
-	value(value),
-	x(x),
-	y(y)
+ThreadWorker::ThreadWorker(std::function<void()> f):
+			thread(&ThreadWorker::run, this),
+			function(std::move(f)),
+			state(State::IDLE)
 {
 #if DEBUG >= DEBUG_TRACE
 	std::cout	<< C_DGREEN	<< "Default constructor "
@@ -41,7 +41,7 @@ nPuzzle::Board::Tile::Tile(const int32_t value, const int32_t x, const int32_t y
  * 
 \* ************************************************************************** */
 
-nPuzzle::Board::Tile::~Tile(void)
+ThreadWorker::~ThreadWorker(void)
 {
 #if DEBUG >= DEBUG_TRACE
 	std::cout	<< C_DRED	<< "Deconstructor "
@@ -49,6 +49,10 @@ nPuzzle::Board::Tile::~Tile(void)
 				<< C_DRED	<< " called"
 				<< C_RESET	<< std::endl;
 #endif
+
+	this->setState(State::STOP);
+	if (this->thread.joinable())
+		this->thread.join();	
 }
 
 /** ************************************************************************ **\
@@ -57,40 +61,47 @@ nPuzzle::Board::Tile::~Tile(void)
  * 
 \* ************************************************************************** */
 
-void			nPuzzle::Board::Tile::setVal(const int32_t val)
+void	ThreadWorker::setState(State state)
 {
-	this->value = val;
+	{
+		std::lock_guard<std::mutex>	lock(this->internalMutex);
+		this->state = state;
+	}
+	this->condition.notify_one();
 }
 
-int32_t	nPuzzle::Board::Tile::getVal(void) const
+ThreadWorker::State	ThreadWorker::getState(void) const
 {
-	return (this->value);
+	std::lock_guard<std::mutex>	lock(this->internalMutex);
+	return (this->state);
 }
 
-void			nPuzzle::Board::Tile::setX(const int32_t x)
+void	ThreadWorker::run(void)
 {
-	this->x = x;
-}
-
-int32_t	nPuzzle::Board::Tile::getX(void) const
-{
-	return (this->x);
-}
-
-void			nPuzzle::Board::Tile::setY(const int32_t y)
-{
-	this->y = y;
-}
-
-int32_t	nPuzzle::Board::Tile::getY(void) const
-{
-	return (this->y);
-}
-
-void	nPuzzle::Board::Tile::swapCoords(Tile& other)
-{
-	std::swap(this->x, other.x);
-	std::swap(this->y, other.y);
+	while (true)
+	{
+		std::unique_lock<std::mutex>	lock(this->internalMutex);
+		switch (this->state)
+		{
+			case State::STOP:
+				return ;
+			case State::IDLE:
+				this->condition.wait(lock, [this] { return (this->state != State::IDLE); });
+				break;
+			case State::RUNONCE:
+				lock.unlock();	// allows this->function to change state
+				this->function();
+				if (this->getState() == State::RUNONCE)
+					this->setState(State::IDLE);
+				break;
+			case State::RUNNING:
+				lock.unlock(); // allows this->function to change state
+				this->function();
+				break;
+			default:
+				break;
+		}
+	}
 }
 
 /** ************************************************************************ **\
@@ -98,9 +109,3 @@ void	nPuzzle::Board::Tile::swapCoords(Tile& other)
  * 	Operators
  * 
 \* ************************************************************************** */
-
-std::ostream&	operator<<(std::ostream& os, const nPuzzle::Board::Tile& tile)
-{
-	os << tile.value;
-	return os;
-}
