@@ -3,15 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   Errors.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/10 12:38:06 by othello           #+#    #+#             */
-/*   Updated: 2026/07/30 11:14:22 by othello          ###   ########.fr       */
+/*   Updated: 2026/10/03 20:50:53 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef ERROR_HPP
-# define ERROR_HPP
+#ifndef ERRORS_HPP
+# define ERRORS_HPP
 
 # define	DEBUG_SILENT	0
 # define	DEBUG_ERROR	1
