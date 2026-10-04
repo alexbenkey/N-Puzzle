@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   nPuzzle.Solver.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
+/*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/29 17:52:09 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/10/04 18:10:03 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/10/04 18:40:55 by avon-ben         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -183,13 +183,25 @@ bool	nPuzzle::Solver::getCalculateAllHeuristics(void) const
 void	nPuzzle::Solver::solveStepWorker(void)
 {
 	// Prevent solving of an already solved puzzle
-	if (this->isSolved())
+	if (this->isSolved() || this->getSolvability() == nPuzzle::Solvability::UNSOLVABLE)
+	{
+		this->setWorkerState(ThreadWorker::State::IDLE);
 		return ;
+	}
 	// Create first queue item from start position
 	if (this->queue.size() == 0)
 		this->processState(new nPuzzle::State(*this->puzzle.state));
-	// Retrieve first element from queue
+	// prevents solving a manually solved puzzle (and subsequently crashiing)
+	this->determineIsSolved();
+	if (this->isSolved())
+		return ;
 	nPuzzle::State*	current = this->popQueue();
+
+	if (current == nullptr)
+	{
+		this->setWorkerState(ThreadWorker::State::IDLE);
+		return ;
+	}
 	// Create upto 4 new states and process them
 	for (nPuzzle::Direction direction : {
 		nPuzzle::Direction::UP,
@@ -359,6 +371,7 @@ void	nPuzzle::Solver::clearQueue(void)
 		this->owner.clear();
 		this->queue = {};
 		this->visited.clear();
+		this->solved = false;
 	}
 	this->determineIsSolved();
 }
