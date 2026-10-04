@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   nPuzzle.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 16:13:50 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/09/03 20:42:01 by othello          ###   ########.fr       */
+/*   Updated: 2026/10/04 14:16:33 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -184,6 +184,8 @@ void	nPuzzle::parse(std::istream& __is)
 		throw std::runtime_error("Invalid puzzle size line: expected 1 or 2 positive integers");
 	this->height = numbers[size - 1];
 	this->size = this->width * this->height;
+	if (this->width != this->height)
+		throw std::range_error("nPuzzle only accept squares");
 	this->state = new nPuzzle::State(*this);
 	this->target = new nPuzzle::Target();
 	this->target->setSize(this->width, this->height);
@@ -191,8 +193,10 @@ void	nPuzzle::parse(std::istream& __is)
 	// Reading puzzle tiles
 	for (int32_t row = 0; std::getline(__is, line); ++row)
 	{
-		if (!validLine(line) || emptyLine(line))
+		if (!validLine(line))
 			throw std::runtime_error("Invalid puzzle row line: " + line);
+		if (emptyLine(line))
+			throw std::runtime_error("Empty or commented line not allowed here: " + line);
 		numbers = nPuzzle::convertLineToNumbers(line);
 		this->setRow(row, numbers);
 	}

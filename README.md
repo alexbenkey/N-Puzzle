@@ -150,6 +150,14 @@ git submodule update --init --recursive
 
 ## Build
 
+Before building ensure the submodules are included in the repository by using either of the following commands
+```sh
+# During cloning
+git clone --recurse-submodules [target]
+# After cloning
+git submodule update --init --recursive
+```
+
 Build raylib and N-Puzzle with:
 
 ```sh
