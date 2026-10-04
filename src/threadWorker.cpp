@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   threadWorker.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
+/*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/20 16:01:17 by othello           #+#    #+#             */
-/*   Updated: 2026/09/11 20:52:21 by othello          ###   ########.fr       */
+/*   Updated: 2026/10/04 14:05:57 by avon-ben         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,9 +23,9 @@
 \* ************************************************************************** */
 
 ThreadWorker::ThreadWorker(std::function<void()> f):
-			thread(&ThreadWorker::run, this),
 			function(std::move(f)),
-			state(State::IDLE)
+			state(State::IDLE),
+			thread(&ThreadWorker::run, this)
 {
 #if DEBUG >= DEBUG_TRACE
 	std::cout	<< C_DGREEN	<< "Default constructor "
@@ -67,7 +67,17 @@ void	ThreadWorker::setState(State state)
 		std::lock_guard<std::mutex>	lock(this->internalMutex);
 		this->state = state;
 	}
-	this->condition.notify_one();
+	this->condition.notify_all();
+}
+
+void	ThreadWorker::pauseAndWait(void)
+{
+	std::unique_lock<std::mutex>	lock(this->internalMutex);
+
+	if (this->state != State::STOP)
+		this->state = State::IDLE;
+	while (this->active)
+		this->condition.wait(lock);
 }
 
 ThreadWorker::State	ThreadWorker::getState(void) const
@@ -89,14 +99,15 @@ void	ThreadWorker::run(void)
 				this->condition.wait(lock, [this] { return (this->state != State::IDLE); });
 				break;
 			case State::RUNONCE:
-				lock.unlock();	// allows this->function to change state
-				this->function();
-				if (this->getState() == State::RUNONCE)
-					this->setState(State::IDLE);
-				break;
+				this->state = State::IDLE;
+				// Fall through: consume the request, then execute once.
 			case State::RUNNING:
+				this->active = true;
 				lock.unlock(); // allows this->function to change state
 				this->function();
+				lock.lock();
+				this->active = false;
+				this->condition.notify_all();
 				break;
 			default:
 				break;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   displayNPuzzle.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
+/*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/02 16:48:19 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/10/03 20:46:30 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/10/03 20:52:51 by avon-ben         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,10 +77,30 @@ static void	ProcessUserInput(int pressedKey, nPuzzle* puzzle, Display* display, 
 {
 	switch (pressedKey)
 	{
-		case KEY_RIGHT:	puzzle->moveRight();	break;
-		case KEY_LEFT:	puzzle->moveLeft();	break;
-		case KEY_DOWN:	puzzle->moveDown();	break;
-		case KEY_UP:	puzzle->moveUp();	break;
+		case KEY_RIGHT:	
+		{
+			display->resetSolutionAnimation();
+			puzzle->moveRight();	
+			break;
+		}
+		case KEY_LEFT:
+		{
+			display->resetSolutionAnimation();	
+			puzzle->moveLeft();	
+			break;
+		}
+		case KEY_DOWN:	
+		{
+			display->resetSolutionAnimation();
+			puzzle->moveDown();	
+			break;
+		}
+		case KEY_UP:
+		{
+			display->resetSolutionAnimation();
+			puzzle->moveUp();	break;
+			break;
+		}
 		case KEY_SPACE:	puzzle->solveStep();	break;
 		case KEY_ENTER:
 		{
@@ -89,6 +109,7 @@ static void	ProcessUserInput(int pressedKey, nPuzzle* puzzle, Display* display, 
 			isRunning = true;
 		}
 			break;
+		}
 		default:	break;
 	}
 }
