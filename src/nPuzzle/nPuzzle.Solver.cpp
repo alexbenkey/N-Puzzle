@@ -6,7 +6,7 @@
 /*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/29 17:52:09 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/10/04 18:40:55 by avon-ben         ###   ########.fr       */
+/*   Updated: 2026/10/04 18:53:11 by avon-ben         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -190,9 +190,11 @@ void	nPuzzle::Solver::solveStepWorker(void)
 	}
 	// Create first queue item from start position
 	if (this->queue.size() == 0)
+	{
+		this->determineIsSolved();
 		this->processState(new nPuzzle::State(*this->puzzle.state));
+	}
 	// prevents solving a manually solved puzzle (and subsequently crashiing)
-	this->determineIsSolved();
 	if (this->isSolved())
 		return ;
 	nPuzzle::State*	current = this->popQueue();
