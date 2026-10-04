@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heuristic.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/14 12:51:34 by othello           #+#    #+#             */
-/*   Updated: 2026/09/03 20:58:55 by othello          ###   ########.fr       */
+/*   Updated: 2026/10/04 14:31:16 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -215,7 +215,6 @@ class WalkingDistanceClass
 
 		int32_t	lookupHeuristic(const nPuzzle::Board& current, const nPuzzle::Board& target)
 		{
-#warning is only called once, returning -2. Needs to be called more often
 			if (this->width != target.getWidth() || this->height != target.getHeight())
 				this->resetLookupTables(target);
 

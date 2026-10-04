@@ -13,7 +13,8 @@ DEFINES ?=
 CPPFLAGS ?=	
 CPPFLAGS +=	$(INCLUDES) $(DEFINES) -DDEBUG=$(DEBUG)
 
-# WARNFLAGS :=	-Wall -Wextra -Werror
+WARNFLAGS :=	-Wall -Wextra -Werror
+WARNFLAGS +=	-Wno-unknown-pragmas
 # WARNFLAGS +=	-Wno-unused-result
 # WARNFLAGS +=	-Wno-unused-variable
 # WARNFLAGS +=	-Wno-error=cpp

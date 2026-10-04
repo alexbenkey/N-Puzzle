@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   threadWorker.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
+/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/20 16:01:17 by othello           #+#    #+#             */
-/*   Updated: 2026/10/04 14:05:57 by avon-ben         ###   ########.fr       */
+/*   Updated: 2026/10/04 14:33:35 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,6 +100,13 @@ void	ThreadWorker::run(void)
 				break;
 			case State::RUNONCE:
 				this->state = State::IDLE;
+				this->active = true;
+				lock.unlock(); // allows this->function to change state
+				this->function();
+				lock.lock();
+				this->active = false;
+				this->condition.notify_all();
+				break;
 				// Fall through: consume the request, then execute once.
 			case State::RUNNING:
 				this->active = true;

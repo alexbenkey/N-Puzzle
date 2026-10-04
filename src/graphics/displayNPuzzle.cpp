@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   displayNPuzzle.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
+/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/02 16:48:19 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/10/03 20:52:51 by avon-ben         ###   ########.fr       */
+/*   Updated: 2026/10/04 14:31:29 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,6 @@ static void	ProcessUserInput(int pressedKey, nPuzzle* puzzle, Display* display, 
 			display->resetSolutionAnimation();
 			puzzle->solve();
 			isRunning = true;
-		}
 			break;
 		}
 		default:	break;
@@ -120,7 +119,6 @@ static void	ProcessUserInputShift(int pressedKey, nPuzzle* puzzle, Display* disp
 		return ;
 	switch (pressedKey)
 	{
-#warning when changing search mode or heuristic while solution is playing either 'Segmentation fault (core dumped)' or 'vector::_M_range_check: __n (which is 1666318464) >= this->size() (which is 16)'
 		case KEY_RIGHT:	puzzle->incrementSearchMode();	break;
 		case KEY_LEFT:	puzzle->decrementSearchMode();	break;
 		case KEY_DOWN:	puzzle->incrementHeuristicIndex();	break;
