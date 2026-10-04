@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   nPuzzle.Solver.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
+/*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/29 17:52:09 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/09/03 20:56:24 by othello          ###   ########.fr       */
+/*   Updated: 2026/10/03 21:06:31 by avon-ben         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -343,7 +343,8 @@ int32_t	nPuzzle::Solver::getTopCost(void) const
 
 void	nPuzzle::Solver::clearQueue(void)
 {
-	this->thread.setState(ThreadWorker::State::IDLE);
+
+	this->thread.pauseAndWait();
 	{
 		std::lock_guard<std::mutex>	lock(this->thread.mutex);
 
