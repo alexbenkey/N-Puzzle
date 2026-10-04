@@ -6,7 +6,7 @@
 /*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/29 17:52:09 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/10/04 18:53:11 by avon-ben         ###   ########.fr       */
+/*   Updated: 2026/10/04 19:01:47 by avon-ben         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -191,17 +191,24 @@ void	nPuzzle::Solver::solveStepWorker(void)
 	// Create first queue item from start position
 	if (this->queue.size() == 0)
 	{
+		// prevents solving a manually solved puzzle (and subsequently crashiing)
 		this->determineIsSolved();
+		if (this->isSolved())
+			return ;
 		this->processState(new nPuzzle::State(*this->puzzle.state));
+		if (this->queue.size() == 0)
+		{
+			this->setWorkerState(ThreadWorker::State::IDLE);
+			throw std::runtime_error("Queue is empty, but puzzle is not solved. This should not happen.");
+			return ;
+		}
 	}
-	// prevents solving a manually solved puzzle (and subsequently crashiing)
-	if (this->isSolved())
-		return ;
-	nPuzzle::State*	current = this->popQueue();
 
+	nPuzzle::State*	current = this->popQueue();
 	if (current == nullptr)
 	{
 		this->setWorkerState(ThreadWorker::State::IDLE);
+		throw std::runtime_error("current state is somehow a nullptr. This should not happen.");
 		return ;
 	}
 	// Create upto 4 new states and process them
