@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   displayNPuzzle.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/02 16:48:19 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/09/02 16:42:10 by othello          ###   ########.fr       */
+/*   Updated: 2026/10/03 20:46:30 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,23 +20,26 @@
 #include <iostream>	// std::stream
 
 static void	ConfigureTrace(void);
-static void	ProcessUserInput(int pressedKey, nPuzzle* puzzle, Display* display);
-static void	ProcessUserInputShift(int pressedKey, nPuzzle* puzzle, Display* display);
+static void	ProcessUserInput(int pressedKey, nPuzzle* puzzle, Display* display, bool& isRunning);
+static void	ProcessUserInputShift(int pressedKey, nPuzzle* puzzle, Display* display, bool& isRunning);
 static void	RenderFrame(Display& graphics);
 
 void	displayNPuzzle(nPuzzle* puzzle)
 {
 	ConfigureTrace();
 	Display	graphics(puzzle);
+	bool	isRunning = false;
 
 	try
 	{
 		while (!WindowShouldClose())
 		{
+			if (puzzle->isSolved())
+				isRunning = false;
 			if (IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT))
-				ProcessUserInputShift(GetKeyPressed(), puzzle, &graphics);
-			else
-				ProcessUserInput(GetKeyPressed(), puzzle, &graphics);
+				ProcessUserInputShift(GetKeyPressed(), puzzle, &graphics, isRunning);
+			else if (!isRunning)
+				ProcessUserInput(GetKeyPressed(), puzzle, &graphics, isRunning);
 			if (IsWindowResized())
 				graphics.configureSizes();
 			RenderFrame(graphics);
@@ -70,7 +73,7 @@ static void	ConfigureTrace(void)
 #endif
 }
 
-static void	ProcessUserInput(int pressedKey, nPuzzle* puzzle, Display* display)
+static void	ProcessUserInput(int pressedKey, nPuzzle* puzzle, Display* display, bool& isRunning)
 {
 	switch (pressedKey)
 	{
@@ -83,14 +86,17 @@ static void	ProcessUserInput(int pressedKey, nPuzzle* puzzle, Display* display)
 		{
 			display->resetSolutionAnimation();
 			puzzle->solve();
+			isRunning = true;
 		}
 			break;
 		default:	break;
 	}
 }
 
-static void	ProcessUserInputShift(int pressedKey, nPuzzle* puzzle, Display* display)
+static void	ProcessUserInputShift(int pressedKey, nPuzzle* puzzle, Display* display, bool& isRunning)
 {
+	if (isRunning == true && pressedKey != KEY_R)
+		return ;
 	switch (pressedKey)
 	{
 #warning when changing search mode or heuristic while solution is playing either 'Segmentation fault (core dumped)' or 'vector::_M_range_check: __n (which is 1666318464) >= this->size() (which is 16)'
@@ -101,11 +107,13 @@ static void	ProcessUserInputShift(int pressedKey, nPuzzle* puzzle, Display* disp
 		case KEY_R:
 			display->resetSolutionAnimation();
 			puzzle->resetToStart();
+			isRunning = false;
 			break;
 		case KEY_ENTER:
 		{
 			display->resetSolutionAnimation();
 			puzzle->solve();
+			isRunning = true;
 		}
 			break;
 		default:	break;
