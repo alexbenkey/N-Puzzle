@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   nPuzzle.Solver.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
+/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/29 17:52:09 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/10/04 19:01:47 by avon-ben         ###   ########.fr       */
+/*   Updated: 2026/10/04 19:15:28 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -191,11 +191,11 @@ void	nPuzzle::Solver::solveStepWorker(void)
 	// Create first queue item from start position
 	if (this->queue.size() == 0)
 	{
-		// prevents solving a manually solved puzzle (and subsequently crashiing)
+		this->processState(new nPuzzle::State(*this->puzzle.state));
+		// Prevents solving a manually solved puzzle (and subsequently crashing)
 		this->determineIsSolved();
 		if (this->isSolved())
 			return ;
-		this->processState(new nPuzzle::State(*this->puzzle.state));
 		if (this->queue.size() == 0)
 		{
 			this->setWorkerState(ThreadWorker::State::IDLE);
