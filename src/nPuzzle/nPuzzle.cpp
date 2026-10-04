@@ -6,7 +6,7 @@
 /*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 16:13:50 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/10/04 14:16:33 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/10/04 18:08:48 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -295,6 +295,11 @@ const nPuzzle::State&	nPuzzle::getQueueState(void)
 int32_t	nPuzzle::getQueueSize(void) const
 {
 	return (this->solver->getQueueSize());
+}
+
+int32_t	nPuzzle::getVisitedCount(void) const
+{
+	return (this->solver->getVisitedCount());
 }
 
 bool	nPuzzle::move(nPuzzle::Direction direction)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   nPuzzle.Solver.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: avon-ben <avon-ben@student.codam.nl>       +#+  +:+       +#+        */
+/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/29 17:52:09 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/10/03 21:06:31 by avon-ben         ###   ########.fr       */
+/*   Updated: 2026/10/04 18:10:03 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -201,7 +201,6 @@ void	nPuzzle::Solver::solveStepWorker(void)
 		nPuzzle::State*	next = new nPuzzle::State(*current);
 		if (next->move(direction))
 		{
-#warning shouldnt this be in move?
 			next->setPrevious(current);
 			this->processState(next);
 		}
@@ -312,6 +311,13 @@ size_t	nPuzzle::Solver::getQueueSize(void) const
 	std::lock_guard<std::mutex>	lock(this->thread.mutex);
 
 	return (this->queue.size());
+}
+
+size_t	nPuzzle::Solver::getVisitedCount(void) const
+{
+	std::lock_guard<std::mutex>	lock(this->thread.mutex);
+
+	return (this->visited.size());
 }
 
 const nPuzzle::State&	nPuzzle::Solver::getTopState(void) const

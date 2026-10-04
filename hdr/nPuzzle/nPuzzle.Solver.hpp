@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   nPuzzle.Solver.hpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/29 17:35:11 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/09/03 19:13:24 by othello          ###   ########.fr       */
+/*   Updated: 2026/10/04 18:09:27 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,6 @@ class nPuzzle::Solver
 	private:
 		const nPuzzle&	puzzle;
 
-#warning not sure how this interacts with mutexes
 		std::atomic<nPuzzle::Solvability>	solvability{nPuzzle::Solvability::UNKNOWN};
 
 		const int32_t&	heuristicIndex;
@@ -90,6 +89,7 @@ class nPuzzle::Solver
 
 		// Queue
 		size_t	getQueueSize(void) const;
+		size_t	getVisitedCount(void) const;
 		const nPuzzle::State&	getTopState(void) const;
 		int32_t	getTopHeuristic(void) const;
 		int32_t	getTopCost(void) const;

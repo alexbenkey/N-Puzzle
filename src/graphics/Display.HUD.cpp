@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Display.HUD.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/09 13:44:29 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/09/03 21:01:22 by othello          ###   ########.fr       */
+/*   Updated: 2026/10/04 18:14:53 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,8 +153,8 @@ TRACE_POSITION();
 void	Display::HUD::configureSolverSize(bool updateFrame)
 {
 TRACE_POSITION();
-	this->Solver.Left.width = (float)MeasureText("Queue:", this->fontSize);
-	this->Solver.Left.height = this->fontHeight * 2;
+	this->Solver.Left.width = (float)MeasureText("Visited:", this->fontSize);
+	this->Solver.Left.height = this->fontHeight * 3;
 	Display::logRectangle("HUD.Solver.Left", this->Solver.Left);
 
 	this->Solver.Right.width = (float)MeasureText("Uniform-cost", this->fontSize);
@@ -450,9 +450,16 @@ TRACE_POSITION();
 		}
 		DrawText(buffer, this->Solver.Right.x, posY, this->fontSize, WHITE);
 	}
-	// Queue
+	// Visited
 	{
 		posY = this->Solver.Left.y + this->fontHeight;
+		DrawText("Visited:", this->Solver.Left.x, posY, this->fontSize, WHITE);
+		buffer = TextFormat("%12i", puzzle->getVisitedCount());
+		DrawText(buffer, this->Solver.Right.x, posY, this->fontSize, WHITE);
+	}
+	// Queue
+	{
+		posY = this->Solver.Left.y + this->fontHeight * 2;
 		DrawText("Queue:", this->Solver.Left.x, posY, this->fontSize, WHITE);
 		buffer = TextFormat("%12i", puzzle->getQueueSize());
 		DrawText(buffer, this->Solver.Right.x, posY, this->fontSize, WHITE);

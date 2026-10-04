@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   nPuzzle.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/23 14:41:42 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/09/03 20:41:47 by othello          ###   ########.fr       */
+/*   Updated: 2026/10/04 18:07:52 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,6 +111,7 @@ class nPuzzle
 		const nPuzzle::State&	getStartState()	const;
 		const nPuzzle::State&	getQueueState(void);
 		int32_t	getQueueSize(void) const;
+		int32_t	getVisitedCount(void) const;
 
 		// Movement
 		bool	moveUp(void);
