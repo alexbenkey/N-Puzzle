@@ -1,5 +1,6 @@
 # N-Puzzle
-Using the A* algorithm to solve n N-Puzzle
+
+N-Puzzle is a variation on the classic sliding tile puzzle, the goal of the game is to move tiles into the single empty space until the specified end result is achieved. Our version allows you to explore the puzzle manually or sit back and let the solver do the hard work for you. We combine a raylib based interactive interface with an A* search algorithm, while allowing for different heuristics and search strategies to explore different ways of solving the puzzle. 
 
 ---
 
@@ -18,37 +19,43 @@ Using the A* algorithm to solve n N-Puzzle
 
 - Describe graphics
 - Describe search
-- Describe greedy vs ...
+
+### Uniform vs greedy searches
+
+Given that A* search algorithms function on the basis of heuristics, there is an inherent component of uncertainty to how remaining routes are determined. The principle of A* is to strike a balance between costs (previous moves made), and heuristic values (an optimistic indication of future moves based on the currently selected heuristic). 
+Selecting greedy or uniform vs A* search allows the user to skew more towards one of those versus the other. 
+
+- __Uniform cost__ search sorts the array of states by path cost, or *g* value, while completely devalueing heuristic value, this acts as what is effectively a breadth first search, trading efficiency for accuracy. 
+
+- __Greedy search__ does effectively the opposite, focussing only on the heuristic, or *h* value of whatever particular heuristic is selected, meaning it selects whatever route looks shortest from the current state, but ignoring the route that has been taken so far. given that heuristics can be inaccurate this does not necessarily leave you with the best option, but it goes down the route that seems the most promising. 
+
+- __A*__ combines the two by, at any given point, prioritizing for the *g + h* selecting for the lowest combination of the two. Thereby being the most balanced of the two in theory. 
+
+
+### Solvability checker
+
+The solvability checker works through comparing the start and target boards, reverted to a 1D version of the respective boards. It subsequently counts the swaps needed to reach target state from start and compares its parity to that of the manhatten distance of the same difference. if the parity of these two routes match the puzzle is deemed solvable, otherwise it is not. given that the checker only compares the orders based on what is given as the solved state, it is effectively layout-agnostic. 
+If the puzzle is deemed unsolvable it is skipped by the solver. 
+
 
 ## Heuristics
 
-### Misplaced Tiles
-[implemented]()
-_"Counts the number of tiles not in their goal position. It is simple and admissible but often inefficient as it ignores tile distance."_
-
+### Displaced Tiles
 Counts the number of tiles (excluding the empty tile) which are in the wrong position.
 
 An extremely cheap heuristic allowing for fast calculations. However, its heuristic value is of little value and its computational gain is negligible compared to the Manhattan Distance, which should be preferred in practically all cases.
 
 
 ### Manhattan Distance
-[implemented]()
-_"Sums the horizontal and vertical distances each tile must move to reach its goal. It is more accurate than misplaced tiles and is sufficient to solve the 8-puzzle efficiently."_
-
 Also known as the Taxicab distance, this heuristic is created as a sum of the horizontal and vertical distance between each tile and their target positions.
 
 An extremely cheap heuristic, which has almost the same computational requirements as Misplaced Tiles. However it provides a significantly more valueable heuristic.
 
 ### Linear Conflict
-[not implemented]()
-_"Adds to the Manhattan distance when two tiles are in the same row or column but in the wrong order, requiring additional moves to resolve."_
 
-Expansion to the Manhattan Distance.
+Expansion to the Manhattan Distance. Starts with manhatten distance, but adds 2 for each *linear conflict* found. Linear conflicts are defined by numbers that are in their correct rows or cullumns, but in the wrong order. the heuristic adds two because the nPuzzle does not allow swaps, meaning that the relocation will require at least two moves to correct the conflict. 
 
 ### Walking Distance
-[not implemented]()
-
-_"Calculates the minimum moves required for tiles to reach their goals in separate 1D projections (rows and columns), accounting for tile conflicts."_
 
 Walking Distance converts a puzzle board into two abstract states. One representing the tile distribution across the rows, and the other respresenting the tile distribution across the columns. These abstract states only track how many tiles in each row/column belong in each row/column respectively. Instead of calculating the minimum steps required to solve the puzzle, these are used to BFS the minimum amount of steps required to get all tiles in their correct row/column.
 
@@ -171,6 +178,17 @@ linking the `npuzzle` executable.
 
 # Usage
 
+After the build is complete you can run npuzzle with one of the included puzzle foramtions:
+
+```bash
+./npuzzle < assets/pregens/solvable.3.3.puzzle
+```
+
+or use the included run script to generate a puzzle through the npuzzle generator: 
+
+```bash
+./run.sh -s 4
+```
 
 ---
 
