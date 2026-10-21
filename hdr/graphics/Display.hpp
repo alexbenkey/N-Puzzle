@@ -106,7 +106,7 @@ class Display
 		bool	isPuzzleSolved(void) const;
 		void 	startSolutionAnimation(void);
 		void 	resetSolutionAnimation(void);
-		void 	renderSolutionAnimation(void);
+		void 	renderSolutionAnimation(bool shiftPressed = false);
 };
 
 #endif
