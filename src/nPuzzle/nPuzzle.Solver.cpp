@@ -6,7 +6,7 @@
 /*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/29 17:52:09 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/10/04 19:15:28 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/10/21 16:16:57 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -191,6 +191,13 @@ void	nPuzzle::Solver::solveStepWorker(void)
 	// Create first queue item from start position
 	if (this->queue.size() == 0)
 	{
+		// Prevent the solving of an already solved state
+		if (this->puzzle.state->getHeuristic(this->heuristicIndex) == 0)
+		{
+			std::lock_guard<std::mutex>	lock(this->thread.mutex);
+			this->solved = true;
+			return ;
+		}
 		this->processState(new nPuzzle::State(*this->puzzle.state));
 		// Prevents solving a manually solved puzzle (and subsequently crashing)
 		this->determineIsSolved();

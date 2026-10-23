@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Display.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: othello <othello@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/02 17:58:28 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/09/03 20:59:35 by othello          ###   ########.fr       */
+/*   Updated: 2026/10/21 15:29:32 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -381,7 +381,7 @@ void Display::startSolutionAnimation(void)
 	this->solutionPlaying = !this->solutionPath.empty();
 }
 
-void Display::renderSolutionAnimation(void)
+void Display::renderSolutionAnimation(bool shiftPressed)
 {
 	if (!this->puzzle)
 		return;
@@ -411,10 +411,7 @@ void Display::renderSolutionAnimation(void)
 	const nPuzzle::State* state = 
 		this->solutionPath[this->solutionIndex];
 
-	this->HUD->render(
-		this->puzzle,
-		const_cast<nPuzzle::State*>(state)
-	);
+	this->HUD->render(this->puzzle,	const_cast<nPuzzle::State*>(state), shiftPressed);
 
 	this->renderBoard(state->getBoard());
 

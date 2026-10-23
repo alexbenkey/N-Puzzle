@@ -6,7 +6,7 @@
 /*   By: ohengelm <ohengelm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/02 16:48:19 by ohengelm          #+#    #+#             */
-/*   Updated: 2026/10/04 14:31:29 by ohengelm         ###   ########.fr       */
+/*   Updated: 2026/10/21 15:28:49 by ohengelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,7 +154,7 @@ static void	RenderFrame(Display& graphics)
 		else if (IsKeyDown(KEY_T))
 			graphics.renderAsTargetState();
 		else if (graphics.isPuzzleSolved())
-			graphics.renderSolutionAnimation();
+			graphics.renderSolutionAnimation(IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT));
 		else
 		{
 			graphics.resetSolutionAnimation();
